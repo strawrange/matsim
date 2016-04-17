@@ -236,16 +236,19 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		addToBuffer(veh);
 	}
 
+	final Id<VehicleType> avId = Id.create("AutonomousVehicle", VehicleType.class);//use this id for AVs
+	final double avFlowFactor = 0.5;//can be something else
+	
 	private void addToBuffer(final QVehicle veh) {
 		// yy might make sense to just accumulate to "zero" and go into negative when something is used up.
 		// kai/mz/amit, mar'12
 		
 		double now = context.getSimTimer().getTimeOfDay() ;
 		
-		boolean av = veh.getVehicle().getType() != VehicleUtils.getDefaultVehicleType();
+		boolean av = veh.getVehicle().getType().getId().equals(avId);
 		double vehFlowSizeInEquivalents = veh.getSizeInEquivalents();
 		if (av) {
-		    vehFlowSizeInEquivalents *= 0.5;
+		    vehFlowSizeInEquivalents *= avFlowFactor;
 		}
 		
 		if( context.qsimConfig.isUsingFastCapacityUpdate() ){
