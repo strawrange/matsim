@@ -19,13 +19,40 @@
 
 package playground.michalm.taxi;
 
-import org.matsim.contrib.taxi.benchmark.RunTaxiBenchmark;
+import org.matsim.contrib.dvrp.trafficmonitoring.*;
+import org.matsim.contrib.taxi.run.*;
+import org.matsim.core.config.*;
+import org.matsim.core.controler.*;
+import org.matsim.core.router.util.TravelTime;
+
+import com.google.inject.name.Names;
 
 
-public class RunAudiAV
+public class RunAudiAVFlowPaper
 {
+    public static void run(String configFile, String inputEvents)
+    {
+        Config config = ConfigUtils.loadConfig(configFile, new TaxiConfigGroup());
+        final Controler controler = RunTaxiScenario.createControler(config, false);
+
+        final TravelTime initialTT = TravelTimeUtils
+                .createTravelTimesFromEvents(controler.getScenario(), inputEvents);
+        controler.addOverridingModule(new AbstractModule() {
+            @Override
+            public void install()
+            {
+                bind(TravelTime.class).annotatedWith(Names.named(VrpTravelTimeModules.DVRP_INITIAL))
+                        .toInstance(initialTT);
+            }
+        });
+
+        controler.run();
+    }
+
+
     public static void main(String[] args)
     {
-        RunTaxiBenchmark.run(args[0], 1);
+        String inputEvents = "d:/eclipse/runs-svn/avsim/prerun02_10pct/output_events.xml.gz";
+        run(args[0], inputEvents);
     }
 }

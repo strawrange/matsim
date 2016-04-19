@@ -17,31 +17,15 @@
  *                                                                         *
  * *********************************************************************** */
 
-package org.matsim.contrib.dvrp.trafficmonitoring;
+package playground.michalm.taxi;
 
-import org.matsim.api.core.v01.Scenario;
-import org.matsim.core.api.experimental.events.EventsManager;
-import org.matsim.core.events.*;
-import org.matsim.core.router.util.TravelTime;
-import org.matsim.core.trafficmonitoring.TravelTimeCalculator;
+import org.matsim.contrib.taxi.benchmark.RunTaxiBenchmark;
 
 
-public class TravelTimeUtils
+public class RunAudiAVBenchmark
 {
-    public static TravelTime createTravelTimesFromEvents(Scenario scenario, String eventsFile)
+    public static void main(String[] args)
     {
-        TravelTimeCalculator ttCalculator = TravelTimeCalculator.create(scenario.getNetwork(),
-                scenario.getConfig().travelTimeCalculator());
-        initTravelTimeCalculatorFromEvents(ttCalculator, eventsFile);
-        return ttCalculator.getLinkTravelTimes();
-    }
-
-
-    public static void initTravelTimeCalculatorFromEvents(TravelTimeCalculator ttCalculator,
-            String eventsFile)
-    {
-        EventsManager events = EventsUtils.createEventsManager();
-        events.addHandler(ttCalculator);
-        new MatsimEventsReader(events).readFile(eventsFile);
+        RunTaxiBenchmark.run(args[0], 1);
     }
 }
