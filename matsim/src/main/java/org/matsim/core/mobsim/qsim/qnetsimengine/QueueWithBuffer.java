@@ -245,8 +245,8 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		
 		double now = context.getSimTimer().getTimeOfDay() ;
 		
-		boolean av = veh.getVehicle().getType().getId().equals(avId);
 		double vehFlowSizeInEquivalents = veh.getSizeInEquivalents();
+        boolean av = veh.getVehicle().getType().getId().equals(avId);
 		if (av) {
 		    vehFlowSizeInEquivalents *= avFlowFactor;
 		}
