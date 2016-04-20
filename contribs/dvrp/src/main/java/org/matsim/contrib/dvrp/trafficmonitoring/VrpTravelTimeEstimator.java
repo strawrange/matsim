@@ -66,7 +66,7 @@ public class VrpTravelTimeEstimator
     {
         for (Link link : network.getLinks().values()) {
             double[] tt = new double[intervalCount];
-            updateTTs(link, tt, initialTT);
+            updateTTs(link, tt, initialTT, 1.);
             linkTTs.put(link.getId(), tt);
         }
     }
@@ -78,7 +78,7 @@ public class VrpTravelTimeEstimator
         //TODO TTC is more flexible (simple averaging vs linear interpolation, etc.)
 
         //the last time bin in TTC is used for a freely large time  
-        int idx = Math.min((int) (time / interval), intervalCount - 1);
+        int idx = Math.min((int)time / interval, intervalCount - 1);
         return linkTTs.get(link.getId())[idx];
     }
 
@@ -87,15 +87,22 @@ public class VrpTravelTimeEstimator
     public void notifyMobsimBeforeCleanup(@SuppressWarnings("rawtypes") MobsimBeforeCleanupEvent e)
     {
         for (Link link : network.getLinks().values()) {
-            updateTTs(link, linkTTs.get(link.getId()), observedTT);
+            updateTTs(link, linkTTs.get(link.getId()), observedTT, ALPHA);
         }
     }
 
 
-    private void updateTTs(Link link, double[] tt, TravelTime travelTime)
+    private static final double ALPHA = 0.3;//exponential moving average
+
+
+    private void updateTTs(Link link, double[] tt, TravelTime travelTime, double alpha)
     {
         for (int i = 0; i < intervalCount; i++) {
-            tt[i] = travelTime.getLinkTravelTime(link, i * interval, null, null);
+            double oldEstimatedTT = tt[i];
+            double experiencedTT = travelTime.getLinkTravelTime(link, i * interval, null, null);
+            tt[i] = alpha * experiencedTT + (1 - alpha) * oldEstimatedTT;
+
+            //tt[i] = travelTime.getLinkTravelTime(link, i * interval, null, null);
         }
     }
 }
