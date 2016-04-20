@@ -30,6 +30,7 @@ import org.matsim.api.core.v01.Id;
 public class VehicleUtils {
 
 	private static final VehicleType DEFAULT_VEHICLE_TYPE = VehicleUtils.getFactory().createVehicleType(Id.create("defaultVehicleType", VehicleType.class));
+    public static final VehicleType AUTONOMOUS_VEHICLE_TYPE = VehicleUtils.getFactory().createVehicleType(Id.create("AutonomousVehicleType", VehicleType.class));
 
 	static {
 		VehicleCapacityImpl capacity = new VehicleCapacityImpl();
@@ -45,6 +46,7 @@ public class VehicleUtils {
 		return new VehiclesImpl();
 	}
 
+	//we do not need that
 	public static VehicleType getDefaultVehicleType() {
 		return DEFAULT_VEHICLE_TYPE;
 	}
