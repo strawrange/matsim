@@ -92,7 +92,7 @@ public class VrpTravelTimeEstimator
     }
 
 
-    private static final double ALPHA = 0.3;//exponential moving average
+    private static final double ALPHA = 0.1;//exponential moving average
 
 
     private void updateTTs(Link link, double[] tt, TravelTime travelTime, double alpha)
@@ -101,8 +101,6 @@ public class VrpTravelTimeEstimator
             double oldEstimatedTT = tt[i];
             double experiencedTT = travelTime.getLinkTravelTime(link, i * interval, null, null);
             tt[i] = alpha * experiencedTT + (1 - alpha) * oldEstimatedTT;
-
-            //tt[i] = travelTime.getLinkTravelTime(link, i * interval, null, null);
         }
     }
 }
