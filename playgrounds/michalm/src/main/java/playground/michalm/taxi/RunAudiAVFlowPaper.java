@@ -42,8 +42,8 @@ public class RunAudiAVFlowPaper
             @Override
             public void install()
             {
-                bind(VehicleType.class).annotatedWith(Names.named(TaxiModule.TAXI_MODE)).toInstance(
-                        VehicleUtils.AUTONOMOUS_VEHICLE_TYPE);
+                bind(VehicleType.class).annotatedWith(Names.named(TaxiModule.TAXI_MODE))
+                        .toInstance(VehicleUtils.AUTONOMOUS_VEHICLE_TYPE);
 
                 bind(TravelTime.class).annotatedWith(Names.named(VrpTravelTimeModules.DVRP_INITIAL))
                         .toInstance(initialTT);
@@ -57,6 +57,8 @@ public class RunAudiAVFlowPaper
     public static void main(String[] args)
     {
         String inputEvents = "d:/eclipse/runs-svn/avsim/prerun02_10pct/output_events.xml.gz";
+        VehicleUtils.avFlowFactor = Double.parseDouble(args[1]);
+        System.out.println("VehicleUtils.avFlowFactor = " + VehicleUtils.avFlowFactor);
         run(args[0], inputEvents);
     }
 }

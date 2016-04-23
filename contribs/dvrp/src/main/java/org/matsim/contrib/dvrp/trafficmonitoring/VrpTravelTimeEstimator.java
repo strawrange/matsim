@@ -92,7 +92,7 @@ public class VrpTravelTimeEstimator
     }
 
 
-    private static final double ALPHA = 0.1;//exponential moving average
+    private static final double ALPHA = 0.05;//exponential moving average
 
 
     private void updateTTs(Link link, double[] tt, TravelTime travelTime, double alpha)

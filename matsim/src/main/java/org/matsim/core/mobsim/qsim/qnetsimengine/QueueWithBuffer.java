@@ -236,7 +236,6 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		addToBuffer(veh);
 	}
 
-	public final double avFlowFactor = 1.5;
 	
 	private void addToBuffer(final QVehicle veh) {
 		// yy might make sense to just accumulate to "zero" and go into negative when something is used up.
@@ -246,7 +245,7 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		
 		double vehFlowSizeInEquivalents = veh.getSizeInEquivalents();
 		if (veh.getVehicle().getType() == VehicleUtils.AUTONOMOUS_VEHICLE_TYPE) {
-		    vehFlowSizeInEquivalents /= avFlowFactor;
+		    vehFlowSizeInEquivalents /= VehicleUtils.avFlowFactor;
 		}
 		
 		if( context.qsimConfig.isUsingFastCapacityUpdate() ){

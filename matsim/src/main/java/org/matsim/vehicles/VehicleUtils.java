@@ -31,6 +31,7 @@ public class VehicleUtils {
 
 	private static final VehicleType DEFAULT_VEHICLE_TYPE = VehicleUtils.getFactory().createVehicleType(Id.create("defaultVehicleType", VehicleType.class));
     public static final VehicleType AUTONOMOUS_VEHICLE_TYPE = VehicleUtils.getFactory().createVehicleType(Id.create("AutonomousVehicleType", VehicleType.class));
+    public static double avFlowFactor = 1.0;
 
 	static {
 		VehicleCapacityImpl capacity = new VehicleCapacityImpl();
