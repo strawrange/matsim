@@ -56,9 +56,8 @@ public class RunAudiAVFlowPaper
 
     public static void main(String[] args)
     {
-        String inputEvents = "d:/eclipse/runs-svn/avsim/prerun02_10pct/output_events.xml.gz";
         VehicleUtils.avFlowFactor = Double.parseDouble(args[1]);
         System.out.println("VehicleUtils.avFlowFactor = " + VehicleUtils.avFlowFactor);
-        run(args[0], inputEvents);
+        run(args[0], args[2]);
     }
 }
