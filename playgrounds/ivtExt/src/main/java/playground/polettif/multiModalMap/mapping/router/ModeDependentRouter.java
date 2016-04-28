@@ -31,33 +31,35 @@ import org.matsim.core.router.Dijkstra;
 import org.matsim.core.router.util.*;
 import org.matsim.core.utils.collections.Tuple;
 import org.matsim.vehicles.Vehicle;
+import playground.polettif.multiModalMap.tools.MiscUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Based on the line, mode, and link type, the traveling on links is assigned different costs.
- * The better the match, the lower the costs.
+ * TODO doc
  *
- * @author boescpa
+ * @author polettif
  */
 public class ModeDependentRouter implements Router {
 
-	private final Network network;
-	private Set<String> routingTransportModes;
+	private final Set<String> routingTransportModes;
     private final LeastCostPathCalculator pathCalculator;
-    private final Map<Tuple<Node, Node>, LeastCostPathCalculator.Path> paths = new HashMap<>();
+    private final Map<Tuple<Node, Node>, LeastCostPathCalculator.Path> paths;
 
-    public ModeDependentRouter(Network network, Set<String> routingTransportModes) {
-        LeastCostPathCalculatorFactory factory = new AStarLandmarksFactory(network, this);
-		this.network = network;
+	public ModeDependentRouter(Network network, Set<String> routingTransportModes) {
 		this.routingTransportModes = routingTransportModes;
-        this.pathCalculator = factory.createPathCalculator(network, this, this);
+		paths = new HashMap<>();
 
-		// Suppress "no route found" statements...
+		LeastCostPathCalculatorFactory factory = new FastAStarLandmarksFactory(network, this);
+		this.pathCalculator = factory.createPathCalculator(network, this, this);
+
+		// Suppress statements...
 		Logger.getLogger( Dijkstra.class ).setLevel( Level.ERROR );
-    }
+		Logger.getLogger( PreProcessEuclidean.class ).setLevel( Level.ERROR );
+		Logger.getLogger( PreProcessLandmarks.class ).setLevel( Level.ERROR );
+	}
 
     @Override
     public LeastCostPathCalculator.Path calcLeastCostPath(Node fromNode, Node toNode) {
@@ -71,6 +73,12 @@ public class ModeDependentRouter implements Router {
             return null;
         }
     }
+
+	@Override
+	public LeastCostPathCalculator.Path calcLeastCostPath(Link fromLink, Link toLink) {
+		return calcLeastCostPath(fromLink.getToNode(), toLink.getFromNode());
+	}
+
 
 	/**
 	 * @param link The link for which the travel disutility is calculated.
@@ -90,27 +98,18 @@ public class ModeDependentRouter implements Router {
 	 */
     @Override
     public double getLinkMinimumTravelDisutility(Link link) {
-		return link.getLength() / link.getFreespeed();
+		return (linkHasRoutingMode(link) ? 1 : 1000) * link.getLength();
 	}
 
 	/**
-	 * @param link The link for which the travel time is calculated.
-	 * @param time The departure time (in seconds since 00:00) at the beginning
-	 * 		of the link for which the travel time is calculated.
+	 * Link travel time is ignored for pseudoRouting!
 	 */
 	@Override
     public double getLinkTravelTime(Link link, double time, Person person, Vehicle vehicle) {
         return link.getLength() / link.getFreespeed(time);
     }
 
-	private boolean linkHasRoutingMode(Link link) {
-		for(String routingTransportMode : this.routingTransportModes) {
-			for(String linkTransportMode : link.getAllowedModes()) {
-				if(routingTransportMode.equalsIgnoreCase(linkTransportMode)) {
-					return true;
-				}
-			}
-		}
-		return false;
+	public boolean linkHasRoutingMode(Link link) {
+		return MiscUtils.setsShareMinOneEntry(link.getAllowedModes(), routingTransportModes);
 	}
 }

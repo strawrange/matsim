@@ -56,6 +56,7 @@ import org.matsim.core.utils.io.IOUtils;
 
 import playground.singapore.springcalibration.run.SingaporeControlerListener;
 
+
 /**
  * @author anhorni
  */
@@ -68,10 +69,11 @@ public class SingaporeDistributions implements IterationEndsListener {
 	private final StageActivityTypes stageActivityTypes;
 	private final List<DistributionClass> classes;
 	private DecimalFormat df = new DecimalFormat("0.00");
+	private DecimalFormat dfpercent = new DecimalFormat("0.0");
 	private String measure = "";
-	private Counter counter = new Counter();
-	
+	private Counter counter = new Counter();	
 	private DistributionClass transit_walk_class = new DistributionClass();
+	private ModesHistoryPlotter modesHistoryPlotter = new ModesHistoryPlotter();
 	
 	public SingaporeDistributions(final Population population,
 			final MainModeIdentifier mainModeIdentifier, final StageActivityTypes stageActivityTypes, String measure) {
@@ -108,11 +110,14 @@ public class SingaporeDistributions implements IterationEndsListener {
 		for (Trip trip : trips) {
 			String originActivityType = trip.getOriginActivity().getType();
 			String destinationActivityType = trip.getDestinationActivity().getType();
-			
+						
 			originActivityType = this.mapActivity(originActivityType);
 			destinationActivityType = this.mapActivity(destinationActivityType);
 												
 			String mainMode = mainModeIdentifier.identifyMainMode(trip.getTripElements());
+			
+			//log.info(plan.getPerson().getId().toString() + ": " + mainMode + " - " + originActivityType + " - " + destinationActivityType);
+			
 			Tuple<String, String> tuple = new Tuple<String, String>(originActivityType, destinationActivityType);
 			for (DistributionClass distributionClass : classes) {
 				boolean containsMainMode = distributionClass.mainModes.contains(mainMode);
@@ -196,6 +201,7 @@ public class SingaporeDistributions implements IterationEndsListener {
 			for (Bin bin : distributionClass.distributionBins) {
 				bin.count = 0;
 			}
+			distributionClass.values.clear();
 		}
 		
 		for (String mode : SingaporeControlerListener.modes) {
@@ -212,6 +218,8 @@ public class SingaporeDistributions implements IterationEndsListener {
 			writeDistributionClass(distributionClass, event.getIteration(), event.getServices().getControlerIO());
 		}		
 		this.writeCounter(event.getServices().getControlerIO(), event.getIteration());
+		this.updateAndRunModesHistoryPlotter(event.getServices().getControlerIO(), event.getIteration());
+		
 	}
 	
 	private void writeDistributionClass(DistributionClass distributionClass, int iteration, 
@@ -385,12 +393,20 @@ public class SingaporeDistributions implements IterationEndsListener {
 		}
 	}
 	
+	private void updateAndRunModesHistoryPlotter(OutputDirectoryHierarchy outputDirectoryHierarchy, int iteration) {
+		for (String mode : SingaporeControlerListener.modes) {
+			double share = this.counter.getShare(mode, "counts");
+			this.modesHistoryPlotter.addModeShare(iteration, mode, share);
+		}
+		this.modesHistoryPlotter.writeModesHistory(outputDirectoryHierarchy.getOutputPath(), iteration);
+	}
+	
 	private void writeCounter(OutputDirectoryHierarchy outputDirectoryHierarchy, int iteration) {
 		String path = outputDirectoryHierarchy.getIterationPath(iteration);
 		String fileName = path + "/counter_" + measure;		
 		
 		try {
-			BufferedWriter writer = IOUtils.getBufferedWriter(fileName + ".txt");
+			BufferedWriter writer = IOUtils.getBufferedWriter(fileName);
 			StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append("mode" + "\t" + "counts" + "\t" + this.measure);			
 			writer.write(stringBuffer.toString());
@@ -400,9 +416,9 @@ public class SingaporeDistributions implements IterationEndsListener {
 			for (String mode : SingaporeControlerListener.modes) {
 				stringBuffer = new StringBuffer();
 				stringBuffer.append(mode + "\t");
-				stringBuffer.append(df.format(this.counter.getShare(mode, "counts")) + "\t");
-				if (measure.equals("distance")) stringBuffer.append(df.format(this.counter.getShare(mode, "distance")) + "\t");
-				if (measure.equals("time")) stringBuffer.append(df.format(this.counter.getShare(mode, "time")));
+				stringBuffer.append(dfpercent.format(100.0 * this.counter.getShare(mode, "counts")) + "\t");
+				if (measure.equals("distance")) stringBuffer.append(dfpercent.format(100.0 * this.counter.getShare(mode, "distance")) + "\t");
+				if (measure.equals("time")) stringBuffer.append(dfpercent.format(100.0 * this.counter.getShare(mode, "time")));
 				writer.write(stringBuffer.toString());
 				writer.newLine();
 			}

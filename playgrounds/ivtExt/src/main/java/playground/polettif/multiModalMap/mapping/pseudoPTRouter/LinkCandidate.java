@@ -19,54 +19,88 @@
 
 package playground.polettif.multiModalMap.mapping.pseudoPTRouter;
 
+import org.matsim.api.core.v01.Coord;
+import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.network.Node;
 import org.matsim.core.utils.geometry.CoordUtils;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 
+/**
+ * A possible link for a stop facility. A LinkCandidate contains a parent stop facility (the
+ * one used in the original schedule), an actual Link and a child stop facility which
+ * is referenced to the link.
+ *
+ * @author polettif
+ */
 public class LinkCandidate  {
 
 	final private String id;
+	private final double stopFacilityDistance;
+	private final double linkLength;
+	private final double linkTravelTime;
 
-	private TransitStopFacility parentStopFacility;
-	private Link link = null;
+	private final String linkId;
+	private final String fromNodeId;
+
+	private final String toNodeId;
+	private final Coord stopFacilityCoord;
+	private final Coord fromNodeCoord;
+	private final Coord toNodeCoord;
+
 	private TransitStopFacility childStopFacility;
 
 	public LinkCandidate(Link link, TransitStopFacility parentStopFacility) {
-		this.id = parentStopFacility.getName() + " " + parentStopFacility.getId() + ":" + link.getId();
-		this.link = link;
-		this.parentStopFacility = parentStopFacility;
+		this.id = parentStopFacility.getId().toString() + ".link:" + link.getId().toString();
+
+		this.linkId = link.getId().toString();
+		this.linkLength = link.getLength();
+		this.linkTravelTime = linkLength / link.getFreespeed();
+
+		this.fromNodeId = link.getFromNode().getId().toString();
+		this.toNodeId = link.getToNode().getId().toString();
+		this.stopFacilityCoord = parentStopFacility.getCoord();
+
+		this.fromNodeCoord = link.getFromNode().getCoord();
+		this.toNodeCoord = link.getToNode().getCoord();
+
+		this.stopFacilityDistance = CoordUtils.distancePointLinesegment(fromNodeCoord, toNodeCoord, stopFacilityCoord);
 	}
 
-	public LinkCandidate(String id) {
-		this.id = id;
-	}
-
-	public TransitStopFacility getParentStop() {
-		return parentStopFacility;
-	}
-
-	public Link getLink() {
-		return link;
+	public double getLinkLength() {
+		return linkLength;
 	}
 
 	public double getLinkTravelTime() {
-		if(link == null) {
-			return 0.0;
-		} else {
-			return link.getLength()/link.getFreespeed();
-		}
-	}
-
-	public void setChildStop(TransitStopFacility childStopFacility) {
-		this.childStopFacility = childStopFacility;
-	}
-
-	public TransitStopFacility getChildStop() {
-		return childStopFacility;
+		return linkTravelTime;
 	}
 
 	public String getId() {
 		return id;
+	}
+
+	public double getStopFacilityDistance() {
+		return stopFacilityDistance;
+	}
+
+	public String getToNodeIdStr() {
+		return toNodeId;
+	}
+
+	public String getFromNodeIdStr() {
+		return fromNodeId;
+	}
+
+	public String getLinkIdStr() {
+		return linkId;
+	}
+
+	public Coord getFromNodeCoord() {
+		return fromNodeCoord;
+	}
+
+	public Coord getToNodeCoord() {
+		return toNodeCoord;
 	}
 
 	@Override
@@ -74,7 +108,35 @@ public class LinkCandidate  {
 		return id;
 	}
 
-	public double getStopDistance() {
-		return CoordUtils.distancePointLinesegment(link.getFromNode().getCoord(), link.getToNode().getCoord(), parentStopFacility.getCoord());
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj)
+			return true;
+		if(obj == null)
+			return false;
+		if(getClass() != obj.getClass())
+			return false;
+
+		LinkCandidate other = (LinkCandidate) obj;
+		if(id == null) {
+			if(other.id != null)
+				return false;
+		} else if(!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Deprecated
+	public void setChildStop(TransitStopFacility childStopFacility) {
+		this.childStopFacility = childStopFacility;
+	}
+
+	/**
+	 * @deprecated Should not be used since we work with different networks
+	 * during pseudoRouting
+	 */
+	@Deprecated
+	public Link getLink() {
+		return null;
 	}
 }

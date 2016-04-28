@@ -21,15 +21,16 @@
 
 package playground.polettif.multiModalMap.mapping.router;
 
+import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Node;
 import org.matsim.core.router.util.LeastCostPathCalculator;
 import org.matsim.core.router.util.TravelDisutility;
 import org.matsim.core.router.util.TravelTime;
 
 /**
- * What is it for?
+ * A Router interface combining travelDisUtility and TravelTime.
  *
- * @author boescpa
+ * @author polettif
  */
 public interface Router extends TravelDisutility, TravelTime {
 
@@ -39,5 +40,8 @@ public interface Router extends TravelDisutility, TravelTime {
      * @param toNode    Node to route to...
      * @return  Least cost path.
      */
-    public LeastCostPathCalculator.Path calcLeastCostPath(Node fromNode, Node toNode);
+    LeastCostPathCalculator.Path calcLeastCostPath(Node fromNode, Node toNode);
+
+    LeastCostPathCalculator.Path calcLeastCostPath(Link fromLink, Link toLink);
+
 }

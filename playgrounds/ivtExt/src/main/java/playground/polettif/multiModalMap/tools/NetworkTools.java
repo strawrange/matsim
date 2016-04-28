@@ -26,17 +26,19 @@ import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.network.NetworkFactory;
 import org.matsim.api.core.v01.network.Node;
-import org.matsim.core.network.NetworkFactoryImpl;
 import org.matsim.core.network.NetworkImpl;
-import org.matsim.core.network.NetworkUtils;
-import org.matsim.core.network.algorithms.NetworkCleaner;
-import org.matsim.core.network.filter.NetworkLinkFilter;
-import org.matsim.core.network.filter.NetworkNodeFilter;
 import org.matsim.core.utils.geometry.CoordUtils;
+import org.matsim.pt.transitSchedule.api.TransitSchedule;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
+import playground.polettif.multiModalMap.config.PublicTransportMapConfigGroup;
 
 import java.util.*;
 
+/**
+ * Provides Tools for analysing and manipulating networks.
+ *
+ * @author polettif
+ */
 public class NetworkTools {
 
 	protected static Logger log = Logger.getLogger(NetworkTools.class);
@@ -72,30 +74,32 @@ public class NetworkTools {
 		if(nearestNodes.size() == 0) {
 			return closestLinks;
 		} else {
+			// check every in- and outlink of each node
 			for (Node node : nearestNodes) {
 				Map<Id<Link>, ? extends Link> outLinks = node.getOutLinks();
 				Map<Id<Link>, ? extends Link> inLinks = node.getInLinks();
 				double lineSegmentDistance;
 
-				for (Link linkCandidate : outLinks.values()) {
+				for (Link outLink : outLinks.values()) {
 					// check if link is already in the closestLinks set
-					if (!closestLinksMap.containsValue(linkCandidate)) {
-						lineSegmentDistance = CoordUtils.distancePointLinesegment(linkCandidate.getFromNode().getCoord(), linkCandidate.getToNode().getCoord(), coord);
+					if(!closestLinksMap.containsValue(outLink)) {
+						// only use links with a viable network transport mode
+						lineSegmentDistance = CoordUtils.distancePointLinesegment(outLink.getFromNode().getCoord(), outLink.getToNode().getCoord(), coord);
 
-						// since distance is used as key, we need to ensure the exact distance is not used already TODO maybe check for side of the road?
-						while (closestLinksMap.containsKey(lineSegmentDistance))
+						// since distance is used as key, we need to ensure the exact distance is not used already
+						while(closestLinksMap.containsKey(lineSegmentDistance))
 							lineSegmentDistance += incr;
 
-						closestLinksMap.put(lineSegmentDistance, linkCandidate);
+						closestLinksMap.put(lineSegmentDistance, outLink);
 					}
 				}
-				for (Link linkCandidate : inLinks.values()) {
-					if (!closestLinksMap.containsValue(linkCandidate)) {
-						lineSegmentDistance = CoordUtils.distancePointLinesegment(linkCandidate.getFromNode().getCoord(), linkCandidate.getToNode().getCoord(), coord);
-						while (closestLinksMap.containsKey(lineSegmentDistance)) {
+				for (Link inLink : inLinks.values()) {
+					if (!closestLinksMap.containsValue(inLink)) {
+						lineSegmentDistance = CoordUtils.distancePointLinesegment(inLink.getFromNode().getCoord(), inLink.getToNode().getCoord(), coord);
+						while(closestLinksMap.containsKey(lineSegmentDistance)) {
 							lineSegmentDistance += incr;
 						}
-						closestLinksMap.put(lineSegmentDistance, linkCandidate);
+						closestLinksMap.put(lineSegmentDistance, inLink);
 					}
 				}
 			}
@@ -128,6 +132,84 @@ public class NetworkTools {
 	}
 
 	/**
+	 * Looks for nodes within search radius of coord (using {@link NetworkImpl#getNearestNodes(Coord, double)},
+	 * fetches all in- and outlinks and sorts them ascending by their
+	 * distance to the coordiantes given. Only returns links with the allowed
+	 * networkTransportMode for the input scheduleTransportMode (defined in
+	 * config). Returns maxNLinks or all links within maxLinkDistance (whichever
+	 * is reached earlier).
+	 *
+	 * <p/>
+	 * Distance Link-Coordinate is calculated via  in {@link org.matsim.core.utils.geometry.CoordUtils#distancePointLinesegment(Coord, Coord, Coord)}).
+	 *
+	 * @param networkImpl A network implementation (needed
+	 *                    for {@link NetworkImpl#getNearestNodes(Coord, double)}
+	 * @param coord the coordinate from which the closest links
+	 *              are searched
+	 * @param scheduleTransportMode the transport mode of the "current" transitRoute.
+	 *                              The config should define which networkTransportModes
+	 *                              are allowed for this scheduleMode
+	 * @param config	The config defining maxNnodes, search radius etc.
+	 * @return a Set of the closest links
+	 */
+	public static Set<Link> findNClosestLinksByMode(NetworkImpl networkImpl, Coord coord, String scheduleTransportMode, PublicTransportMapConfigGroup config) {
+		Set<Link> closestLinks = new HashSet<>();
+
+		Collection<Node> nearestNodes = networkImpl.getNearestNodes(coord, config.getNodeSearchRadius());
+		SortedMap<Double, Link> closestLinksMap = new TreeMap<>();
+		double incr = 0.0001; double tol=0.001;
+
+//		int maxNnodes = (config.getMaxNClosestLinksByMode().get(scheduleTransportMode) == null ? config.getMaxNClosestLinks() : config.getMaxNClosestLinksByMode().get(scheduleTransportMode));
+
+		Set<String> networkTransportModes = config.getModeRoutingAssignment().get(scheduleTransportMode);
+
+		if(nearestNodes.size() == 0) {
+			return closestLinks;
+		} else {
+			// check every in- and outlink of each node
+			for (Node node : nearestNodes) {
+				Set<Link> links = new HashSet<>(node.getInLinks().values());
+				links.addAll(node.getOutLinks().values());
+
+				double lineSegmentDistance;
+
+				for (Link link : links) {
+					// check if link is already in the closestLinks set
+					if(!closestLinksMap.containsValue(link)) {
+						// only use links with a viable network transport mode
+						if(MiscUtils.setsShareMinOneEntry(link.getAllowedModes(), networkTransportModes)) {
+							lineSegmentDistance = CoordUtils.distancePointLinesegment(link.getFromNode().getCoord(), link.getToNode().getCoord(), coord);
+
+							// since distance is used as key, we need to ensure the exact distance is not used already
+							while(closestLinksMap.containsKey(lineSegmentDistance))
+								lineSegmentDistance += incr;
+
+							closestLinksMap.put(lineSegmentDistance, link);
+						}
+					}
+				}
+			}
+
+			int i = 1; double previousDistance = 2*tol;
+			for(Map.Entry<Double, Link> entry : closestLinksMap.entrySet()) {
+				// if the distance difference to the previous link is less than tol, add the link as well
+				if(i > config.getMaxNClosestLinks() && Math.abs(entry.getKey() - previousDistance) >= tol) {
+					break;
+				}
+				if(entry.getKey() > config.getMaxStopFacilityDistance()) {
+					break;
+				}
+
+				previousDistance = entry.getKey();
+				closestLinks.add(entry.getValue());
+				i++;
+			}
+
+			return closestLinks;
+		}
+	}
+
+	/**
 	 * Adds a node on the position of coord and connects it with two links to the neareast node of the network.
 	 * @param coord where the new node should be created
 	 * @param network that should be modified
@@ -136,7 +218,7 @@ public class NetworkTools {
 	 * @return a list with the two newly created links
 	 */
 	@Deprecated
-	public static List<Link> addArtificialLinksToNetwork(Coord coord, Network network, String idPrefix, int idCounter) {
+	public static List<Link> createLinkToNearestNode(Coord coord, Network network, String idPrefix, int idCounter) {
 		NetworkImpl networkImpl = (NetworkImpl) network;
 		NetworkFactory networkFactory = network.getFactory();
 
@@ -156,31 +238,32 @@ public class NetworkTools {
 		return newLinks;
 	}
 
-	public static List<Link> addArtificialLinksToNetwork(Coord coord, Network network, Set<String> networkModes, String idPrefix, int idCounter) {
-		NetworkImpl networkImpl = (NetworkImpl) network;
+	/**
+	 * Creates a node and dummy/loop link on the coordinate of the stop facility and
+	 * adds both to the network. The stop facility is NOT referenced.
+	 * @return the new Link.
+	 */
+	public static Link createArtificialStopFacilityLink(TransitStopFacility stopFacility, Network network, String prefix) {
 		NetworkFactory networkFactory = network.getFactory();
 
-		Node newNode = networkFactory.createNode(Id.create(idPrefix + "node_" + idCounter, Node.class), coord);
-		Node nearestNode = networkImpl.getNearestNode(coord);
-		Link newLink1 = networkFactory.createLink(Id.createLinkId(idPrefix + idCounter + ":1"), newNode, nearestNode);
-		Link newLink2 = networkFactory.createLink(Id.createLinkId(idPrefix + idCounter + ":2"), nearestNode, newNode);
+		Coord coord = stopFacility.getCoord();
 
-		newLink1.setAllowedModes(networkModes);
-		newLink2.setAllowedModes(networkModes);
+		Node dummyNode = networkFactory.createNode(Id.createNodeId(prefix+stopFacility.getId()+"_node"), coord);
+		Link dummyLink = networkFactory.createLink(Id.createLinkId(prefix+stopFacility.getId()+"_link"), dummyNode, dummyNode);
 
-		network.addNode(newNode);
-		network.addLink(newLink1);
-		network.addLink(newLink2);
+		dummyLink.setAllowedModes(Collections.singleton(PublicTransportMapConfigGroup.ARTIFICIAL_LINK_MODE));
+		dummyLink.setLength(1.0);
 
-		List<Link> newLinks = new ArrayList<>();
-		newLinks.add(newLink1);
-		newLinks.add(newLink2);
+		if(!network.getNodes().containsKey(dummyNode.getId())) {
+			network.addNode(dummyNode);
+			network.addLink(dummyLink);
+		}
 
-		return newLinks;
+		return dummyLink;
 	}
 
 	/**
-	 * @return the azimuth from two points in [rad]
+	 * @return the azimuth in [rad] of a line defined by two points.
 	 */
 	public static double getAzimuth(Coord from, Coord to) {
 		double deltaE = to.getX()-from.getX();
@@ -195,29 +278,6 @@ public class NetworkTools {
 			az2 = az2-2*Math.PI;
 
 		return az2;
-	}
-
-	/**
-	 * @return whether Coord2 lies<br/>
-	 * [1] North-East<br/>
-	 * [2] South-East<br/>
-	 * [3] South-West<br/>
-	 * [4] North-West<br/>
-	 * of Coord1
-	 */
-	public static int getCompassQuarter(Coord baseCoord, Coord toCoord) {
-		double az = getAzimuth(baseCoord, toCoord);
-
-
-		if(az < Math.PI/2) {
-			return 1;
-		} else if(az >= Math.PI/2 && az < Math.PI) {
-			return 2;
-		} else if(az > Math.PI && az < 1.5*Math.PI) {
-			return 3;
-		} else {
-			return 4;
-		}
 	}
 
 	/**
@@ -264,6 +324,8 @@ public class NetworkTools {
 
 	/**
 	 * A debug method to assign weights to network links as number of lanes.
+	 * The network is changed permanently, so this should really only be used for
+	 * debugging.
 	 */
 	public static void visualizeWeightsAsLanes(Network network, Map<Id<Link>, Double> weightMap) {
 		for(Map.Entry<Id<Link>, Double> w : weightMap.entrySet()) {
@@ -271,154 +333,10 @@ public class NetworkTools {
 		}
 	}
 
-
-	/**
-	 * Adds a node on the splitPointCoordinates and splits the link into two new links
-	 * @param network network the operations runs on, is modified.
-	 * @param linkId of the link which should be split
-	 * @param splitPointCoordinates of the point where the link should be separated. Practically the link is removed
-	 *                              and two new links connecting the nodes are added. The splitPoint is moved onto the link.
-	 * @param newObjectPrefix prefix for new the link and node (default: "split_")
-	 */
-	@Deprecated
-	public static void splitLink(Network network, Id<Link> linkId, Coord splitPointCoordinates, String newObjectPrefix) {
-		String prefix;
-
-		if(newObjectPrefix == null) {
-			prefix = "split_";
-		} else {
-			prefix = newObjectPrefix;
-		}
-
-		int intId = 0;
-
-		Link link = network.getLinks().get(linkId);
-
-		Coord coordinatesOnLink = getClosestPointOnLine(link, splitPointCoordinates);
-
-		NetworkFactoryImpl networkFactory = new NetworkFactoryImpl(network);
-
-		String newNodeIdString = link.getFromNode().getId().toString()+"_"+link.getToNode().getId().toString();
-		String newLinkIdString = newNodeIdString+"_"+linkId.toString();
-
-		while(network.getNodes().containsKey(Id.createNodeId(prefix+intId))) { intId++; }
-		while(network.getLinks().containsKey(Id.createLinkId(prefix+intId))) { intId++; }
-
-		Node newNode = networkFactory.createNode(Id.createNodeId(prefix+intId), coordinatesOnLink);
-		Link newLink = networkFactory.createLink(Id.createLinkId(prefix+intId), newNode, link.getToNode());
-		newLink.setLength(CoordUtils.calcEuclideanDistance(newNode.getCoord(), link.getToNode().getCoord()));
-		newLink.setAllowedModes(link.getAllowedModes());
-		newLink.setCapacity(link.getCapacity());
-		newLink.setFreespeed(link.getFreespeed());
-		newLink.setNumberOfLanes(link.getNumberOfLanes());
-
-		network.addNode(newNode);
-		network.addLink(newLink);
-
-		link.setToNode(newNode);
-		link.setLength(CoordUtils.calcEuclideanDistance(link.getFromNode().getCoord(), newNode.getCoord()));
-	}
-
-	/**
-	 * Creates a deep copy of a network
-	 * @param network
-	 * @return
-	 */
-	public static Network copyNetwork(Network network) {
-		return createFilteredNetwork(network, null, null);
-	}
-
-	/**
-	 * Creates a new network (deep copy) which only contains link with transportMode
-	 * @param network the base network that should be copied
-	 * @param linkFilter to decide which links should be kept
-	 * @return
-	 */
-	@Deprecated
-	public static Network createFilteredNetwork(Network network, NetworkLinkFilter linkFilter, NetworkNodeFilter nodeFilter) {
-		Network newNetwork = NetworkUtils.createNetwork();
-
-		NetworkLinkFilter lf = (linkFilter == null ? new NetworkLinkFilterAllLinks() : linkFilter);
-		NetworkNodeFilter nf = (nodeFilter == null ? new NetworkNodeFilterAllNodes() : nodeFilter);
-
-		// Add node if it passes filter
-		for (Node node : network.getNodes().values()) {
-			if(nf.judgeNode(node)) {
-				addNewNode(newNetwork, node);
-			}
-		}
-
-		// Add link if it passes filter
-		for(Link link : network.getLinks().values()) {
-			if(lf.judgeLink(link)) {
-				addNewLink(newNetwork, link);
-			}
-		}
-
-		new NetworkCleaner().run(newNetwork);
-		return newNetwork;
-	}
-
-	/**
-	 * Creates a  network which only contains link with transportMode
-	 * @param network the base network that should be copied
-	 * @param linkFilter to decide which links should be kept
-	 * @return
-	 */
-	@Deprecated
-	public static Network getFilteredNetwork(Network network, NetworkLinkFilter linkFilter, NetworkNodeFilter nodeFilter) {
-		Network newNetwork = NetworkUtils.createNetwork();
-
-		NetworkLinkFilter lf = (linkFilter == null ? new NetworkLinkFilterAllLinks() : linkFilter);
-		NetworkNodeFilter nf = (nodeFilter == null ? new NetworkNodeFilterAllNodes() : nodeFilter);
-
-		// Add node if it passes filter
-		for (Node node : network.getNodes().values()) {
-			if(nf.judgeNode(node)) {
-				addNewNode(newNetwork, node);
-			}
-		}
-		for(Link link : network.getLinks().values()) {
-			if(lf.judgeLink(link)) {
-				newNetwork.addLink(link);
-			}
-		}
-
-		return newNetwork;
-	}
-
-	@Deprecated
-	public static Network addNewNode(Network network, Node node) {
-		Id<Node> nodeId = Id.create(node.getId().toString(), Node.class);
-		if (!network.getNodes().containsKey(nodeId)) {
-			Node newNode = network.getFactory().createNode(nodeId, node.getCoord());
-			network.addNode(newNode);
-		}
-		return network;
-	}
-
-	@Deprecated
-	public static Network addNewLink(Network network, Link link) {
-		Id<Link> linkId = Id.create(link.getId().toString(), Link.class);
-		Id<Node> fromNodeId = Id.create(link.getFromNode().getId().toString(), Node.class);
-		Id<Node> toNodeId = Id.create(link.getToNode().getId().toString(), Node.class);
-
-		if(!network.getLinks().containsKey(linkId)) { // todo && network.getNodes().containsKey(fromNodeId) && network.getNodes().containsKey(toNodeId))
-			Link newLink = network.getFactory().createLink(linkId, network.getNodes().get(fromNodeId), network.getNodes().get(toNodeId));
-			newLink.setAllowedModes(link.getAllowedModes());
-			newLink.setCapacity(link.getCapacity());
-			newLink.setFreespeed(link.getFreespeed());
-			newLink.setLength(link.getLength());
-			newLink.setNumberOfLanes(link.getNumberOfLanes());
-			network.addLink(newLink);
-		}
-		return network;
-	}
-
 	/**
 	 * Calculates the extent of the given network.
-	 * @param network
-	 * @return Array of Coords with the minimal South-West and the maximal North-East Coordinates
+	 * @return Array of Coords with the minimal South-West and the
+	 * 		   maximal North-East Coordinates
 	 */
 	public static Coord[] getExtent(Network network) {
 		double maxE = 0;
@@ -443,4 +361,262 @@ public class NetworkTools {
 
 		return new Coord[]{new Coord(minW, minS), new Coord(maxE, maxN)};
 	}
+
+	/**
+	 * Checks if a coordinate is in the area given by SE and NE.
+	 * @param coord the coordinate to check
+	 * @param SW the south-west corner of the area
+	 * @param NE the north-east corner of the area
+	 */
+	public static boolean isInArea(Coord coord, Coord SW, Coord NE) {
+		return (getCompassQuarter(SW, coord) == 1 && getCompassQuarter(NE, coord) == 3);
+	}
+
+	public static boolean isInArea(Coord coord, Coord[] area) {
+		return (getCompassQuarter(area[0], coord) == 1 && getCompassQuarter(area[1], coord) == 3);
+	}
+
+	/**
+	 * @return whether Coord2 lies<br/>
+	 * [1] North-East<br/>
+	 * [2] South-East<br/>
+	 * [3] South-West<br/>
+	 * [4] North-West<br/>
+	 * of Coord1
+	 */
+	public static int getCompassQuarter(Coord baseCoord, Coord toCoord) {
+		double az = getAzimuth(baseCoord, toCoord);
+
+
+		if(az < Math.PI/2) {
+			return 1;
+		} else if(az >= Math.PI/2 && az < Math.PI) {
+			return 2;
+		} else if(az > Math.PI && az < 1.5*Math.PI) {
+			return 3;
+		} else {
+			return 4;
+		}
+	}
+
+	/**
+	 * @return a Map with a boolean for each stop facility denoting whether
+	 * the facility is within the area or not.
+	 */
+	public static Map<TransitStopFacility, Boolean> getStopsInAreaBool(TransitSchedule schedule, Coord[] area) {
+		HashMap<TransitStopFacility, Boolean> stopsInArea = new HashMap<>();
+		for(TransitStopFacility stopFacility : schedule.getFacilities().values()) {
+			stopsInArea.put(stopFacility, NetworkTools.isInArea(stopFacility.getCoord(), area));
+		}
+		return stopsInArea;
+	}
+
+	/**
+	 * Merges all network into baseNetworks. If a link id already
+	 * exists in the base network, the link is not added to it.
+	 *
+	 * @param baseNetwork the network in which all other networks are integrated
+	 * @param networks collection of networks to merge into the base network
+	 */
+	public static void mergeNetworks(Network baseNetwork, Collection<Network> networks) {
+		log.info("Merging networks...");
+
+		int numberOfLinksBefore = baseNetwork.getLinks().size();
+		int numberOfNodesBefore = baseNetwork.getNodes().size();
+
+		for(Network currentNetwork : networks) {
+			integrateNetwork(baseNetwork, currentNetwork);
+		}
+
+		log.info(" Merging Stats:");
+		log.info("  Total number of links added to network: " + (baseNetwork.getLinks().size()-numberOfLinksBefore));
+		log.info("  Total number of nodes added to network: " + (baseNetwork.getNodes().size()-numberOfNodesBefore));
+		log.info("Merging networks... done.");
+	}
+
+	/**
+	 * Integrates network B into network A. Network
+	 * A contains all links and nodes of both networks
+	 * after integration.
+	 *
+	 * @param networkA
+	 * @param networkB
+	 */
+	public static void integrateNetwork(final Network networkA, final Network networkB) {
+		final NetworkFactory factory = networkA.getFactory();
+
+		// Nodes
+		for (Node node : networkB.getNodes().values()) {
+			Id<Node> nodeId = Id.create(node.getId().toString(), Node.class);
+			if(!networkA.getNodes().containsKey(nodeId)) {
+				Node newNode = factory.createNode(nodeId, node.getCoord());
+				networkA.addNode(newNode);
+			}
+		}
+
+		// Links
+		double capacityFactor = networkA.getCapacityPeriod() / networkB.getCapacityPeriod();
+		for (Link link : networkB.getLinks().values()) {
+			Id<Link> linkId = Id.create(link.getId().toString(), Link.class);
+			if (!networkA.getLinks().containsKey(linkId)) {
+				Id<Node> fromNodeId = Id.create(link.getFromNode().getId().toString(), Node.class);
+				Id<Node> toNodeId = Id.create(link.getToNode().getId().toString(), Node.class);
+				Link newLink = factory.createLink(linkId, networkA.getNodes().get(fromNodeId), networkA.getNodes().get(toNodeId));
+				newLink.setAllowedModes(link.getAllowedModes());
+				newLink.setCapacity(link.getCapacity() * capacityFactor);
+				newLink.setFreespeed(link.getFreespeed());
+				newLink.setLength(link.getLength());
+				newLink.setNumberOfLanes(link.getNumberOfLanes());
+				networkA.addLink(newLink);
+			}
+		}
+	}
+
+
+	/**
+	 * @return which border of a rectangular area of interest a line fromCoord-toCoord crosses. One coord has to be
+	 * inside area of interest<br/>
+	 * [10] north->inside<br/>
+	 * [17] inside->north<br/>
+	 * [20] east->inside<br/>
+	 * [27] inside->east<br/>
+	 * [30] south->inside<br/>
+	 * [37] inside->south<br/>
+	 * [40] west->inside<br/>
+	 * [47] inside->west<br/>
+	 * [0] line does not cross any border
+	 */
+	public int getBorderCrossType(Coord SWcut, Coord NEcut, Coord fromCoord, Coord toCoord) {
+		int fromSector = getAreaOfInterestSector(SWcut, NEcut, fromCoord);
+		int toSector = getAreaOfInterestSector(SWcut, NEcut, toCoord);
+
+		if(fromSector == toSector) {
+			return 0;
+		}
+
+		double azFromTo = getAzimuth(fromCoord, toCoord);
+		double azFromSW = getAzimuth(fromCoord, SWcut);
+		double azFromNE = getAzimuth(fromCoord, NEcut);
+
+		double azToFrom = getAzimuth(toCoord, fromCoord);
+		double azToSW = getAzimuth(toCoord, SWcut);
+		double azToNE = getAzimuth(toCoord, NEcut);
+
+		if(fromSector != 0 ) {
+			switch (fromSector) {
+				case 1:
+					return 10;
+				case 2: {
+					if(azFromTo > azFromNE)
+						return 10;
+					else
+						return 20;
+				}
+				case 3:
+					return 20;
+				case 4: {
+					if(azFromTo > azFromNE)
+						return 20;
+					else
+						return 30;
+				}
+				case 5:
+					return 30;
+				case 6: {
+					if(azFromTo > azFromSW)
+						return 30;
+					else
+						return 40;
+				}
+				case 7:
+					return 40;
+				case 8: {
+					if(azFromTo > azFromSW)
+						return 40;
+					else
+						return 10;
+				}
+			}
+		}
+
+		if(toSector != 0) {
+			switch (toSector) {
+				case 1:
+					return 17;
+				case 2: {
+					if(azToFrom < azToNE)
+						return 17;
+					else
+						return 27;
+				}
+				case 3:
+					return 27;
+				case 4: {
+					if(azToFrom < azToNE)
+						return 27;
+					else
+						return 37;
+				}
+				case 5:
+					return 37;
+				case 6: {
+					if(azToFrom < azToSW)
+						return 37;
+					else
+						return 47;
+				}
+				case 7:
+					return 47;
+				case 8: {
+					if(azToFrom< azToSW)
+						return 47;
+					else
+						return 17;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	private int getAreaOfInterestSector(Coord SWcut, Coord NEcut, Coord c) {
+		int qSW = getCompassQuarter(SWcut, c);
+		int qNE = getCompassQuarter(NEcut, c);
+
+		if(qSW == 1 && qNE == 3) {
+			return 0;
+		} else if(qSW == 1 && qNE == 4) {
+			return 1;
+		} else if(qSW == 1 && qNE == 1) {
+			return 2;
+		} else if(qSW == 1 && qNE == 2) {
+			return 3;
+		} else if(qSW == 2 && qNE == 2) {
+			return 4;
+		} else if(qSW == 2 && qNE == 3) {
+			return 5;
+		} else if(qSW == 3 && qNE == 3) {
+			return 6;
+		} else if(qSW == 4 && qNE == 3) {
+			return 7;
+		} else if(qSW == 4 && qNE == 4) {
+			return 8;
+		}
+
+		return 0;
+	}
+
+	@Deprecated
+	public void shortenLink(Link link, Node toNode) {
+		link.setToNode(toNode);
+		link.setLength(CoordUtils.calcEuclideanDistance(link.getFromNode().getCoord(), toNode.getCoord()));
+	}
+
+	@Deprecated
+	public void shortenLink(Node fromNode, Link link) {
+		link.setFromNode(fromNode);
+		link.setLength(CoordUtils.calcEuclideanDistance(link.getFromNode().getCoord(), fromNode.getCoord()));
+	}
+
+
 }

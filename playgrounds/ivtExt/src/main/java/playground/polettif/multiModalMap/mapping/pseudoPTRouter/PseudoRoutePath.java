@@ -22,7 +22,10 @@ package playground.polettif.multiModalMap.mapping.pseudoPTRouter;
 import org.matsim.core.utils.collections.Tuple;
 
 /**
- * Describes the path between two link candidates for the pseudo network.
+ * Describes the path between two pseudoRouteStops for the pseudoGraph (used by the
+ * Dijkstra algorithm).
+ *
+ * @author polettif
  */
 public class PseudoRoutePath {
 
@@ -31,17 +34,26 @@ public class PseudoRoutePath {
 	private final PseudoRouteStop to;
 	private final double weight;
 
-	public PseudoRoutePath(PseudoRouteStop fromStop, PseudoRouteStop toStop, double travelTime) {
-		this(fromStop, toStop, travelTime, false);
+	/*
+	private static PublicTransportMapEnum pseudoRouteWeightType;
+	public static void setPseudoRouteWeightType(PublicTransportMapEnum type) {
+		pseudoRouteWeightType = type;
+	}
+	*/
+
+	public PseudoRoutePath(PseudoRouteStop fromStop, PseudoRouteStop toStop, double weight) {
+		this(fromStop, toStop, weight, false);
 	}
 
-	public PseudoRoutePath(PseudoRouteStop fromStop, PseudoRouteStop toStop, double travelTime, boolean dummy) {
+	public PseudoRoutePath(PseudoRouteStop fromStop, PseudoRouteStop toStop, double weight, boolean dummy) {
 		this.id = new Tuple<>(fromStop, toStop);
 		this.from = fromStop;
 		this.to = toStop;
 
-		this.weight = travelTime + (dummy ? 0 : 0.5 * fromStop.getLinkCandidate().getLinkTravelTime() + 0.5 * toStop.getLinkCandidate().getLinkTravelTime());
+		this.weight = weight + (dummy ? 0 : 0.5 * fromStop.getLinkWeight() + 0.5 * toStop.getLinkWeight());
 	}
+
+
 
 	public Tuple<PseudoRouteStop, PseudoRouteStop> getId() {
 		return id;
@@ -53,7 +65,7 @@ public class PseudoRoutePath {
 
 	@Override
 	public String toString() {
-		return to.getName()+";"+from.getName();
+		return from.getName()+" -> "+to.getName();
 	}
 
 	public PseudoRouteStop getFromPseudoStop() {

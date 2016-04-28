@@ -19,34 +19,34 @@
 
 package playground.polettif.multiModalMap.workbench;
 
-import playground.polettif.multiModalMap.mapping.PTMapperModes;
+import playground.polettif.multiModalMap.mapping.PTMapperModesOneNetwork;
 
 public class RunPTMapperModes {
 
 	public static void main(String[] args) {
 
 
-		String base = "C:/Users/Flavio/Desktop/";
-		String outbase = base+"output/mtsMapping_modes/";
+		String base = "C:/Users/polettif/Desktop/";
+		String outbase = base+"output/mtsMapping_zurich/";
 
 		// input
 //		final String mtsFile = base + "data/mts/zvv/zvv_unmappedSchedule_LV1903+.xml";
 //		final String mtsFile = base + "data/mts/uri/schedule_unmapped_cut.xml";
 //		final String mtsFile = base + "data/mts/uri/debug.xml";
 //		final String mtsFile = base + "data/mts/zvv_69er.xml";
-		final String mtsFile = base + "data/mts/unmapped/fromHafas/uri.xml";
-//		final String mtsFile = base + "data/mts/unmapped/fromHafas/zurich.xml";
+//		final String mtsFile = base + "data/mts/unmapped/fromHafas/uri.xml";
+		final String mtsFile = base + "data/mts/unmapped/fromHafas/zurich.xml";
 //		final String mtsFile = base + "data/mts/unmapped/fromGtfs/zvv.xml";
 //		final String mtsFile = base + "data/mts/unmapped/fromHafas/debug-pseudo.xml";
 
 //		final String networkFile = base + "data/network/uri.xml.gz";
 //		final String networkFile = base + "data/network/zurich-city.xml.gz";
 //		final String networkFile = base + "data/network/zurich-plus.xml.gz";
-//		final String networkFile = base + "data/network/multimodal/zurich-plus-mm.xml.gz";
-		final String networkFile = base + "data/network/multimodal/uri-mm.xml.gz";
+//		final String networkFile = base + "data/network/multimodal/uri-mm.xml.gz";
+		final String networkFile = base + "data/network/multimodal/zurich-plus-mm.xml.gz";
 //		final String networkFile = base + "data/network/uri.xml.gz";
 
-		PTMapperModes.main(new String[]{mtsFile, networkFile, outbase+"schedule.xml", outbase+"network.xml"});
+		PTMapperModesOneNetwork.main(new String[]{mtsFile, networkFile, outbase+"schedule.xml", outbase+"network.xml"});
 	}
 
 }

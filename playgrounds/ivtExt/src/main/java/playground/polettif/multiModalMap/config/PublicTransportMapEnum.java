@@ -20,5 +20,5 @@
 package playground.polettif.multiModalMap.config;
 
 public enum PublicTransportMapEnum {
-	VALUE1, VALUE2;
+	linkLength, travelTime;
 }

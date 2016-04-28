@@ -68,13 +68,14 @@ public class RunSingapore {
 			}
 		}) ;		
 		
-//		final SubpopTravelDisutilityFactory subPopDisutilityCalculatorFactory = new SubpopTravelDisutilityFactory(parameters, TransportMode.car);
-//		controler.addOverridingModule(new AbstractModule() {
-//			@Override
-//			public void install() {
-//				bindCarTravelDisutilityFactory().toInstance(subPopDisutilityCalculatorFactory);
-//			}
-//		});
+		final SubpopTravelDisutility.Builder builder_freight =  new SubpopTravelDisutility.Builder("freight", parameters);	
+		controler.addOverridingModule(new AbstractModule() {
+			@Override
+			public void install() {
+				addTravelTimeBinding("freight").to(networkTravelTime());
+				addTravelDisutilityFactoryBinding("freight").toInstance(builder_freight);
+			}
+		});
 						
 		final SubpopTravelDisutility.Builder builder_taxi =  new SubpopTravelDisutility.Builder("taxi", parameters);	
 		controler.addOverridingModule(new AbstractModule() {
@@ -89,6 +90,8 @@ public class RunSingapore {
 		controler.setModules(rpModule);
 										
 		controler.addControlerListener(new SingaporeControlerListener());
+		
+		controler.addControlerListener(new SingaporeIterationEndsListener());
 		
 		// Singapore transit router: --------------------------------------------------
 		WaitTimeStuckCalculator waitTimeCalculator = new WaitTimeStuckCalculator(

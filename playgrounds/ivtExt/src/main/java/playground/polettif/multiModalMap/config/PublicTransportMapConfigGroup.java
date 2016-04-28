@@ -19,61 +19,102 @@
 
 package playground.polettif.multiModalMap.config;
 
-import org.matsim.api.core.v01.Coord;
-import org.matsim.api.core.v01.Id;
-import org.matsim.api.core.v01.network.Link;
-import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.ReflectiveConfigGroup;
 
 import java.util.*;
 
 
 /**
- * Demonstrate how to use ReflectiveModule to easily create typed config groups.
- * Please do not modify this class: it is used from unit tests!
+ *
  */
 public class PublicTransportMapConfigGroup extends ReflectiveConfigGroup {
 
-	public static final String GROUP_NAME = "MultiModalMap";
+	public static final String GROUP_NAME = "PublicTransportMap";
 
-	// TODO: test for ALL primitive types
-	private double doubleField = Double.NaN;
+	public static final String ARTIFICIAL_LINK_MODE = "artificial";
 
-	// Object fields:
-	// Id: string representation is toString
-	private Id<Link> idField = null;
-	// Coord: some conversion needed
-	private Coord coordField = null;
-	// enum: handled especially
-	private PublicTransportMapEnum enumField = null;
-	// field without null conversion
-	private String nonNull = "some arbitrary default value.";
+	private static final String MODE_ROUTING_ASSIGNMENT ="modeRoutingAssignment";
+	private static final String MODES_TO_KEEP_ON_CLEAN_UP = "modesToKeepOnCleanUp";
+	private static final String NODE_SEARCH_RADIUS = "nodeSearchRadius";
+	private static final String PSEUDO_ROUTE_WEIGHT_TYPE = "pseudoRouteWeightType";
+	private static final String MAX_NCLOSEST_LINKS = "maxNClosestLinks";
+	private static final String MAX_STOP_FACILITY_DISTANCE = "maxStopFacilityDistance";
+	private static final String PREFIX_ARTIFICIAL = "prefixArtificial";
+	private static final String SUFFIX_CHILD_STOP_FACILITIES = "suffixChildStopFacilities";
+	private static final String BEELINE_DISTANCE_MAX_FACTOR = "beelineDistanceMaxFactor";
+	private static final String NETWORK_FILE = "networkFile";
+	private static final String SCHEDULE_FILE = "scheduleFile";
+	private static final String OUTPUT_NETWORK_FILE = "outputNetworkFile";
+	private static final String OUTPUT_SCHEDULE_FILE = "outputScheduleFile";
 
-/*
-for each schedule transport the following needs to be specified:
-- should it be mapped independently?
-- to which network transport modes it can be mapped
+	public PublicTransportMapConfigGroup() {
+		super(GROUP_NAME);
 
-for network transport modes:
-- should it be cleaned upt
- */
+		modesToKeepOnCleanUp.add("car");
+	}
 
-	private Set<String> modesToKeepOnCleanUp = new HashSet<>();
-	private double nodeSearchRadius = 300;
-	private int maxNClosestLinks = 8;
-	private double maxStopFacilityDistance = 80;
-	private double sameLinkPunishment = 10;
-	private String prefixArtificialLinks = "pt_";
-	private String suffixChildStopFacilities = ".fac:";
-	private double maxAoiDistance = 1000;
+	private String networkFile = null;
+	private String scheduleFile = null;
+	private String outputNetworkFile = null;
+	private String outputScheduleFile = null;
 
-	private double increasedNodeSearchRadius = 1.2;
+	@Override
+	public final Map<String, String> getComments() {
+		Map<String, String> map = super.getComments();
+		map.put(MODE_ROUTING_ASSIGNMENT,
+				"References transportModes from the schedule (key) and the allowed transportModes of a link from \n" +
+				"\t\the network (values). Schedule transport modes not defined here are not mapped at all and routes \n" +
+				"\t\tusing them are removed. One schedule transport mode can be mapped to multiple network transport \n" +
+				"\t\tmodes, the latter have to be separated by \",\". To map a schedule transport mode independently \n" +
+				"\t\tfrom the network use \"artificial\". Assignments are separated by \"|\" (case sensitive). \n" +
+				"Example: \"bus:bus,car|rail:rail,light_rail\"");
+		map.put(MODES_TO_KEEP_ON_CLEAN_UP,
+				"All links that do not have a transit route on them are removed, except the ones \n" +
+				"\t\tlisted in this set (typically only car). Separated by comma.");
+
+		map.put(MAX_NCLOSEST_LINKS,
+				"Number of link candidates considered for all stops, depends on accuracy of stops and desired \n" +
+				"\t\tperformance. Somewhere between 4 and 10 seems reasonable, depending on the accuracy of the stop \n" +
+				"\t\tfacility coordinates. Default: " + nodeSearchRadius);
+		map.put(NODE_SEARCH_RADIUS,
+				"Defines the radius [meter] from a stop facility within nodes are searched. Mainly a maximum \n" +
+				"\t\tvalue for performance.");
+		map.put(MAX_STOP_FACILITY_DISTANCE,
+				"The maximal distance [meter] a link candidate is allowed to have from the stop facility.");
+		map.put(PREFIX_ARTIFICIAL,
+				"ID prefix used for artificial links and nodes created if no nodes are found within nodeSearchRadius.");
+		map.put(SUFFIX_CHILD_STOP_FACILITIES,
+				"Suffix used for child stop facilities. The id of the referenced link is appended\n" +
+				"\t\t(i.e. stop0123.link:LINKID20123).");
+		map.put(BEELINE_DISTANCE_MAX_FACTOR ,
+				"If all paths between two stops have a length > beelineDistanceMaxFactor * beelineDistance, \n" +
+				"\t\tan artificial link is created.");
+		map.put(NETWORK_FILE, "Path to the input network file. Not needed if PTMapper is called within another class.");
+		map.put(SCHEDULE_FILE, "Path to the input schedule file. Not needed if PTMapper is called within another class.");
+		map.put(OUTPUT_NETWORK_FILE, "Path to the output network file. Not needed if PTMapper is used within another class.");
+		map.put(OUTPUT_SCHEDULE_FILE, "Path to the output schedule file. Not needed if PTMapper is used within another class.");
+//		map.put(PSEUDO_ROUTE_WEIGHT_TYPE,
+//				"Defines which link attribute should be used for pseudo route calculations. Default is minimization \n" +
+//				"\t\tof travel distance. If high quality information on link travel times is available, travelTime can be \n" +
+//				"\t\tused. (Possible values \""+PublicTransportMapEnum.linkLength+"\" and \""+PublicTransportMapEnum.travelTime+"\"");
+		return map;
+	}
+
+
+	/**
+	 * for each schedule transport the following needs to be specified:
+	 * - should it be mapped independently?
+	 * - to which network transport modeRouting it can be mapped
+	 *
+	 * for network transport modeRouting:
+	 * - should it be cleaned up
+	 */
 
 	/**
 	 * References transportModes from the schedule (key) and the
-	 * allowed modes of a link from the network (value). <p/>
+	 * allowed modeRouting of a link from the network (value). <p/>
 	 * <p/>
-	 * Schedule transport modes should be in gtfs categories:
+	 * Schedule transport modeRouting should be in gtfs categories:
 	 * <ul>
 	 * <li>0 - Tram, Streetcar, Light rail. Any light rail or street level system within a metropolitan area.</li>
 	 * <li>1 - Subway, Metro. Any underground rail system within a metropolitan area.</li>
@@ -85,193 +126,269 @@ for network transport modes:
 	 * <li>7 - Funicular. Any rail system designed for steep inclines.</li>
 	 * </ul>
 	 */
-	private Map<String, Set<String>> modes = new HashMap<>();
+	private Map<String, Set<String>> modeRoutingAssignment = new HashMap<>();
 
-	public PublicTransportMapConfigGroup() {
-		super( GROUP_NAME );
+	public Map<String, Set<String>> getModeRoutingAssignment() {
+		return this.modeRoutingAssignment;
 	}
 
-	// /////////////////////////////////////////////////////////////////////
-	// primitive type field: standard getter and setter suffice
-	@StringGetter( "doubleField" )
-	public double getDoubleField() {
-		return this.doubleField;
+	public void setModeRoutingAssignment(Map<String, Set<String>> modeRoutingAssignment) {
+		this.modeRoutingAssignment = modeRoutingAssignment;
 	}
 
-	// there should be no restriction on return type of
-	// setters
-	@StringSetter( "doubleField" )
-	public double setDoubleField(double doubleField) {
-		final double old = this.doubleField;
-		this.doubleField = doubleField;
-		return old;
+	@StringGetter(MODE_ROUTING_ASSIGNMENT)
+	private String getModeRoutingAssignmentString() {
+		String ret = "";
+		for(Map.Entry<String, Set<String>> entry : modeRoutingAssignment.entrySet()) {
+			ret += "|" + entry.getKey() + ":";
+			String value = "";
+			for(String mode : entry.getValue()) {
+				value += "," + mode;
+			}
+			ret += value.substring(1);
+		}
+		return this.modesToKeepOnCleanUp == null ? null : ret.substring(1);
 	}
 
-	// /////////////////////////////////////////////////////////////////////
-	// id field: need for a special setter, normal getter suffice
-	/**
-	 * string representation of Id is result of
-	 * toString: just annotate getter
-	 */
-	@StringGetter( "idField" )
-	public Id<Link> getIdField() {
-		return this.idField;
-	}
-
-	public void setIdField(Id<Link> idField) {
-		this.idField = idField;
-	}
-
-	/**
-	 * We need to do the conversion from string to Id
-	 * ourselves.
-	 * the annotated setter can be private to avoid polluting the
-	 * interface: the user just sees the "typed" setter.
-	 */
-	@StringSetter( "idField" )
-	private void setIdField(String s) {
-		// Null handling needs to be done manually if conversion "by hand"
-		this.idField = s == null ? null : Id.create( s, Link.class );
-	}
-
-	// /////////////////////////////////////////////////////////////////////
-	// coord field: need for special getter and setter
-	public Coord getCoordField() {
-		return this.coordField;
-	}
-
-	public void setCoordField(Coord coordField) {
-		this.coordField = coordField;
-	}
-
-	// we have to convert both ways here.
-	// the annotated getter and setter can be private to avoid polluting the
-	// interface: the user just sees the "typed" getter and setter.
-	@StringGetter( "coordField" )
-	private String getCoordFieldString() {
-		// Null handling needs to be done manually if conversion "by hand"
-		// Note that one *needs" to return a null pointer, not the "null"
-		// String, which is reserved word.
-		return this.coordField == null ? null : this.coordField.getX()+","+this.coordField.getY();
-	}
-
-	@StringSetter( "coordField" )
-	private void setCoordField(String coordField) {
-		if ( coordField == null ) {
-			// Null handling needs to be done manually if conversion "by hand"
-			this.coordField = null;
+	@StringSetter(MODE_ROUTING_ASSIGNMENT)
+	private void setModeRoutingAssignmentString(String modeRoutingAssignmentString) {
+		if(modeRoutingAssignmentString == null) {
+			this.modeRoutingAssignment = null;
 			return;
 		}
 
-		final String[] coords = coordField.split( "," );
-		if ( coords.length != 2 ) throw new IllegalArgumentException( coordField );
-
-		this.coordField = new Coord(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+		for(String assignment : modeRoutingAssignmentString.split("\\|")) {
+			String[] tuple = assignment.split(":");
+			Set<String> set = new HashSet<>();
+			for(String networkMode : tuple[1].trim().split(",")) {
+				set.add(networkMode.trim());
+			}
+			this.modeRoutingAssignment.put(tuple[0].trim(), set);
+		}
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// Non-null string: standard setter and getter
-	@StringGetter( "nonNullField" )
-	@DoNotConvertNull
-	public String getNonNull() {
-		return nonNull;
+
+	/**
+	 * All links that do not have a transit route on them are removed, except
+	 * the ones listed in this set (typically only car).
+	 */
+	private Set<String> modesToKeepOnCleanUp = new HashSet<>();
+
+	public Set<String> getModesToKeepOnCleanUp() {
+		return this.modesToKeepOnCleanUp;
 	}
 
-	@StringSetter( "nonNullField" )
-	@DoNotConvertNull
-	public void setNonNull( String nonNull ) {
-		// in case the setter is called from user code, we need to check for nullity ourselves.
-		if ( nonNull == null ) throw new IllegalArgumentException();
-		this.nonNull = nonNull;
+	public void setModesToKeepOnCleanUp(Set<String> modesToKeepOnCleanUp) {
+		this.modesToKeepOnCleanUp = modesToKeepOnCleanUp;
 	}
 
-	// /////////////////////////////////////////////////////////////////////
-	// enum: normal getter and setter suffice
-	@StringGetter( "enumField" )
-	public PublicTransportMapEnum getTestEnumField() {
-		return this.enumField;
+	@StringGetter(MODES_TO_KEEP_ON_CLEAN_UP)
+	private String getModesToKeepOnCleanUpString() {
+		String ret = "";
+		if(modesToKeepOnCleanUp != null) {
+			for(String mode : modesToKeepOnCleanUp) {
+				ret += "," + mode;
+			}
+		}
+		return this.modesToKeepOnCleanUp == null ? null : ret.substring(1);
 	}
 
-	@StringSetter( "enumField" )
-	public void setTestEnumField(final PublicTransportMapEnum enumField) {
-		// no need to test for null: the parent class does it for us
-		this.enumField = enumField;
+	@StringSetter(MODES_TO_KEEP_ON_CLEAN_UP)
+	private void setModesToKeepOnCleanUp(String modesToKeepOnCleanUp) {
+		if(modesToKeepOnCleanUp == null) {
+			this.modesToKeepOnCleanUp = null;
+			return;
+		}
+		for(String mode : modesToKeepOnCleanUp.split(",")) {
+			this.modesToKeepOnCleanUp.add(mode.trim());
+		}
 	}
 
-	// /////////////////////////////////////////////////////////////////////
-	// Default
-	public static PublicTransportMapConfigGroup createDefaultConfig() {
 
-		PublicTransportMapConfigGroup defaultConfig = ConfigUtils.addOrGetModule(ConfigUtils.createConfig(), PublicTransportMapConfigGroup.GROUP_NAME, PublicTransportMapConfigGroup.class);
+	/**
+	 * Defines the radius [meter] from a stop facility within nodes are searched.
+	 * Mainly a maximum value for performance.
+	 */
+	private double nodeSearchRadius = 300;
 
-		defaultConfig.modesToKeepOnCleanUp.add("car");
-
-		Set<String> busSet = new HashSet<>(); busSet.add("bus"); busSet.add("car");
-		defaultConfig.modes.put("BUS", busSet);
-
-		Set<String> tramSet = new HashSet<>(); tramSet.add("tram");
-		defaultConfig.modes.put("TRAM", tramSet);
-
-		Set<String> railSet = new HashSet<>();
-		railSet.add("rail");
-		railSet.add("pt");
-		defaultConfig.modes.put("RAIL", railSet);
-
-		// subway, gondola, funicular, ferry and cablecar are not mapped
-
-		return defaultConfig;
-	}
-
+	@StringGetter(NODE_SEARCH_RADIUS)
 	public double getNodeSearchRadius() {
 		return nodeSearchRadius;
 	}
 
+	@StringSetter(NODE_SEARCH_RADIUS)
+	public void setNodeSearchRadius(double nodeSearchRadius) {
+		this.nodeSearchRadius = nodeSearchRadius;
+	}
+
+	/**
+	 * Defines which link attribute should be used for pseudo route
+	 * calculations. Default is link length (linkLength). If high quality
+	 * information on link travel times is available, travelTime
+	 * can be used.
+	 */
+	/*
+	private PublicTransportMapEnum pseudoRouteWeightType = PublicTransportMapEnum.linkLength;
+
+	@StringGetter(PSEUDO_ROUTE_WEIGHT_TYPE)
+	public PublicTransportMapEnum getPseudoRouteWeightType() {
+		return pseudoRouteWeightType;
+	}
+
+	@StringSetter(PSEUDO_ROUTE_WEIGHT_TYPE)
+	public void setPseudoRouteWeightType(PublicTransportMapEnum weight) {
+		this.pseudoRouteWeightType = weight;
+	}
+	*/
+
+	/**
+	 * Number of link candidates considered for all stops, depends on accuracy of
+	 * stops and desired performance. Somewhere between 4 and 10 seems reasonable,
+	 * depending on the accuracy of the stop facility coordinates. Default: 8
+	 */
+	private int maxNClosestLinks = 8;
+
+	@StringGetter(MAX_NCLOSEST_LINKS)
 	public int getMaxNClosestLinks() {
 		return maxNClosestLinks;
 	}
 
+	@StringSetter(MAX_NCLOSEST_LINKS)
+	public void setMaxNClosestLinks(int maxNClosestLinks) {
+		this.maxNClosestLinks = maxNClosestLinks;
+	}
 
+	/**
+	 * The maximal distance [meter] a link candidate is allowed to have from
+	 * the stop facility.
+	 */
+	private double maxStopFacilityDistance = 80;
+
+	@StringGetter(MAX_STOP_FACILITY_DISTANCE)
 	public double getMaxStopFacilityDistance() {
 		return maxStopFacilityDistance;
 	}
 
-	public double getSameLinkPunishment() {
-		return sameLinkPunishment;
+	@StringSetter(MAX_STOP_FACILITY_DISTANCE)
+	public void setMaxStopFacilityDistance(double maxStopFacilityDistance) {
+		this.maxStopFacilityDistance = maxStopFacilityDistance;
 	}
 
-	public String getPrefixArtificialLinks() {
-		return prefixArtificialLinks;
+	/**
+	 * ID prefix used for artificial links and nodes created if no nodes
+	 * are found within nodeSearchRadius
+	 */
+	private String prefixArtificial = "pt_";
+
+	@StringGetter(PREFIX_ARTIFICIAL)
+	public String getPrefixArtificial() {
+		return prefixArtificial;
 	}
 
+	@StringSetter(PREFIX_ARTIFICIAL)
+	public void setPrefixArtificial(String prefixArtificial) {
+		this.prefixArtificial = prefixArtificial;
+	}
+
+	/**
+	 * Suffix used for child stop facilities. A number for each child of a
+	 * parent stop facility is appended (i.e. stop0123.fac:2).
+	 */
+	private String suffixChildStopFacilities = ".link:";
+
+	@StringGetter(SUFFIX_CHILD_STOP_FACILITIES)
 	public String getSuffixChildStopFacilities() {
 		return suffixChildStopFacilities;
 	}
 
-	public Set<String> getModesToKeepOnCleanUp() {
-		return modesToKeepOnCleanUp;
+	@StringSetter(SUFFIX_CHILD_STOP_FACILITIES)
+	public void setSuffixChildStopFacilities(String suffixChildStopFacilities) {
+		this.suffixChildStopFacilities = suffixChildStopFacilities;
 	}
 
-	public Map<String, Set<String>> getModes() {
-		return modes;
+	/**
+	 * If all paths between two stops have a length > beelineDistanceMaxFactor * beelineDistance,
+	 * an artificial link is created.
+	 */
+	private double beelineDistanceMaxFactor = 5.0;
+
+	@StringGetter(BEELINE_DISTANCE_MAX_FACTOR)
+	public double getBeelineDistanceMaxFactor() {
+		return beelineDistanceMaxFactor;
+	}
+
+	@StringSetter(BEELINE_DISTANCE_MAX_FACTOR)
+	public void setBeelineDistanceMaxFactor(double beelineDistanceMaxFactor) {
+		this.beelineDistanceMaxFactor = beelineDistanceMaxFactor;
 	}
 
 	public Set<String> getNetworkModes() {
 		Set<String> networkModes = new HashSet<>();
-		modes.values().forEach(networkModes::addAll);
+		modeRoutingAssignment.values().forEach(networkModes::addAll);
 		return networkModes;
 	}
 
 	public Set<String> getScheduleModes() {
 		Set<String> scheduleModes = new HashSet<>();
-		modes.keySet().forEach(scheduleModes::add);
+		modeRoutingAssignment.keySet().forEach(scheduleModes::add);
 		return scheduleModes;
 	}
 
-	public double getMaxAoiDistance() {
-		return maxAoiDistance;
+	@StringGetter(NETWORK_FILE)
+	public String getNetworkFile() {
+		return this.networkFile;
 	}
 
-	public double getIncreasedNodeSearchRadius() {
-		return increasedNodeSearchRadius;
+	@StringSetter(NETWORK_FILE)
+	public String setNetworkFile(String networkFile) {
+		final String old = this.networkFile;
+		this.networkFile = networkFile;
+		return old;
 	}
+
+	@StringGetter(SCHEDULE_FILE)
+	public String getScheduleFile() {
+		return this.scheduleFile;
+	}
+
+	@StringSetter(SCHEDULE_FILE)
+	public String setScheduleFile(String scheduleFile) {
+		final String old = this.scheduleFile;
+		this.scheduleFile = scheduleFile;
+		return old;
+	}
+
+	@StringGetter(OUTPUT_NETWORK_FILE)
+	public String getOutputNetworkFile() {
+		return this.outputNetworkFile;
+	}
+
+	@StringSetter(OUTPUT_NETWORK_FILE)
+	public String setOutputNetwork(String outputNetwork) {
+		final String old = this.outputNetworkFile;
+		this.outputNetworkFile = outputNetwork;
+		return old;
+	}
+
+	@StringGetter(OUTPUT_SCHEDULE_FILE)
+	public String getOutputScheduleFile() {
+		return this.outputScheduleFile;
+	}
+
+	@StringSetter(OUTPUT_SCHEDULE_FILE)
+	public String setOutputSchedule(String outputSchedule) {
+		final String old = this.outputScheduleFile;
+		this.outputScheduleFile = outputSchedule;
+		return old;
+	}
+
+	/**
+	 * Number of link candidates considered for all stops, different for scheduleModes.
+	 * Depends on accuracy of stops and desired performance. Somewhere between 4 and 10 seems reasonable,
+	 * depending on the accuracy of the stop facility coordinates. Default: 8
+	 */
+	public Map<String, Integer> getMaxNClosestLinksByMode() {
+		return null;
+	}
+
 }

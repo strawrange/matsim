@@ -65,12 +65,15 @@ public class Incident2NetworkChangeEventsWriter {
 	private Map<String, Path> trafficItemId2path = null;
 	private TMCAlerts tmc = null;
 	
+	private String crs = null;
+	
 	private final NetworkChangeEventFactory nceFactory = new NetworkChangeEventFactoryImpl();
 		
-	public Incident2NetworkChangeEventsWriter(TMCAlerts tmc, Map<String, TrafficItem> trafficItems, Map<String, Path> trafficItemId2path) {
+	public Incident2NetworkChangeEventsWriter(TMCAlerts tmc, Map<String, TrafficItem> trafficItems, Map<String, Path> trafficItemId2path, String crs) {
 		this.tmc = tmc;
 		this.trafficItems = trafficItems;
-		this.trafficItemId2path = trafficItemId2path;		
+		this.trafficItemId2path = trafficItemId2path;
+		this.crs = crs;
 	}
 
 	public void writeIncidentLinksToNetworkChangeEventFile(String startDateTime, String endDateTime, String outputDirectory) throws IOException {
@@ -89,7 +92,7 @@ public class Incident2NetworkChangeEventsWriter {
 
 			new NetworkChangeEventsWriter().write(outputDirectory + "networkChangeEvents_" + DateTime.secToDateTimeString(dateInSec) + ".xml.gz", allChangeEvents);
 			Incident2CSVWriter.writeProcessedNetworkIncidents(linkId2processedIncidentsCurrentDay, outputDirectory + "processedNetworkIncidents_" + DateTime.secToDateTimeString(dateInSec) + ".csv");
-			Incident2SHPWriter.writeDailyIncidentLinksToShapeFile(linkId2processedIncidentsCurrentDay, outputDirectory, dateInSec);
+			Incident2SHPWriter.writeDailyIncidentLinksToShapeFile(linkId2processedIncidentsCurrentDay, outputDirectory, dateInSec, crs);
 			dateInSec = dateInSec + 24 * 3600.;
 		}
 		
@@ -317,7 +320,7 @@ public class Incident2NetworkChangeEventsWriter {
 					log.warn("Incident link: " + incident.toString());
 				}
 				
-				nceStart.setFlowCapacityChange(new ChangeValue(ChangeType.ABSOLUTE, incident.getIncidentLink().getCapacity()));
+				nceStart.setFlowCapacityChange(new ChangeValue(ChangeType.ABSOLUTE, Math.round((incident.getIncidentLink().getCapacity() / 3600.) * 1000) / 1000.0));
 				nceStart.setFreespeedChange(new ChangeValue(ChangeType.ABSOLUTE, incident.getIncidentLink().getFreespeed()));
 				nceStart.setLanesChange(new ChangeValue(ChangeType.ABSOLUTE, incident.getIncidentLink().getNumberOfLanes()));
 				
@@ -340,7 +343,7 @@ public class Incident2NetworkChangeEventsWriter {
 					NetworkChangeEvent nceEnd = nceFactory.createNetworkChangeEvent(incident.getEndTime());
 					nceEnd.addLink(incident.getLink());
 					
-					nceEnd.setFlowCapacityChange(new ChangeValue(ChangeType.ABSOLUTE, incident.getLink().getCapacity()));
+					nceEnd.setFlowCapacityChange(new ChangeValue(ChangeType.ABSOLUTE, Math.round((incident.getLink().getCapacity() / 3600.) * 1000) / 1000.0));
 					nceEnd.setFreespeedChange(new ChangeValue(ChangeType.ABSOLUTE, incident.getLink().getFreespeed()));
 					nceEnd.setLanesChange(new ChangeValue(ChangeType.ABSOLUTE, incident.getLink().getNumberOfLanes()));
 					
