@@ -43,8 +43,8 @@ public class RunAudiAVFlowPaper
             public void install()
             {
 //XXX this line is used in the 'flowpaper' (branch 'increasedFlowCapForAVs')
-//                bind(VehicleType.class).annotatedWith(Names.named(TaxiModule.TAXI_MODE))
-//                        .toInstance(VehicleUtils.AUTONOMOUS_VEHICLE_TYPE);
+                bind(VehicleType.class).annotatedWith(Names.named(TaxiModule.TAXI_MODE))
+                        .toInstance(VehicleUtils.AUTONOMOUS_VEHICLE_TYPE);
 
                 bind(TravelTime.class).annotatedWith(Names.named(VrpTravelTimeModules.DVRP_INITIAL))
                         .toInstance(initialTT);
@@ -58,8 +58,8 @@ public class RunAudiAVFlowPaper
     public static void main(String[] args)
     {
 //XXX this line is used in the 'flowpaper' (branch 'increasedFlowCapForAVs')
-//        VehicleUtils.avFlowFactor = Double.parseDouble(args[1]);
-//        System.out.println("VehicleUtils.avFlowFactor = " + VehicleUtils.avFlowFactor);
+        VehicleUtils.avFlowFactor = Double.parseDouble(args[1]);
+        System.out.println("VehicleUtils.avFlowFactor = " + VehicleUtils.avFlowFactor);
         run(args[0], args[2]);
     }
 }

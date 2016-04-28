@@ -55,7 +55,7 @@ import org.matsim.core.network.LinkImpl;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.utils.misc.Time;
 import org.matsim.lanes.data.v20.Lane;
-import org.matsim.vehicles.Vehicle;
+import org.matsim.vehicles.*;
 import org.matsim.vis.snapshotwriters.AgentSnapshotInfo;
 
 /**
@@ -236,25 +236,31 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		addToBuffer(veh);
 	}
 
+	
 	private void addToBuffer(final QVehicle veh) {
 		// yy might make sense to just accumulate to "zero" and go into negative when something is used up.
 		// kai/mz/amit, mar'12
 		
 		double now = context.getSimTimer().getTimeOfDay() ;
 		
+		double vehFlowSizeInEquivalents = veh.getSizeInEquivalents();
+		if (veh.getVehicle().getType() == VehicleUtils.AUTONOMOUS_VEHICLE_TYPE) {
+		    vehFlowSizeInEquivalents /= VehicleUtils.avFlowFactor;
+		}
+		
 		if( context.qsimConfig.isUsingFastCapacityUpdate() ){
 			updateFlowAccumulation();
 			if (flowcap_accumulate.getValue() > 0.0  ) {
-				flowcap_accumulate.addValue(-veh.getSizeInEquivalents(), now);
+				flowcap_accumulate.addValue(-vehFlowSizeInEquivalents, now);
 			} else {
 				throw new IllegalStateException("Buffer of link " + this.id + " has no space left!");
 			}
 		} else {
 			if (remainingflowCap >= 1.0  ) {
-				remainingflowCap -= veh.getSizeInEquivalents();
+				remainingflowCap -= vehFlowSizeInEquivalents;
 			}
 			else if (flowcap_accumulate.getValue() >= 1.0) {
-				flowcap_accumulate.setValue(flowcap_accumulate.getValue() - veh.getSizeInEquivalents() );
+				flowcap_accumulate.setValue(flowcap_accumulate.getValue() - vehFlowSizeInEquivalents );
 			}
 			else {
 				throw new IllegalStateException("Buffer of link " + this.id + " has no space left!");
