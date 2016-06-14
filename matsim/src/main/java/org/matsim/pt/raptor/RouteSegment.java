@@ -17,43 +17,37 @@
  *                                                                         *
  * *********************************************************************** */
 
-package org.matsim.contrib.minibus.performance.raptor;
+package org.matsim.pt.raptor;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.pt.transitSchedule.api.TransitLine;
 import org.matsim.pt.transitSchedule.api.TransitRoute;
+import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 
 /**
  * 
  * @author aneumann
  *
  */
-public class RouteEntry {
+public class RouteSegment {
 	
-	final Id<TransitLine> lineId;
-	final Id<TransitRoute> routeId;
-
-	final int indexOfFirstDeparture;
-	final int numberOfDepartures;
-
-	final int indexOfFirstStop;
-	final int numberOfRouteStops;
+	final TransitStopFacility fromStop;
+	final TransitStopFacility toStop;
+	final double travelTime;
+	final Id<TransitLine> lineTaken;
+	final Id<TransitRoute> routeTaken;
 	
-
-	
-	public RouteEntry(Id<TransitLine> lineId, Id<TransitRoute> routeId, int indexOfFirstDeparture, int numberOfDepartures, int indexOfFirstStop, int numberOfRouteStops) {
-		this.lineId = lineId;
-		this.routeId = routeId;
-		
-		this.indexOfFirstDeparture = indexOfFirstDeparture;
-		this.numberOfDepartures = numberOfDepartures;
-		
-		this.indexOfFirstStop = indexOfFirstStop;
-		this.numberOfRouteStops = numberOfRouteStops;
+	public RouteSegment(TransitStopFacility fromStop, TransitStopFacility toStop, double travelTime, Id<TransitLine> lineTaken, Id<TransitRoute> routeTaken) {
+		this.fromStop = fromStop;
+		this.toStop = toStop;
+		this.travelTime = travelTime;
+		this.lineTaken = lineTaken;
+		this.routeTaken = routeTaken;
 	}
 	
 	@Override
 	public String toString() {
-		return lineId + ", " + routeId + ", " + numberOfRouteStops + " from " + indexOfFirstStop + ", " + numberOfDepartures + " dep from " + indexOfFirstDeparture;
+		return "From: " + fromStop.getId() + " to " + toStop.getId() + " in " + travelTime + "s via " + routeTaken;
 	}
+
 }

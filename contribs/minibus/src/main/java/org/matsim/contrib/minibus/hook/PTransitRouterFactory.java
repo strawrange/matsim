@@ -23,10 +23,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
-import org.matsim.contrib.minibus.performance.raptor.Raptor;
-import org.matsim.contrib.minibus.performance.raptor.RaptorDisutility;
-import org.matsim.contrib.minibus.performance.raptor.TransitRouterQuadTree;
 import org.matsim.core.config.Config;
+import org.matsim.pt.raptor.Raptor;
+import org.matsim.pt.raptor.RaptorDisutility;
+import org.matsim.pt.raptor.TransitRouterQuadTree;
 import org.matsim.pt.router.*;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
 

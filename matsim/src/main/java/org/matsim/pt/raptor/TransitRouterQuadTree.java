@@ -18,7 +18,7 @@
  *                                                                         *
  * *********************************************************************** */
 
-package org.matsim.contrib.minibus.performance.raptor;
+package org.matsim.pt.raptor;
 
 import java.util.*;
 

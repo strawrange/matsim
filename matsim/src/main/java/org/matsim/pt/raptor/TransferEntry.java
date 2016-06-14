@@ -17,21 +17,27 @@
  *                                                                         *
  * *********************************************************************** */
 
-package org.matsim.contrib.minibus.performance.raptor;
+package org.matsim.pt.raptor;
 
-import org.matsim.pt.transitSchedule.api.TransitRouteStop;
 
-/** 
+/**
  * 
  * @author aneumann
  *
  */
-public class WrappedTransitRouteStop {
-	
-	final TransitRouteStop transitRouteStop;
-	
-	public WrappedTransitRouteStop(TransitRouteStop transitRouteStop) {
-		this.transitRouteStop = transitRouteStop;
-	}
+public class TransferEntry {
 
+	final int indexOfRouteStop;
+	final double transferTime;
+	
+	public TransferEntry(int indexOfRouteStop, double transferTime) {
+		this.indexOfRouteStop = indexOfRouteStop;
+		this.transferTime = transferTime;
+	}
+	
+	@Override
+	public String toString() {
+		return "To: " + this.indexOfRouteStop + " in " + transferTime + "s";
+	}
+	
 }

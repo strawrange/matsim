@@ -1,9 +1,9 @@
 /* *********************************************************************** *
- * project: org.matsim.*
+ * project: org.matsim.*												   *
  *                                                                         *
  * *********************************************************************** *
  *                                                                         *
- * copyright       : (C) 2015 by the members listed in the COPYING,        *
+ * copyright       : (C) 2008 by the members listed in the COPYING,        *
  *                   LICENSE and WARRANTY file.                            *
  * email           : info at matsim dot org                                *
  *                                                                         *
@@ -16,28 +16,8 @@
  *   See also COPYING, LICENSE and WARRANTY file                           *
  *                                                                         *
  * *********************************************************************** */
-
-package org.matsim.contrib.minibus.performance.raptor;
-
-
 /**
- * 
- * @author aneumann
+ * @author nagel
  *
  */
-public class TransferEntry {
-
-	final int indexOfRouteStop;
-	final double transferTime;
-	
-	public TransferEntry(int indexOfRouteStop, double transferTime) {
-		this.indexOfRouteStop = indexOfRouteStop;
-		this.transferTime = transferTime;
-	}
-	
-	@Override
-	public String toString() {
-		return "To: " + this.indexOfRouteStop + " in " + transferTime + "s";
-	}
-	
-}
+package org.matsim.pt.raptor;

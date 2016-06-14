@@ -24,10 +24,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -40,6 +46,8 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
+import org.matsim.core.config.groups.QSimConfigGroup.LinkDynamics;
+import org.matsim.core.config.groups.QSimConfigGroup.TrafficDynamics;
 import org.matsim.core.network.NetworkImpl;
 import org.matsim.core.network.NodeImpl;
 import org.matsim.core.population.routes.LinkNetworkRouteImpl;
@@ -53,6 +61,9 @@ import org.matsim.core.utils.geometry.CoordUtils;
 import org.matsim.core.utils.misc.Time;
 import org.matsim.facilities.ActivityFacilities;
 import org.matsim.facilities.ActivityFacility;
+import org.matsim.pt.raptor.Raptor;
+import org.matsim.pt.raptor.RaptorDisutility;
+import org.matsim.pt.raptor.TransitRouterQuadTree;
 import org.matsim.pt.routes.ExperimentalTransitRoute;
 import org.matsim.pt.transitSchedule.api.Departure;
 import org.matsim.pt.transitSchedule.api.TransitLine;
@@ -66,8 +77,28 @@ import org.matsim.testcases.MatsimTestCase;
 /**
  * @author mrieser
  */
+@RunWith(Parameterized.class)
 public class TransitRouterImplTest {
+	private static final Logger log = Logger.getLogger(TransitRouterImplTest.class) ;
+	
+	private static enum TransitRouterType { standard, raptor } ;
 
+	private TransitRouterType routerType ;
+
+	@Parameters(name = "{index}: TransitRouter == {0}")
+	public static Collection<Object> createRouterTypes() {
+		Object[] router = new Object [] { 
+				TransitRouterType.standard,
+				TransitRouterType.raptor
+		};
+		return Arrays.asList(router);
+	}
+
+	public TransitRouterImplTest( TransitRouterType routerType ) {
+		log.warn( "using router=" + routerType ) ;
+		this.routerType = routerType;
+	}
+	
 	@Test
 	public void testSingleLine() {
 		Fixture f = new Fixture();
@@ -75,7 +106,22 @@ public class TransitRouterImplTest {
 		TransitRouterConfig config = new TransitRouterConfig(f.scenario.getConfig().planCalcScore(),
 				f.scenario.getConfig().plansCalcRoute(), f.scenario.getConfig().transitRouter(),
 				f.scenario.getConfig().vspExperimental());
-		TransitRouterImpl router = new TransitRouterImpl(config, f.schedule);
+		TransitRouter router = null ;
+		switch( this.routerType ) { 
+		case raptor:
+			double costPerMeterTraveled = 0. ;
+			double costPerBoarding = 0. ;
+			RaptorDisutility raptorDisutility = new RaptorDisutility(config, costPerBoarding, costPerMeterTraveled);
+			TransitRouterQuadTree transitRouterQuadTree = new TransitRouterQuadTree(raptorDisutility);
+			transitRouterQuadTree.initializeFromSchedule(f.schedule, config.getBeelineWalkConnectionDistance());
+			router = new Raptor(transitRouterQuadTree, raptorDisutility, config) ;
+			break;
+		case standard:
+			router = new TransitRouterImpl(config, f.schedule);
+			break;
+		default:
+			break;
+		}
 		Coord fromCoord = new Coord((double) 3800, (double) 5100);
 		Coord toCoord = new Coord((double) 16100, (double) 5050);
 		List<Leg> legs = router.calcRoute(new FakeFacility(fromCoord), new FakeFacility(toCoord), 5.0*3600, null);

@@ -17,29 +17,25 @@
  *                                                                         *
  * *********************************************************************** */
 
-package org.matsim.contrib.minibus.performance.raptor;
-
-import org.matsim.pt.transitSchedule.api.TransitStopFacility;
+package org.matsim.pt.raptor;
 
 /**
  * 
  * @author aneumann
  *
  */
-public class TransitStopEntry {
+public class DepartureEntry {
 	
-	final TransitStopFacility transitStopFacility;
-	final int numberOfTransfers;
-	final int indexOfFirstTransfer;
+	final int arrivalTime;
+	final int departureTime;
 	
-	TransitStopEntry(TransitStopFacility transitStopFacility, int numberOfTransfers, int indexOfFirstTransfer) {
-		this.transitStopFacility = transitStopFacility;
-		this.numberOfTransfers = numberOfTransfers;
-		this.indexOfFirstTransfer = indexOfFirstTransfer;
+	DepartureEntry(int arrivalTime, int departureTime) {
+		this.arrivalTime = arrivalTime;
+		this.departureTime = departureTime;
 	}
 
 	@Override
 	public String toString() {
-		return "Id " + transitStopFacility.getId() + ", " + numberOfTransfers + " transfers from " + indexOfFirstTransfer;
+		return arrivalTime + "-" + departureTime;
 	}
 }

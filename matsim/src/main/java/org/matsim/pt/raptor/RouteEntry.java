@@ -17,25 +17,43 @@
  *                                                                         *
  * *********************************************************************** */
 
-package org.matsim.contrib.minibus.performance.raptor;
+package org.matsim.pt.raptor;
 
 import org.matsim.api.core.v01.Id;
+import org.matsim.pt.transitSchedule.api.TransitLine;
 import org.matsim.pt.transitSchedule.api.TransitRoute;
 
-public class TransferEntryPointer extends TransferEntry{
-
-	final WrappedTransitRouteStop transferDestination;
+/**
+ * 
+ * @author aneumann
+ *
+ */
+public class RouteEntry {
+	
+	final Id<TransitLine> lineId;
 	final Id<TransitRoute> routeId;
 
-	public TransferEntryPointer(int indexOfRouteStop, double transferTime, WrappedTransitRouteStop transferDestination, Id<TransitRoute> routeId) {
-		super(indexOfRouteStop, transferTime);
-		this.transferDestination = transferDestination;
+	final int indexOfFirstDeparture;
+	final int numberOfDepartures;
+
+	final int indexOfFirstStop;
+	final int numberOfRouteStops;
+	
+
+	
+	public RouteEntry(Id<TransitLine> lineId, Id<TransitRoute> routeId, int indexOfFirstDeparture, int numberOfDepartures, int indexOfFirstStop, int numberOfRouteStops) {
+		this.lineId = lineId;
 		this.routeId = routeId;
+		
+		this.indexOfFirstDeparture = indexOfFirstDeparture;
+		this.numberOfDepartures = numberOfDepartures;
+		
+		this.indexOfFirstStop = indexOfFirstStop;
+		this.numberOfRouteStops = numberOfRouteStops;
 	}
 	
 	@Override
 	public String toString() {
-		return super.toString() + " target id " + transferDestination;
+		return lineId + ", " + routeId + ", " + numberOfRouteStops + " from " + indexOfFirstStop + ", " + numberOfDepartures + " dep from " + indexOfFirstDeparture;
 	}
-
 }

@@ -17,37 +17,21 @@
  *                                                                         *
  * *********************************************************************** */
 
-package org.matsim.contrib.minibus.performance.raptor;
+package org.matsim.pt.raptor;
 
-import org.matsim.api.core.v01.Id;
-import org.matsim.pt.transitSchedule.api.TransitLine;
-import org.matsim.pt.transitSchedule.api.TransitRoute;
-import org.matsim.pt.transitSchedule.api.TransitStopFacility;
+import org.matsim.pt.transitSchedule.api.TransitRouteStop;
 
-/**
+/** 
  * 
  * @author aneumann
  *
  */
-public class RouteSegment {
+public class WrappedTransitRouteStop {
 	
-	final TransitStopFacility fromStop;
-	final TransitStopFacility toStop;
-	final double travelTime;
-	final Id<TransitLine> lineTaken;
-	final Id<TransitRoute> routeTaken;
+	final TransitRouteStop transitRouteStop;
 	
-	public RouteSegment(TransitStopFacility fromStop, TransitStopFacility toStop, double travelTime, Id<TransitLine> lineTaken, Id<TransitRoute> routeTaken) {
-		this.fromStop = fromStop;
-		this.toStop = toStop;
-		this.travelTime = travelTime;
-		this.lineTaken = lineTaken;
-		this.routeTaken = routeTaken;
-	}
-	
-	@Override
-	public String toString() {
-		return "From: " + fromStop.getId() + " to " + toStop.getId() + " in " + travelTime + "s via " + routeTaken;
+	public WrappedTransitRouteStop(TransitRouteStop transitRouteStop) {
+		this.transitRouteStop = transitRouteStop;
 	}
 
 }

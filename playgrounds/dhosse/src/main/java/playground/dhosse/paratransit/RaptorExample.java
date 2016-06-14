@@ -7,14 +7,14 @@ import org.matsim.api.core.v01.population.Activity;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.contrib.minibus.PConfigGroup;
-import org.matsim.contrib.minibus.performance.raptor.Raptor;
-import org.matsim.contrib.minibus.performance.raptor.RaptorDisutility;
-import org.matsim.contrib.minibus.performance.raptor.TransitRouterQuadTree;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.router.ActivityWrapperFacility;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.misc.Time;
+import org.matsim.pt.raptor.Raptor;
+import org.matsim.pt.raptor.RaptorDisutility;
+import org.matsim.pt.raptor.TransitRouterQuadTree;
 import org.matsim.pt.router.TransitRouterConfig;
 import org.matsim.pt.router.TransitRouterImpl;
 
