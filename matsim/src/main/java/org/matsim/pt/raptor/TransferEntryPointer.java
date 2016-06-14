@@ -22,7 +22,7 @@ package org.matsim.pt.raptor;
 import org.matsim.api.core.v01.Id;
 import org.matsim.pt.transitSchedule.api.TransitRoute;
 
-public class TransferEntryPointer extends TransferEntry{
+final class TransferEntryPointer extends TransferEntry{
 
 	final WrappedTransitRouteStop transferDestination;
 	final Id<TransitRoute> routeId;

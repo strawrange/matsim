@@ -22,15 +22,20 @@ package org.matsim.contrib.minibus.hook;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.inject.Provider;
+
 import org.apache.log4j.Logger;
 import org.matsim.core.config.Config;
 import org.matsim.pt.raptor.Raptor;
 import org.matsim.pt.raptor.RaptorDisutility;
 import org.matsim.pt.raptor.TransitRouterQuadTree;
-import org.matsim.pt.router.*;
+import org.matsim.pt.router.PreparedTransitSchedule;
+import org.matsim.pt.router.TransitRouter;
+import org.matsim.pt.router.TransitRouterConfig;
+import org.matsim.pt.router.TransitRouterImpl;
+import org.matsim.pt.router.TransitRouterNetwork;
+import org.matsim.pt.router.TransitRouterNetworkTravelTimeAndDisutility;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
-
-import javax.inject.Provider;
 
 /**
  * 
@@ -38,6 +43,8 @@ import javax.inject.Provider;
  *
  */
 class PTransitRouterFactory implements Provider<TransitRouter> {
+	// How is this working if nothing is injected?  But presumably it uses "Provider" only as a syntax clarifier, but the class
+	// is not injectable. kai, jun'16 
 	
 	private final static Logger log = Logger.getLogger(PTransitRouterFactory.class);
 	private TransitRouterConfig transitRouterConfig;
@@ -53,20 +60,20 @@ class PTransitRouterFactory implements Provider<TransitRouter> {
 	private RaptorDisutility raptorDisutility;
 	private TransitRouterQuadTree transitRouterQuadTree;
 	
-	public PTransitRouterFactory(String ptEnabler, String ptRouter, double costPerBoarding, double costPerMeterTraveled){
+	PTransitRouterFactory(String ptEnabler, String ptRouter, double costPerBoarding, double costPerMeterTraveled){
 		this.ptEnabler = ptEnabler;
 		this.ptRouter = ptRouter;
 		this.costPerBoarding = costPerBoarding;
 		this.costPerMeterTraveled = costPerMeterTraveled;
 	}
 
-	public void createTransitRouterConfig(Config config) {
+	void createTransitRouterConfig(Config config) {
 		this.transitRouterConfig = new TransitRouterConfig(config.planCalcScore(), config.plansCalcRoute(), config.transitRouter(), config.vspExperimental());
 	}
 	
-	public void updateTransitSchedule(TransitSchedule schedule) {
+	void updateTransitSchedule(TransitSchedule schedule2) {
 		this.needToUpdateRouter = true;
-		this.schedule = schedule;
+		this.schedule = schedule2;
 //		this.schedule = PTransitLineMerger.mergeSimilarRoutes(schedule);
 		
 		if (this.ptRouter.equalsIgnoreCase("raptor")) {

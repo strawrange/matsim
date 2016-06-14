@@ -103,27 +103,25 @@ public class TransitRouterImplTest {
 	public void testSingleLine() {
 		Fixture f = new Fixture();
 		f.init();
-		TransitRouterConfig config = new TransitRouterConfig(f.scenario.getConfig().planCalcScore(),
-				f.scenario.getConfig().plansCalcRoute(), f.scenario.getConfig().transitRouter(),
-				f.scenario.getConfig().vspExperimental());
+		TransitRouterConfig trConfig = new TransitRouterConfig(f.scenario.getConfig());
 		TransitRouter router = null ;
 		switch( this.routerType ) { 
 		case raptor:
 			double costPerMeterTraveled = 0. ;
 			double costPerBoarding = 0. ;
-			RaptorDisutility raptorDisutility = new RaptorDisutility(config, costPerBoarding, costPerMeterTraveled);
+			RaptorDisutility raptorDisutility = new RaptorDisutility(trConfig, costPerBoarding, costPerMeterTraveled);
 			TransitRouterQuadTree transitRouterQuadTree = new TransitRouterQuadTree(raptorDisutility);
-			transitRouterQuadTree.initializeFromSchedule(f.schedule, config.getBeelineWalkConnectionDistance());
-			router = new Raptor(transitRouterQuadTree, raptorDisutility, config) ;
+			transitRouterQuadTree.initializeFromSchedule(f.schedule, trConfig.getBeelineWalkConnectionDistance());
+			router = new Raptor(transitRouterQuadTree, raptorDisutility, trConfig) ;
 			break;
 		case standard:
-			router = new TransitRouterImpl(config, f.schedule);
+			router = new TransitRouterImpl(trConfig, f.schedule);
 			break;
 		default:
 			break;
 		}
-		Coord fromCoord = new Coord((double) 3800, (double) 5100);
-		Coord toCoord = new Coord((double) 16100, (double) 5050);
+		Coord fromCoord = new Coord(3800, 5100);
+		Coord toCoord = new Coord(16100, 5050);
 		List<Leg> legs = router.calcRoute(new FakeFacility(fromCoord), new FakeFacility(toCoord), 5.0*3600, null);
 		assertEquals(3, legs.size());
 		assertEquals(TransportMode.transit_walk, legs.get(0).getMode());
@@ -140,7 +138,7 @@ public class TransitRouterImplTest {
 			actualTravelTime += leg.getTravelTime();
 		}
 		double expectedTravelTime = 29.0 * 60 + // agent takes the *:06 course, arriving in D at *:29
-				CoordUtils.calcEuclideanDistance(f.schedule.getFacilities().get(Id.create("6", TransitStopFacility.class)).getCoord(), toCoord) / config.getBeelineWalkSpeed();
+				CoordUtils.calcEuclideanDistance(f.schedule.getFacilities().get(Id.create("6", TransitStopFacility.class)).getCoord(), toCoord) / trConfig.getBeelineWalkSpeed();
 		assertEquals(expectedTravelTime, actualTravelTime, MatsimTestCase.EPSILON);
 	}
 
