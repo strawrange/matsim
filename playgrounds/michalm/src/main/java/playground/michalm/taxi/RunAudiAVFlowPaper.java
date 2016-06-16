@@ -24,6 +24,7 @@ import org.matsim.contrib.taxi.run.*;
 import org.matsim.core.config.*;
 import org.matsim.core.controler.*;
 import org.matsim.core.router.util.TravelTime;
+import org.matsim.core.trafficmonitoring.FreeSpeedTravelTime;
 import org.matsim.vehicles.*;
 
 import com.google.inject.name.Names;
@@ -36,8 +37,8 @@ public class RunAudiAVFlowPaper
         Config config = ConfigUtils.loadConfig(configFile, new TaxiConfigGroup());
         final Controler controler = RunTaxiScenario.createControler(config, false);
 
-        final TravelTime initialTT = TravelTimeUtils
-                .createTravelTimesFromEvents(controler.getScenario(), inputEvents);
+//        final TravelTime initialTT = TravelTimeUtils
+//                .createTravelTimesFromEvents(controler.getScenario(), inputEvents);
         controler.addOverridingModule(new AbstractModule() {
             @Override
             public void install()
@@ -46,7 +47,7 @@ public class RunAudiAVFlowPaper
                         .toInstance(VehicleUtils.AUTONOMOUS_VEHICLE_TYPE);
 
                 bind(TravelTime.class).annotatedWith(Names.named(VrpTravelTimeModules.DVRP_INITIAL))
-                        .toInstance(initialTT);
+                        .toInstance(new FreeSpeedTravelTime());
             }
         });
 
