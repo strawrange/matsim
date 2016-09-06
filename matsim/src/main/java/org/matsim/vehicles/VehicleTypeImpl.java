@@ -147,14 +147,25 @@ public class VehicleTypeImpl implements VehicleType {
 		this.doorOperationMode = mode;
 	}
 
-	@Override
-	public double getPcuEquivalents() {
-		return pcuEquivalents;
-	}
+    @Override
+    public double getPcuEquivalents() {
+        return pcuEquivalents;
+    }
 
-	@Override
-	public void setPcuEquivalents(double pcuEquivalents) {
-		this.pcuEquivalents = pcuEquivalents;
-	}
+    @Override
+    public void setPcuEquivalents(double pcuEquivalents) {
+        this.pcuEquivalents = pcuEquivalents;
+    }
 
+    @Override
+    public double getFlowPcuEquivalents() {
+        return pcuEquivalents;//pcu equivalents are used for both storage and flow
+    }
+
+    @Override
+    public void setFlowPcuEquivalents(double flowPcuEquivalents) {
+        throw new UnsupportedOperationException("In the default implementation,"
+                + "flowPcuEquivalents are identical to pcuEquivalents."
+                + "You can change them by calling the setPcuEquivalents(pcuEquivalents) method");
+    }
 }

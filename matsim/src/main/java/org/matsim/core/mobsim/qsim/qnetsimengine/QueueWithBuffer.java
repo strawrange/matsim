@@ -248,16 +248,16 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		if( context.qsimConfig.isUsingFastCapacityUpdate() ){
 			updateFlowAccumulation();
 			if (flowcap_accumulate.getValue() > 0.0  ) {
-				flowcap_accumulate.addValue(-veh.getSizeInEquivalents(), now);
+				flowcap_accumulate.addValue(-veh.getFlowSizeInEquivalents(), now);
 			} else {
 				throw new IllegalStateException("Buffer of link " + this.id + " has no space left!");
 			}
 		} else {
 			if (remainingflowCap >= 1.0  ) {
-				remainingflowCap -= veh.getSizeInEquivalents();
+				remainingflowCap -= veh.getFlowSizeInEquivalents();
 			}
 			else if (flowcap_accumulate.getValue() >= 1.0) {
-				flowcap_accumulate.setValue(flowcap_accumulate.getValue() - veh.getSizeInEquivalents() );
+				flowcap_accumulate.setValue(flowcap_accumulate.getValue() - veh.getFlowSizeInEquivalents() );
 			}
 			else {
 				throw new IllegalStateException("Buffer of link " + this.id + " has no space left!");
@@ -534,7 +534,6 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 	}
 
 	private void letVehicleArrive(QVehicle veh) {
-		double now = context.getSimTimer().getTimeOfDay() ;
 		qLink.addParkedVehicle(veh);
 		qLink.letVehicleArrive(veh);
 		qLink.makeVehicleAvailableToNextDriver(veh);
