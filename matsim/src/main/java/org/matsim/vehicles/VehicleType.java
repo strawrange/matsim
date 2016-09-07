@@ -107,7 +107,7 @@ public interface VehicleType {
 
 	public void setPcuEquivalents(double pcuEquivalents);
 
-    public double getFlowPcuEquivalents();
+    public double getFlowEfficiencyFactor();
 
-	public void setFlowPcuEquivalents(double flowPcuEquivalents);
+	public void setFlowEfficiencyFactor(double flowEfficiencyFactor);
 }

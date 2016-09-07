@@ -29,7 +29,8 @@ public class VehicleTypeImpl implements VehicleType {
 	private double width = 1.0;
 	private double maxVelocity = Double.POSITIVE_INFINITY; // default: constrained only by the link speed
 	private double length = 7.5;
-	private double pcuEquivalents = 1.0;
+    private double pcuEquivalents = 1.0;
+    private double flowEfficiencyFactor = 1.0;
 	private EngineInformation engineInformation;
 	private String description;
 	private VehicleCapacity capacity;
@@ -158,14 +159,12 @@ public class VehicleTypeImpl implements VehicleType {
     }
 
     @Override
-    public double getFlowPcuEquivalents() {
-        return pcuEquivalents;//pcu equivalents are used for both storage and flow
+    public double getFlowEfficiencyFactor() {
+        return flowEfficiencyFactor;
     }
 
     @Override
-    public void setFlowPcuEquivalents(double flowPcuEquivalents) {
-        throw new UnsupportedOperationException("In the default implementation,"
-                + "flowPcuEquivalents are identical to pcuEquivalents."
-                + "You can change them by calling the setPcuEquivalents(pcuEquivalents) method");
+    public void setFlowEfficiencyFactor(double flowEfficiencyFactor) {
+        this.flowEfficiencyFactor = flowEfficiencyFactor;
     }
 }

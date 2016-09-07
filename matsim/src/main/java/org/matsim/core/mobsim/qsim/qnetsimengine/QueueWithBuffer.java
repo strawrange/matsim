@@ -248,16 +248,16 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		if( context.qsimConfig.isUsingFastCapacityUpdate() ){
 			updateFlowAccumulation();
 			if (flowcap_accumulate.getValue() > 0.0  ) {
-				flowcap_accumulate.addValue(-veh.getFlowSizeInEquivalents(), now);
+				flowcap_accumulate.addValue(-veh.getFlowCapacityConsumptionInEquivalents(), now);
 			} else {
 				throw new IllegalStateException("Buffer of link " + this.id + " has no space left!");
 			}
 		} else {
 			if (remainingflowCap >= 1.0  ) {
-				remainingflowCap -= veh.getFlowSizeInEquivalents();
+				remainingflowCap -= veh.getFlowCapacityConsumptionInEquivalents();
 			}
 			else if (flowcap_accumulate.getValue() >= 1.0) {
-				flowcap_accumulate.setValue(flowcap_accumulate.getValue() - veh.getFlowSizeInEquivalents() );
+				flowcap_accumulate.setValue(flowcap_accumulate.getValue() - veh.getFlowCapacityConsumptionInEquivalents() );
 			}
 			else {
 				throw new IllegalStateException("Buffer of link " + this.id + " has no space left!");
