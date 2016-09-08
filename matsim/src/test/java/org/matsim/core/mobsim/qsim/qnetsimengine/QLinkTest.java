@@ -295,6 +295,9 @@ public final class QLinkTest extends MatsimTestCase {
 	 */
 	@Test
 	public void testBuffer() {
+	    
+	    double param = 0.5;
+	    
 		Config conf = super.loadConfig(null);
 		
 		conf.qsim().setUsingFastCapacityUpdate(isUsingFastCapacityUpdate);
@@ -302,37 +305,41 @@ public final class QLinkTest extends MatsimTestCase {
 		MutableScenario scenario = (MutableScenario) ScenarioUtils.createScenario(conf);
 		
 		Network network = (Network) scenario.getNetwork();
-		network.setCapacityPeriod(1.0);
+		network.setCapacityPeriod(60.0);
 		Node node1 = NetworkUtils.createAndAddNode(network, Id.create("1", Node.class), new Coord(0, 0));
 		Node node2 = NetworkUtils.createAndAddNode(network, Id.create("2", Node.class), new Coord(1, 0));
 		Node node3 = NetworkUtils.createAndAddNode(network, Id.create("3", Node.class), new Coord(2, 0));
 		final Node fromNode = node1;
 		final Node toNode = node2;
-		Link link1 = NetworkUtils.createAndAddLink(network,Id.create("1", Link.class), fromNode, toNode, 1.0, 1.0, 1.0, 1.0 );
+		Link link1 = NetworkUtils.createAndAddLink(network,Id.create("1", Link.class), fromNode, toNode, 100.0, 100.0, 1.0 / param, 1.0 );
 		final Node fromNode1 = node2;
 		final Node toNode1 = node3;
-		Link link2 = NetworkUtils.createAndAddLink(network,Id.create("2", Link.class), fromNode1, toNode1, 1.0, 1.0, 1.0, 1.0 );
+		Link link2 = NetworkUtils.createAndAddLink(network,Id.create("2", Link.class), fromNode1, toNode1, 100.0, 100.0, 1.0, 1.0 );
 		QSim qsim = QSimUtils.createDefaultQSim(scenario, (EventsUtils.createEventsManager()));
 		NetsimNetwork queueNetwork = qsim.getNetsimNetwork();
 		dummify((QNetwork) queueNetwork);
 		QLinkImpl qlink = (QLinkImpl) queueNetwork.getNetsimLink(Id.create("1", Link.class));
 
-		QVehicle v1 = new QVehicle(new VehicleImpl(Id.create("1", Vehicle.class), new VehicleTypeImpl(Id.create("defaultVehicleType", VehicleType.class))));
+		VehicleType vehType1 = new VehicleTypeImpl(Id.create("defaultVehicleType1", VehicleType.class));
+		vehType1.setFlowEfficiencyFactor(param);
+		QVehicle v1 = new QVehicle(new VehicleImpl(Id.create("1", Vehicle.class), vehType1));
 		Person p = createPerson(Id.createPersonId(1), scenario, link1, link2);
 		PersonDriverAgentImpl pa1 = createAndInsertPersonDriverAgentImpl(p, qsim);
 		v1.setDriver(pa1);
 		pa1.setVehicle(v1);
 		pa1.endActivityAndComputeNextState(0);
 
-		QVehicle v2 = new QVehicle(new VehicleImpl(Id.create("2", Vehicle.class), new VehicleTypeImpl(Id.create("defaultVehicleType", VehicleType.class))));
+		VehicleType vehType2 = new VehicleTypeImpl(Id.create("defaultVehicleType2", VehicleType.class));
+		vehType2.setFlowEfficiencyFactor(param);
+		QVehicle v2 = new QVehicle(new VehicleImpl(Id.create("2", Vehicle.class), vehType2));
 		Person p2 = createPerson( Id.createPersonId(2),scenario,link1, link2) ;
 		PersonDriverAgentImpl pa2 = createAndInsertPersonDriverAgentImpl(p2, qsim);
 		v2.setDriver(pa2);
 		pa2.setVehicle(v2);
+        pa2.endActivityAndComputeNextState( 0. );
 		
 		double now = 0. ;
 		
-		pa2.endActivityAndComputeNextState( now );
 
 
 		// start test

@@ -360,7 +360,9 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 	private void calculateStorageCapacity() {
 		// yyyyyy the following is not adjusted for time-dependence!! kai, apr'16
 		
-		bufferStorageCapacity = (int) Math.ceil(flowCapacityPerTimeStep);
+	    double maxFlowToStorageVehRatio = 2;//should be calculated for all vehicle types
+	    
+		bufferStorageCapacity = (int) Math.ceil(flowCapacityPerTimeStep * maxFlowToStorageVehRatio);
 
 		// first guess at storageCapacity:
 		storageCapacity = this.length * this.effectiveNumberOfLanes / context.effectiveCellSize * context.qsimConfig.getStorageCapFactor() ;
