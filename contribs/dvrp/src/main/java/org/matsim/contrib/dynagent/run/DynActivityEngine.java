@@ -40,6 +40,7 @@ import org.matsim.core.mobsim.qsim.*;
  * 
  * DynActivityEngine and ActivityEngine could be decoupled
  * (if we can ensure DynActivityEngine's handleActivity() is called before that of ActivityEngine)
+ * 
  */
 public class DynActivityEngine
     extends ActivityEngine
