@@ -1,40 +1,26 @@
-/* *********************************************************************** *
- * project: org.matsim.*
- *                                                                         *
- * *********************************************************************** *
- *                                                                         *
- * copyright       : (C) 2014 by the members listed in the COPYING,        *
- *                   LICENSE and WARRANTY file.                            *
- * email           : info at matsim dot org                                *
- *                                                                         *
- * *********************************************************************** *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *   See also COPYING, LICENSE and WARRANTY file                           *
- *                                                                         *
- * *********************************************************************** */
-
 package org.matsim.contrib.dvrp.passenger;
 
 import java.util.Map;
 
 import org.matsim.api.core.v01.Id;
-import org.matsim.api.core.v01.events.*;
-import org.matsim.api.core.v01.network.*;
-import org.matsim.contrib.dvrp.data.*;
+import org.matsim.api.core.v01.events.PersonEntersVehicleEvent;
+import org.matsim.api.core.v01.events.PersonLeavesVehicleEvent;
+import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.network.Network;
+import org.matsim.contrib.dvrp.data.Request;
+import org.matsim.contrib.dvrp.data.VrpData;
 import org.matsim.contrib.dvrp.optimizer.VrpOptimizer;
 import org.matsim.core.api.experimental.events.EventsManager;
-import org.matsim.core.mobsim.framework.*;
+import org.matsim.core.mobsim.framework.MobsimAgent;
+import org.matsim.core.mobsim.framework.MobsimDriverAgent;
+import org.matsim.core.mobsim.framework.MobsimPassengerAgent;
 import org.matsim.core.mobsim.framework.MobsimAgent.State;
 import org.matsim.core.mobsim.qsim.InternalInterface;
-import org.matsim.core.mobsim.qsim.interfaces.*;
+import org.matsim.core.mobsim.qsim.interfaces.DepartureHandler;
+import org.matsim.core.mobsim.qsim.interfaces.MobsimEngine;
+import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 
-
-public class PassengerEngine
-    implements MobsimEngine, DepartureHandler
+public class RideShareEngine implements MobsimEngine, DepartureHandler
 {
     private final String mode;
 
@@ -42,22 +28,28 @@ public class PassengerEngine
     private InternalInterface internalInterface;
     private final PassengerRequestCreator requestCreator;
     private final VrpOptimizer optimizer;
-    private final VrpData vrpData;
-    private final Network network;
+    private VrpData vrpData;
+    
+    public void setVrpData(VrpData vrpData) {
+		this.vrpData = vrpData;
+	}
+
+
+	private final Network network;
 
     private final AdvanceRequestStorage advanceRequestStorage;
     private final AwaitingPickupStorage awaitingPickupStorage;
 
 
-    public PassengerEngine(String mode, EventsManager eventsManager,
-            PassengerRequestCreator requestCreator, VrpOptimizer optimizer, VrpData vrpData,
+    public RideShareEngine(String mode, EventsManager eventsManager,
+            PassengerRequestCreator requestCreator, VrpOptimizer optimizer,
             Network network)
     {
         this.mode = mode;
         this.eventsManager = eventsManager;
         this.requestCreator = requestCreator;
         this.optimizer = optimizer;
-        this.vrpData = vrpData;
+        //this.vrpData = vrpData;
         this.network = network;
 
         advanceRequestStorage = new AdvanceRequestStorage();
@@ -80,11 +72,7 @@ public class PassengerEngine
 
     @Override
     public void onPrepareSim()
-    {
-    	if (optimizer instanceof VrpOptimizer){
-    	optimizer.setVehicleSchedule(vrpData);
-    	}
-    }
+    {}
 
 
     @Override
@@ -128,7 +116,6 @@ public class PassengerEngine
         }
 
         MobsimPassengerAgent passenger = (MobsimPassengerAgent)agent;
-        
 
         Id<Link> toLinkId = passenger.getDestinationLinkId();
         double departureTime = now;
@@ -224,3 +211,4 @@ public class PassengerEngine
         internalInterface.arrangeNextAgentState(passenger);
     }
 }
+

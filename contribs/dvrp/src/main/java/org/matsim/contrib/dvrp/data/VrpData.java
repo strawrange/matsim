@@ -22,6 +22,11 @@ package org.matsim.contrib.dvrp.data;
 import java.util.Map;
 
 import org.matsim.api.core.v01.Id;
+import org.matsim.api.core.v01.population.Leg;
+import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.Plan;
+import org.matsim.core.mobsim.framework.MobsimAgent;
+import org.matsim.core.mobsim.qsim.QSim;
 
 
 public interface VrpData
@@ -39,4 +44,6 @@ public interface VrpData
 
 
     void clearRequestsAndResetSchedules();
+    
+    Vehicle changeNormalVehicle(org.matsim.vehicles.Vehicle vehicle, Leg leg, Plan plan, QSim qSim);
 }

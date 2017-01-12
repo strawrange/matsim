@@ -21,48 +21,56 @@ import org.matsim.contrib.dvrp.schedule.Schedules;
 import org.matsim.contrib.dvrp.schedule.StayTask;
 import org.matsim.contrib.dvrp.schedule.StayTaskImpl;
 import org.matsim.contrib.dvrp.schedule.Task;
-import org.matsim.core.mobsim.framework.MobsimTimer;
+import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.router.Dijkstra;
 import org.matsim.core.router.util.LeastCostPathCalculator;
 import org.matsim.core.router.util.TravelTime;
 import org.matsim.core.trafficmonitoring.FreeSpeedTravelTime;
 
 public class RideShareOptimizer  implements VrpOptimizer{
-	private final MobsimTimer timer;
+	private final QSim qsim;
 
     private final TravelTime travelTime;
     private final LeastCostPathCalculator router;
 
-    private final Vehicle vehicle;//we have only one vehicle
-    private final Schedule<AbstractTask> schedule;// the vehicle's schedule
+    private Vehicle vehicle;//we have only one vehicle
+    
+
+
+	@SuppressWarnings("unchecked")
+	public void setVehicleSchedule(VrpData vrpData) {
+		this.vehicle = vrpData.getVehicles().values().iterator().next();
+        schedule = (Schedule<AbstractTask>)vehicle.getSchedule();
+        schedule.addTask(
+                new StayTaskImpl(vehicle.getT0(), vehicle.getT1(), vehicle.getStartLink(), "wait"));
+	}
+
+
+	private Schedule<AbstractTask> schedule;// the vehicle's schedule
 
     public static final double PICKUP_DURATION = 120;
     public static final double DROPOFF_DURATION = 60;
 
 
-    @SuppressWarnings("unchecked")
-    public RideShareOptimizer(Scenario scenario, VrpData vrpData, MobsimTimer timer)
+
+    public RideShareOptimizer(Scenario scenario, VrpData vrpData, QSim qsim)
     {
-        this.timer = timer;
+        this.qsim = qsim;
 
         travelTime = new FreeSpeedTravelTime();
         router = new Dijkstra(scenario.getNetwork(), new TimeAsTravelDisutility(travelTime),
                 travelTime);
 
         vrpData.clearRequestsAndResetSchedules();//necessary if we run more than 1 iteration
-        
-        vehicle = vrpData.getVehicles().values().iterator().next();
-        schedule = (Schedule<AbstractTask>)vehicle.getSchedule();
-        schedule.addTask(
-                new StayTaskImpl(vehicle.getT0(), vehicle.getT1(), vehicle.getStartLink(), "wait"));
-    }
+             // vehicle = vrpData.getVehicles().values().iterator().next();
+   }
 
 
     @Override
     public void requestSubmitted(Request request)
     {
         StayTask lastTask = (StayTask)Schedules.getLastTask(schedule);// only WaitTask possible here
-        double currentTime = timer.getTimeOfDay();
+        double currentTime = qsim.getSimTimer().getTimeOfDay();
 
         switch (lastTask.getStatus()) {
             case PLANNED:
@@ -77,7 +85,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
                 throw new IllegalStateException();
         }
 
-        OneTaxiRequest req = (OneTaxiRequest)request;
+        RideShareRequest req = (RideShareRequest)request;
         Link fromLink = req.getFromLink();
         Link toLink = req.getToLink();
 
@@ -91,7 +99,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
         double t1 = p1.getArrivalTime();
         double t2 = t1 + PICKUP_DURATION;// 2 minutes for picking up the passenger
-        schedule.addTask(new OneTaxiServeTask(t1, t2, fromLink, true, req));
+        schedule.addTask(new RideShareServeTask(t1, t2, fromLink, true, req));
 
         VrpPathWithTravelData p2 = VrpPaths.calcAndCreatePath(fromLink, toLink, t2, router,
                 travelTime);
@@ -99,7 +107,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
         double t3 = p2.getArrivalTime();
         double t4 = t3 + DROPOFF_DURATION;// 1 minute for dropping off the passenger
-        schedule.addTask(new OneTaxiServeTask(t3, t4, toLink, false, req));
+        schedule.addTask(new RideShareServeTask(t3, t4, toLink, false, req));
 
         //just wait (and be ready) till the end of the vehicle's time window (T1)
         double tEnd = Math.max(t4, vehicle.getT1());
@@ -126,7 +134,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
             return;
         }
 
-        double now = timer.getTimeOfDay();
+        double now = qsim.getSimTimer().getTimeOfDay();
         Task currentTask = schedule.getCurrentTask();
         double diff = now - currentTask.getEndTime();
 
@@ -155,4 +163,5 @@ public class RideShareOptimizer  implements VrpOptimizer{
             waitTask.setEndTime(tEnd);
         }
     }
+
 }

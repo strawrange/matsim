@@ -109,7 +109,9 @@ public final class QSimConfigGroup extends ReflectiveConfigGroup {
 	private boolean usingFastCapacityUpdate = false ;
 	// ---
 	private static final String VEHICLES_SOURCE = "vehiclesSource";
-	public enum VehiclesSource { defaultVehicle, modeVehicleTypesFromVehiclesData, fromVehiclesData} ;
+	
+	//Biyu add fromVrpData
+	public enum VehiclesSource { defaultVehicle, modeVehicleTypesFromVehiclesData, fromVehiclesData, fromVrpData} ;
 	private VehiclesSource vehiclesSource = VehiclesSource.defaultVehicle ;
 	// ---
 	private static final String IS_SEEP_MODE_STORAGE_FREE = "isSeepModeStorageFree";

@@ -20,6 +20,8 @@
 package org.matsim.contrib.dvrp.optimizer;
 
 import org.matsim.contrib.dvrp.data.Request;
+import org.matsim.contrib.dvrp.data.Vehicle;
+import org.matsim.contrib.dvrp.data.VrpData;
 import org.matsim.contrib.dvrp.schedule.*;
 
 
@@ -29,6 +31,9 @@ public interface VrpOptimizer
      * This function can be generalized (in the future) to encompass request modification,
      * cancellation etc.
      */
+    
+    public void setVehicleSchedule(VrpData vrpData);
+    
     void requestSubmitted(Request request);
 
 

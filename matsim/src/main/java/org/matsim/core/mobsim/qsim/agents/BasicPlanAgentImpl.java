@@ -224,11 +224,20 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 			// thus we answer with "null".  This will likely result in an "abort". kai, nov'14
 			return null ;
 		}
-		PlanElement currentPlanElement = this.getCurrentPlanElement();
-		if (!(currentPlanElement instanceof Leg)) {
-			return null;
+		
+		//Change Biyu
+		for(PlanElement PlanElement:plan.getPlanElements()) {
+			if (PlanElement instanceof Leg) {
+				return ((Leg) PlanElement).getMode() ;
+			}
 		}
-		return ((Leg) currentPlanElement).getMode() ;
+		return null;
+		
+		//PlanElement currentPlanElement = this.getCurrentPlanElement();
+		//if (!(currentPlanElement instanceof Leg)) {
+		//	return null;
+		//}
+		//return ((Leg) currentPlanElement).getMode() ;
 	}
 	@Override
 	public final Double getExpectedTravelTime() {

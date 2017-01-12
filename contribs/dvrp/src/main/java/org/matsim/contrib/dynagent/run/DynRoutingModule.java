@@ -44,7 +44,8 @@ public class DynRoutingModule
     public List<? extends PlanElement> calcRoute(Facility<?> fromFacility, Facility<?> toFacility,
             double departureTime, Person person)
     {
-        Route route = new GenericRouteImpl(fromFacility.getLinkId(), toFacility.getLinkId());
+    	
+        //Route route = new GenericRouteImpl(fromFacility.getLinkId(), toFacility.getLinkId());
         route.setDistance(Double.NaN);
         route.setTravelTime(Double.NaN);
 

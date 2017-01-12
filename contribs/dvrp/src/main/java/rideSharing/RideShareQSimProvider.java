@@ -39,17 +39,11 @@ public class RideShareQSimProvider implements Provider<Mobsim>{
 	    public Mobsim get()
 	    {
 	        QSim qSim = QSimUtils.createQSim(scenario,events, plugins);
-	        /*for(MobsimAgent agent : qSim.getAgents()){
-	        	if(agent.getMode().equals(Run.MODE_DRIVER)){
-	        		Vehicle vehicle = new VehicleImpl(Id.create(agent.getId(), Vehicle.class),scenario.getNetwork().getLinks().get(agent.getCurrentLinkId()),4,0,8000);
-	        		vrpData.addVehicle(vehicle);
-	        	}
-	        }*/
 	        
-	        RideShareOptimizer optimizer = new RideShareOptimizer(scenario,vrpData, qSim.getSimTimer());
+	        RideShareOptimizer optimizer = new RideShareOptimizer(scenario,vrpData, qSim);
 
 	        PassengerEngine passengerEngine = new PassengerEngine(Run.MODE_PASSENGER, events,
-	                new RideShareRequestCreator(), optimizer, vrpData, scenario.getNetwork());
+	                new RideShareRequestCreator(), optimizer,  vrpData,scenario.getNetwork());
 	        qSim.addMobsimEngine(passengerEngine);
 	        qSim.addDepartureHandler(passengerEngine);
 
@@ -60,3 +54,4 @@ public class RideShareQSimProvider implements Provider<Mobsim>{
 	        return qSim;
 	    }
 }
+

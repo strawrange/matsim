@@ -33,7 +33,7 @@ public class VehicleReader
 {
     private static final String VEHICLE = "vehicle";
 
-    private static final double DEFAULT_CAPACITY = 1;
+    private static final double DEFAULT_CAPACITY = 2;
     private static final double DEFAULT_T_0 = 0;
     private static final double DEFAULT_T_1 = 24 * 60 * 60;
 
@@ -45,6 +45,10 @@ public class VehicleReader
     {
         this.data = data;
         links = network.getLinks();
+    }
+    
+    public VehicleReader()
+    {
     }
 
 
@@ -77,4 +81,10 @@ public class VehicleReader
     {
         return new VehicleImpl(id, startLink, capacity, t0, t1);
     }
+    
+    public Vehicle createVehicle(Id<Vehicle> id, Link startLink,double t0, double t1)
+    {
+        return new VehicleImpl(id, startLink, DEFAULT_CAPACITY, t0, t1);
+    }
+
 }

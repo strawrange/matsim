@@ -29,6 +29,8 @@ import org.matsim.core.mobsim.framework.events.MobsimInitializedEvent;
 import org.matsim.core.mobsim.framework.listeners.MobsimInitializedListener;
 import org.matsim.core.mobsim.qsim.QSim;
 
+import rideSharing.Run;
+
 
 /**
  * This does, if I see it correctly, prebook a trip for every passenger already at the beginning of

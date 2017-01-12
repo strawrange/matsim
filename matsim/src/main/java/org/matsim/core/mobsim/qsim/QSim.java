@@ -218,6 +218,7 @@ public final class QSim extends Thread implements VisMobsim, Netsim, ActivityEnd
 			// only before running.
 			addDepartureHandler(this.teleportationEngine);
 			prepareSim();
+						
 			this.listenerManager.fireQueueSimulationInitializedEvent();
 
 			// Put agents into the handler for their first ("overnight") action,
@@ -274,6 +275,7 @@ public final class QSim extends Thread implements VisMobsim, Netsim, ActivityEnd
 			agentSource.insertAgentsIntoMobsim();
 		}
 	}
+	
 
 	private static int wrnCnt = 0;
 	public void createAndParkVehicleOnLink(Vehicle vehicle, Id<Link> linkId) {
@@ -289,7 +291,7 @@ public final class QSim extends Thread implements VisMobsim, Netsim, ActivityEnd
 			}
 		}
 	}
-
+	
 	private static int wrnCnt2 = 0;
 	public void addParkedVehicle(MobsimVehicle veh, Id<Link> startLinkId) {
 		if (this.netEngine != null) {
