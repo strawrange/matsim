@@ -1,6 +1,9 @@
 package rideSharing;
 
+import java.util.Arrays;
+
 import org.matsim.api.core.v01.Scenario;
+import org.matsim.api.core.v01.TransportMode;
 import org.matsim.contrib.dvrp.data.VrpData;
 import org.matsim.contrib.dvrp.data.VrpDataImpl;
 import org.matsim.contrib.dynagent.run.DynQSimConfigConsistencyChecker;
@@ -34,7 +37,8 @@ public class Run {
         ConfigGroup rideShareCfg = new ConfigGroup(RIDE_SHARE_GROUP_NAME) {};
         OTFVisConfigGroup otfvisConfig = new OTFVisConfigGroup();
         Config config = ConfigUtils.loadConfig(configFile,otfvisConfig,rideShareCfg);
-        //config.qsim().setMainModes(Arrays.asList(TransportMode.car,MODE_DRIVER));
+        //config.qsim().setMainModes(Arrays.asList(T
+        //ransportMode.car,MODE_DRIVER));
         config.addConfigConsistencyChecker(new DynQSimConfigConsistencyChecker());
         config.checkConsistency();
         Scenario scenario = ScenarioUtils.loadScenario(config);
@@ -49,7 +53,7 @@ public class Run {
             public void install()
             {
                 addRoutingModuleBinding(MODE_PASSENGER).toInstance(new DynRoutingModule(MODE_PASSENGER));
-                addRoutingModuleBinding(MODE_DRIVER).toInstance(new DynRoutingModule(MODE_DRIVER));
+                //addRoutingModuleBinding(MODE_DRIVER).toInstance(new DynRoutingModule(MODE_DRIVER));
                 bind(VrpData.class).toInstance(vrpData);
             }
         });

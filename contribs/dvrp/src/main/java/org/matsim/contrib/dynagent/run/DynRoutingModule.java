@@ -45,7 +45,7 @@ public class DynRoutingModule
             double departureTime, Person person)
     {
     	
-        //Route route = new GenericRouteImpl(fromFacility.getLinkId(), toFacility.getLinkId());
+        Route route = new GenericRouteImpl(fromFacility.getLinkId(), toFacility.getLinkId());
         route.setDistance(Double.NaN);
         route.setTravelTime(Double.NaN);
 

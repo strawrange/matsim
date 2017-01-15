@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.contrib.dvrp.data.VrpData;
 import org.matsim.contrib.dvrp.passenger.PassengerEngine;
+import org.matsim.contrib.dvrp.passenger.TripPrebookingManager;
 import org.matsim.contrib.dvrp.vrpagent.VrpAgentSource;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.mobsim.framework.Mobsim;
@@ -41,12 +42,16 @@ public class RideShareQSimProvider implements Provider<Mobsim>{
 	        QSim qSim = QSimUtils.createQSim(scenario,events, plugins);
 	        
 	        RideShareOptimizer optimizer = new RideShareOptimizer(scenario,vrpData, qSim);
-
+	        //qSim.addQueueSimulationListeners(optimizer);
+	        
 	        PassengerEngine passengerEngine = new PassengerEngine(Run.MODE_PASSENGER, events,
 	                new RideShareRequestCreator(), optimizer,  vrpData,scenario.getNetwork());
 	        qSim.addMobsimEngine(passengerEngine);
 	        qSim.addDepartureHandler(passengerEngine);
-
+	        
+	        //TripPrebookingManager tripPrebookManager = new TripPrebookingManager(passengerEngine);
+	        //qSim.addQueueSimulationListeners(tripPrebookManager);
+	        
 	        RideShareActionCreator actionCreator = new RideShareActionCreator(passengerEngine,
 	                qSim.getSimTimer());
 	        qSim.addAgentSource(new VrpAgentSource(actionCreator, vrpData, optimizer, qSim));

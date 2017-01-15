@@ -168,4 +168,11 @@ public class OneTaxiOptimizer
             waitTask.setEndTime(tEnd);
         }
     }
+
+
+	@Override
+	public void setVehicleSchedule(VrpData vrpData) {
+		// TODO Auto-generated method stub
+		
+	}
 }

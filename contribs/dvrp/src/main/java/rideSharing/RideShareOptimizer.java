@@ -36,16 +36,6 @@ public class RideShareOptimizer  implements VrpOptimizer{
     private Vehicle vehicle;//we have only one vehicle
     
 
-
-	@SuppressWarnings("unchecked")
-	public void setVehicleSchedule(VrpData vrpData) {
-		this.vehicle = vrpData.getVehicles().values().iterator().next();
-        schedule = (Schedule<AbstractTask>)vehicle.getSchedule();
-        schedule.addTask(
-                new StayTaskImpl(vehicle.getT0(), vehicle.getT1(), vehicle.getStartLink(), "wait"));
-	}
-
-
 	private Schedule<AbstractTask> schedule;// the vehicle's schedule
 
     public static final double PICKUP_DURATION = 120;
@@ -163,5 +153,14 @@ public class RideShareOptimizer  implements VrpOptimizer{
             waitTask.setEndTime(tEnd);
         }
     }
+    
+	@SuppressWarnings("unchecked")
+	public void setVehicleSchedule(VrpData vrpData) {
+		this.vehicle = vrpData.getVehicles().values().iterator().next();
+        schedule = (Schedule<AbstractTask>)vehicle.getSchedule();
+        schedule.addTask(
+                new StayTaskImpl(vehicle.getT0(), vehicle.getT1(), vehicle.getStartLink(), "wait"));
+	}
+
 
 }

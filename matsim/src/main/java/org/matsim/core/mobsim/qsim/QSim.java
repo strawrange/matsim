@@ -396,7 +396,8 @@ public final class QSim extends Thread implements VisMobsim, Netsim, ActivityEnd
 
 	public void insertAgentIntoMobsim(final MobsimAgent agent) {
 		if (this.agents.containsKey(agent.getId())) {
-			throw new RuntimeException("Agent with same Id (" + agent.getId().toString() + ") already in mobsim; aborting ... ") ;
+			//throw new RuntimeException("Agent with same Id (" + agent.getId().toString() + ") already in mobsim; aborting ... ") ;
+			this.agents.remove(agent.getId());
 		}
 		this.agents.put(agent.getId(), agent);
 		this.agentCounter.incLiving();

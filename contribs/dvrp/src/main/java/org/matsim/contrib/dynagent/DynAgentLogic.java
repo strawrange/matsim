@@ -19,6 +19,8 @@
 
 package org.matsim.contrib.dynagent;
 
+import org.matsim.contrib.dvrp.data.Vehicle;
+
 public interface DynAgentLogic
 {
     DynAgent getDynAgent();
@@ -28,4 +30,7 @@ public interface DynAgentLogic
 
 
     DynAction computeNextAction(DynAction oldAction, double now);
+
+
+	DynAction finishDynAction(DynAction oldDynAction, double now);
 }

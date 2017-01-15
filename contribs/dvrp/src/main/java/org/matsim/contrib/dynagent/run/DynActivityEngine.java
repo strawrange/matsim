@@ -25,12 +25,17 @@ import javax.inject.Inject;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.contrib.dynagent.DynAgent;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.framework.MobsimAgent.State;
 import org.matsim.core.mobsim.qsim.*;
+
+import rideSharing.RideShareAgent;
+import rideSharing.Run;
 
 
 /**
@@ -47,8 +52,8 @@ public class DynActivityEngine
 {
     private InternalInterface internalInterface;
 
-    private final List<DynAgent> dynAgents = new LinkedList<>();
-    private final List<DynAgent> newDynAgents = new ArrayList<>();//will to be handled in the next timeStep
+    private final List<RideShareAgent> dynAgents = new LinkedList<>();
+    private final List<RideShareAgent> newDynAgents = new ArrayList<>();//will to be handled in the next timeStep
 
 
     @Inject
@@ -69,9 +74,9 @@ public class DynActivityEngine
         dynAgents.addAll(newDynAgents);
         newDynAgents.clear();
 
-        Iterator<DynAgent> dynAgentIter = dynAgents.iterator();
+        Iterator<RideShareAgent> dynAgentIter = dynAgents.iterator();
         while (dynAgentIter.hasNext()) {
-            DynAgent agent = dynAgentIter.next();
+            RideShareAgent agent = dynAgentIter.next();
             if (agent.getState() == State.ACTIVITY) {
                 agent.doSimStep(time);
                 //ask agents about the current activity end time;
@@ -83,7 +88,7 @@ public class DynActivityEngine
                     dynAgentIter.remove();
                 }
                 else if (currentEndTime <= time) { //the agent wants to end the activity NOW
-                    unregisterAgentAtActivityLocation(agent);
+                	unregisterAgentAtActivityLocation(agent);
                     agent.endActivityAndComputeNextState(time);
                     internalInterface.arrangeNextAgentState(agent);
                     dynAgentIter.remove();
@@ -96,41 +101,54 @@ public class DynActivityEngine
     }
 
 
+
     @Override
     public boolean handleActivity(MobsimAgent agent)
     {
-        if (! (agent instanceof DynAgent)) {
-            return super.handleActivity(agent);
+        if (agent instanceof RideShareAgent) {
+        	return handleActivity(((RideShareAgent)agent));
         }
-
-        double endTime = agent.getActivityEndTime();
-        double currentTime = internalInterface.getMobsim().getSimTimer().getTimeOfDay();
-
-        if (endTime == Double.POSITIVE_INFINITY) {
-            // This is the last planned activity.
-            // So the agent goes to sleep.
-            internalInterface.getMobsim().getAgentCounter().decLiving();
-        }
-        else if (endTime <= currentTime && !beforeFirstSimStep) {
-            // This activity is already over (planned for 0 duration)
-            // So we proceed immediately.
-            agent.endActivityAndComputeNextState(currentTime);
-            internalInterface.arrangeNextAgentState(agent);
-        }
-        else {
-            // The agent commences an activity on this link.
-            if (beforeFirstSimStep) {
-                dynAgents.add((DynAgent)agent);
-            }
-            else {
-                newDynAgents.add((DynAgent)agent);
-            }
-
-            internalInterface.registerAdditionalAgentOnLink(agent);
-        }
-
-        return true;
+        return super.handleActivity(agent);
     }
+    
+    public boolean handleActivity(RideShareAgent agent)
+    {
+    	//PlanElement next = agent.getCurrentPlanElement();
+    	if(!agent.getIsDyn()){
+    		super.handleActivity(agent);
+    		return false;
+    	}
+            double endTime = agent.getActivityEndTime();
+            double currentTime = internalInterface.getMobsim().getSimTimer().getTimeOfDay();
+            if (endTime == Double.POSITIVE_INFINITY) {
+                // This is the last planned activity.
+                // So the agent goes to sleep.
+                internalInterface.getMobsim().getAgentCounter().decLiving();
+            }
+            else if (endTime <= currentTime && !beforeFirstSimStep) {
+                // This activity is already over (planned for 0 duration)
+                // So we proceed immediately.
+            	//agent.setIsDyn(true);
+                agent.endActivityAndComputeNextState(currentTime);
+                internalInterface.arrangeNextAgentState(agent);
+                //return super.handleActivity(agent);
+            }
+            else{
+
+                // The agent commences an activity on this link.
+                if (beforeFirstSimStep) {
+                    dynAgents.add(agent);
+                }
+                else {
+                    newDynAgents.add(agent);
+                }
+
+                internalInterface.registerAdditionalAgentOnLink(agent);
+            }
+    	//}
+    	return true;
+    }
+    
 
 
     @Override

@@ -31,10 +31,14 @@ import org.matsim.contrib.dvrp.optimizer.VrpOptimizer;
 import org.matsim.contrib.dvrp.vrpagent.VrpAgentLogic.DynActionCreator;
 import org.matsim.contrib.dynagent.DynAgent;
 import org.matsim.core.mobsim.framework.AgentSource;
+import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.qsim.QSim;
+import org.matsim.core.mobsim.qsim.agents.BasicPlanAgentImpl;
+import org.matsim.core.mobsim.qsim.agents.PersonDriverAgentImpl;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
 import org.matsim.vehicles.*;
 
+import rideSharing.RideShareAgent;
 import rideSharing.Run;
 
 
@@ -92,14 +96,19 @@ public class VrpAgentSource
             Id<Link> startLinkId = vrpVeh.getStartLink().getId();
 
             VrpAgentLogic vrpAgentLogic = new VrpAgentLogic(optimizer, nextActionCreator, vrpVeh);
-            DynAgent vrpAgent = new DynAgent(Id.createPersonId(id), startLinkId,
-            qSim.getEventsManager(), vrpAgentLogic);
+            PersonDriverAgentImpl agent = (PersonDriverAgentImpl) qSim.getAgentMap().get(Id.createPersonId(id));
+            DynAgent vrpAgent = new DynAgent(Id.createPersonId(id), startLinkId,qSim.getEventsManager(), vrpAgentLogic);
+       
             QVehicle mobsimVehicle = new QVehicle(vehicleFactory.createVehicle(Id.create(id, org.matsim.vehicles.Vehicle.class), vehicleType));
-            vrpAgent.setVehicle(mobsimVehicle);
-            mobsimVehicle.setDriver(vrpAgent);
+            RideShareAgent rideShareAgent = new RideShareAgent(agent,vrpAgent);
+            rideShareAgent.setVehicle(mobsimVehicle);
+            mobsimVehicle.setDriver(rideShareAgent);
 
             qSim.addParkedVehicle(mobsimVehicle, startLinkId);
-            //qSim.insertAgentIntoMobsim(vrpAgent);
+            //if(qSim.getAgentMap().containsKey(vrpAgent.getId())){
+            //	qSim.getAgentMap().remove(vrpAgent.getId());
+            //}
+            qSim.insertAgentIntoMobsim(rideShareAgent);
         }
     }
 }

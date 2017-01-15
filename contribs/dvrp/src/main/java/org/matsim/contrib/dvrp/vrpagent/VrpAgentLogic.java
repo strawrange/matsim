@@ -124,4 +124,28 @@ public class VrpAgentLogic
     {
         return new StaticDynActivity(AFTER_SCHEDULE_ACTIVITY_TYPE, Double.POSITIVE_INFINITY);
     }
+
+
+	@Override
+	public DynAction finishDynAction(DynAction oldDynAction, double now) {
+		// TODO Auto-generated method stub
+        Schedule<?> schedule = vehicle.getSchedule();
+
+        if (schedule.getStatus() == ScheduleStatus.UNPLANNED) {
+            return createAfterScheduleActivity();// FINAL ACTIVITY (deactivate the agent in QSim)
+        }
+        // else: PLANNED or STARTED
+
+        optimizer.nextTask(schedule);
+        // remember to REFRESH status (after nextTask -> now it can be COMPLETED)!!!
+
+        if (schedule.getStatus() == ScheduleStatus.COMPLETED) {// no more tasks
+            return createAfterScheduleActivity();// FINAL ACTIVITY (deactivate the agent in QSim)
+        }
+
+        Task task = schedule.getCurrentTask();
+        DynAction action = dynActionCreator.createAction(task, now);
+
+        return action;
+	}
 }

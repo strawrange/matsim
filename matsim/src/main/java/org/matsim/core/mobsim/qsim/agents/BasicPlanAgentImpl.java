@@ -37,7 +37,8 @@ import org.matsim.facilities.ActivityOption;
 import org.matsim.facilities.Facility;
 import org.matsim.vehicles.Vehicle;
 
-public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identifiable<Person>, HasPerson, VehicleUsingAgent {
+//Biyu - final
+public class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identifiable<Person>, HasPerson, VehicleUsingAgent {
 	
 	private static final Logger log = Logger.getLogger(BasicPlanAgentImpl.class);
 	private static int finalActHasDpTimeWrnCnt = 0;
@@ -81,7 +82,7 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 }
 	
 	@Override
-	public final void endLegAndComputeNextState(final double now) {
+	public void endLegAndComputeNextState(final double now) {
 		this.getEvents().processEvent(new PersonArrivalEvent( now, this.getId(), this.getDestinationLinkId(), getCurrentLeg().getMode()));
 		if( (!(this.getCurrentLinkId() == null && this.getDestinationLinkId() == null)) 
 				&& !this.getCurrentLinkId().equals(this.getDestinationLinkId())) {
@@ -102,7 +103,7 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 	}
 
 	@Override
-	public final void notifyArrivalOnLinkByNonNetworkMode(final Id<Link> linkId) {
+	public void notifyArrivalOnLinkByNonNetworkMode(final Id<Link> linkId) {
 		Gbl.assertNotNull(linkId);
 		this.setCurrentLinkId( linkId ) ;
 	}
@@ -154,7 +155,8 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 	 * If this method is called to update a changed ActivityEndTime please
 	 * ensure that the ActivityEndsList in the {@link QSim} is also updated.
 	 */
-	private final void calculateAndSetDepartureTime(Activity act) {
+	//Biyu to protected
+	protected final void calculateAndSetDepartureTime(Activity act) {
 		PlansConfigGroup.ActivityDurationInterpretation activityDurationInterpretation = this.getScenario().getConfig().plans().getActivityDurationInterpretation();
 		double now = this.getSimTimer().getTimeOfDay() ;
 		double departure = ActivityDurationUtils.calculateDepartureTime(act, now, activityDurationInterpretation);
@@ -172,13 +174,14 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 	}
 
 	@Override
-	public final void endActivityAndComputeNextState(final double now) {
+	public void endActivityAndComputeNextState(final double now) {
 		Activity act = (Activity) this.getCurrentPlanElement() ;
 		this.getEvents().processEvent( new ActivityEndEvent(now, this.getPerson().getId(), this.currentLinkId, act.getFacilityId(), act.getType()));
 	
 		// note that when we are here we don't know if next is another leg, or an activity  Therefore, we go to a general method:
 		advancePlan(now);
 	}
+	
 	
 	final void resetCaches() {
 		if ( this.getCurrentPlanElement() instanceof Activity ) {
@@ -206,7 +209,8 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 		return this.getCurrentPlan();
 	}
 	@Override
-	public final Id<Vehicle> getPlannedVehicleId() {
+	//Biyu -final
+	public Id<Vehicle> getPlannedVehicleId() {
 		NetworkRoute route = (NetworkRoute) this.getCurrentLeg().getRoute(); // if casts fail: illegal state.
 		if (route.getVehicleId() != null) {
 			return route.getVehicleId();
@@ -218,7 +222,7 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 		}
 	}
 	@Override
-	public final String getMode() {
+	public String getMode() {
 		if( this.getCurrentPlanElementIndex() >= this.getCurrentPlan().getPlanElements().size() ) {
 			// just having run out of plan elements it not an argument for not being able to answer the "mode?" question,
 			// thus we answer with "null".  This will likely result in an "abort". kai, nov'14
@@ -240,7 +244,7 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 		//return ((Leg) currentPlanElement).getMode() ;
 	}
 	@Override
-	public final Double getExpectedTravelTime() {
+	public Double getExpectedTravelTime() {
 		PlanElement currentPlanElement = this.getCurrentPlanElement();
 		if (!(currentPlanElement instanceof Leg)) {
 			return null;
@@ -256,7 +260,7 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 	}
 
     @Override
-    public final Double getExpectedTravelDistance() {
+    public Double getExpectedTravelDistance() {
         PlanElement currentPlanElement = this.getCurrentPlanElement();
         if (!(currentPlanElement instanceof Leg)) {
             return null;
@@ -314,7 +318,9 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 		return plan;
 	}
 	@Override
-	public final Id<Person> getId() {
+	
+	//Biyu -final
+	public Id<Person> getId() {
 		return this.plan.getPerson().getId() ;
 	}
 	@Override
@@ -329,40 +335,47 @@ public final class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identif
 	public final EventsManager getEvents() {
 		return events;
 	}
-	
-	final MobsimTimer getSimTimer() {
+	//Biyu + public
+	public final MobsimTimer getSimTimer() {
 		return simTimer;
 	}
 	
 	@Override
-	public final MobsimVehicle getVehicle() {
+	//Biyu -final
+	public MobsimVehicle getVehicle() {
 		return vehicle;
 	}
 	
+	//Biyu -final
 	@Override
-	public final void setVehicle(MobsimVehicle vehicle) {
+	public void setVehicle(MobsimVehicle vehicle) {
 		this.vehicle = vehicle;
 	}
 	
 	@Override
-	public final Id<Link> getCurrentLinkId() {
+	//Biyu -final
+	public Id<Link> getCurrentLinkId() {
 		return this.currentLinkId;
 	}
 	
-	/* package */ final void setCurrentLinkId( Id<Link> linkId ) {
+	//BIyu final-public
+	/* package */ public void setCurrentLinkId( Id<Link> linkId ) {
 		this.currentLinkId = linkId ;
 	}
 	
 	@Override
-	public final Id<Link> getDestinationLinkId() {
+	//Biyu -final
+	public Id<Link> getDestinationLinkId() {
 		return this.getCurrentLeg().getRoute().getEndLinkId() ;
 	}
 	@Override
-	public final double getActivityEndTime() {
+	//BIyu - final
+	public double getActivityEndTime() {
 		return this.activityEndTime;
 	}
 	@Override
-	public final MobsimAgent.State getState() {
+	//Biyu -final
+	public MobsimAgent.State getState() {
 		return state;
 	}
 

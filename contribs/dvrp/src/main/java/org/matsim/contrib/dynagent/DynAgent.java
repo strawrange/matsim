@@ -1,22 +1,3 @@
-/* *********************************************************************** *
- * project: org.matsim.*
- *                                                                         *
- * *********************************************************************** *
- *                                                                         *
- * copyright       : (C) 2012 by the members listed in the COPYING,        *
- *                   LICENSE and WARRANTY file.                            *
- * email           : info at matsim dot org                                *
- *                                                                         *
- * *********************************************************************** *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *   See also COPYING, LICENSE and WARRANTY file                           *
- *                                                                         *
- * *********************************************************************** */
-
 package org.matsim.contrib.dynagent;
 
 import java.util.List;
@@ -25,6 +6,7 @@ import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.events.*;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
@@ -35,7 +17,7 @@ import org.matsim.pt.transitSchedule.api.*;
 import org.matsim.vehicles.Vehicle;
 
 
-public final class DynAgent
+public class DynAgent
     implements MobsimDriverPassengerAgent
 {
     private DynAgentLogic agentLogic;
@@ -70,8 +52,30 @@ public final class DynAgent
 
         // initial activity
         dynActivity = this.agentLogic.computeInitialActivity(this);
-        state = dynActivity.getEndTime() != Time.UNDEFINED_TIME ? //
+        state = dynActivity.getEndTime() != Time.UNDEFINED_TIME ? 
                 MobsimAgent.State.ACTIVITY : MobsimAgent.State.ABORT;
+    }
+    
+    public void finishDynAction(DynAction oldDynAction, double now){
+        oldDynAction.finalizeAction(now);
+
+        state = null;// !!! this is important
+        dynActivity = null;
+        dynLeg = null;
+
+        DynAction nextDynAction = agentLogic.finishDynAction(oldDynAction, now);
+
+        if (nextDynAction instanceof DynActivity) {
+            dynActivity = (DynActivity)nextDynAction;
+            state = MobsimAgent.State.ACTIVITY;
+
+            events.processEvent(new ActivityStartEvent(now, id, currentLinkId, null,
+                    dynActivity.getActivityType()));
+        }
+        else {
+            dynLeg = (DynLeg)nextDynAction;
+            state = MobsimAgent.State.LEG;
+        }
     }
 
 
@@ -328,4 +332,11 @@ public final class DynAgent
         // TODO Auto-generated method stub
         throw new RuntimeException("not implemented");
     }
+
+
+	@Override
+	public PlanElement getNextPlanElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

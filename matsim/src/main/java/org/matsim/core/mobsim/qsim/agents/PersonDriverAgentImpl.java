@@ -207,5 +207,10 @@ public class PersonDriverAgentImpl implements MobsimDriverAgent, MobsimPassenger
 	public final PlanElement getPreviousPlanElement() {
 		return this.basicAgentDelegate.getPreviousPlanElement();
 	}
+	
+	public void setCurrentLinkId( Id<Link> linkId ) {
+		this.basicAgentDelegate.setCurrentLinkId(linkId); 
+	}
+	
 
 }

@@ -25,6 +25,7 @@ import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.gbl.Gbl;
 import org.matsim.core.mobsim.framework.DriverAgent;
 import org.matsim.core.mobsim.framework.MobsimAgent;
@@ -236,6 +237,12 @@ public final class PlanBasedDriverAgentImpl implements DriverAgent {
 	@Override
 	public String getMode() {
 		return this.basicPlanAgentDelegate.getMode() ;
+	}
+
+	@Override
+	public PlanElement getNextPlanElement() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

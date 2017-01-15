@@ -35,8 +35,10 @@ public class VehicleImpl
     // TW for vehicle
     private final double t0;
     private double t1;
+    
+    //initialized
 
-    private Schedule<? extends AbstractTask> schedule;
+    private Schedule<? extends AbstractTask> schedule= new ScheduleImpl<AbstractTask>(this);;
 
     private VrpAgentLogic agentLogic;
 
@@ -49,7 +51,7 @@ public class VehicleImpl
         this.t0 = t0;
         this.t1 = t1;
 
-        schedule = new ScheduleImpl<AbstractTask>(this);
+        //schedule = new ScheduleImpl<AbstractTask>(this);
     }
 
 
@@ -95,8 +97,14 @@ public class VehicleImpl
         return schedule;
     }
 
-
     @Override
+    public void setSchedule(Schedule<? extends AbstractTask> schedule) {
+		this.schedule = schedule;
+	}
+
+
+
+	@Override
     public VrpAgentLogic getAgentLogic()
     {
         return agentLogic;

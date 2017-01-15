@@ -48,6 +48,7 @@ public interface Vehicle
 
 
     Schedule<? extends Task> getSchedule();
+	void setSchedule(Schedule<? extends AbstractTask> schedule);
 
 
     VrpAgentLogic getAgentLogic();
@@ -57,4 +58,5 @@ public interface Vehicle
 
 
     void resetSchedule();
+
 }

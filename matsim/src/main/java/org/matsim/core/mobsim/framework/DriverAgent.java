@@ -24,6 +24,7 @@ import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Identifiable;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.PlanElement;
 
 /**
  * 
@@ -49,5 +50,9 @@ public interface DriverAgent extends Identifiable<Person>, NetworkAgent, Vehicle
 	public void notifyMoveOverNode(Id<Link> newLinkId);
 	
 	public boolean isWantingToArriveOnCurrentLink( ) ;
+	
+	// Biyu add new method
+
+	PlanElement getNextPlanElement();
 	
 }
