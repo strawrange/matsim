@@ -38,7 +38,7 @@ public class VehicleImpl
     
     //initialized
 
-    private Schedule<? extends AbstractTask> schedule= new ScheduleImpl<AbstractTask>(this);;
+    private Schedule<? extends AbstractTask> schedule= new ScheduleImpl<AbstractTask>(this);
 
     private VrpAgentLogic agentLogic;
 
@@ -97,9 +97,10 @@ public class VehicleImpl
         return schedule;
     }
 
-    @Override
-    public void setSchedule(Schedule<? extends AbstractTask> schedule) {
-		this.schedule = schedule;
+    @SuppressWarnings("unchecked")
+	@Override
+    public void setSchedule(Schedule<? extends Task> schedule) {
+		this.schedule = (Schedule<? extends AbstractTask>) schedule;
 	}
 
 

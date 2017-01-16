@@ -33,7 +33,11 @@ public class RideShareOptimizer  implements VrpOptimizer{
     private final TravelTime travelTime;
     private final LeastCostPathCalculator router;
 
-    private Vehicle vehicle;//we have only one vehicle
+    public LeastCostPathCalculator getRouter() {
+		return router;
+	}
+
+	private Vehicle vehicle;//we have only one vehicle
     
 
 	private Schedule<AbstractTask> schedule;// the vehicle's schedule
@@ -104,6 +108,16 @@ public class RideShareOptimizer  implements VrpOptimizer{
         schedule.addTask(new StayTaskImpl(t4, tEnd, toLink, "wait"));
     }
 
+    public void driveRequestSubmitted(Request request, double now)
+    {
+        RideShareRequest req = (RideShareRequest)request;
+        Link fromLink = req.getFromLink();
+        Link toLink = req.getToLink();
+
+        VrpPathWithTravelData p1 = VrpPaths.calcAndCreatePath(fromLink, toLink, request.getT0(),
+                router, travelTime);
+        schedule.addTask(new DriveTaskImpl(p1));
+    }
 
     @Override
     public void nextTask(Schedule<? extends Task> schedule)

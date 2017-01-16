@@ -54,7 +54,7 @@ public class RideShareQSimProvider implements Provider<Mobsim>{
 	        
 	        RideShareActionCreator actionCreator = new RideShareActionCreator(passengerEngine,
 	                qSim.getSimTimer());
-	        qSim.addAgentSource(new VrpAgentSource(actionCreator, vrpData, optimizer, qSim));
+	        qSim.addAgentSource(new VrpAgentSource(actionCreator, vrpData, optimizer, qSim, passengerEngine));
 
 	        return qSim;
 	    }

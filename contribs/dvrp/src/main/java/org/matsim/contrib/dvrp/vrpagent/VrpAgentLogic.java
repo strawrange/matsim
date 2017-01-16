@@ -19,6 +19,7 @@
 
 package org.matsim.contrib.dvrp.vrpagent;
 
+import org.matsim.contrib.dvrp.data.Request;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.optimizer.VrpOptimizer;
 import org.matsim.contrib.dvrp.schedule.*;
@@ -37,13 +38,21 @@ public class VrpAgentLogic
     {
         DynAction createAction(Task task, double now);
     }
+    
+    public void driveRequestSubmitted(Request request, double now){
+    	this.optimizer.driveRequestSubmitted(request, now);  	
+    }
 
 
     private final VrpOptimizer optimizer;
-    private final DynActionCreator dynActionCreator;
+    public VrpOptimizer getOptimizer() {
+		return optimizer;
+	}
+
+
+	private final DynActionCreator dynActionCreator;
     private final Vehicle vehicle;
     private DynAgent agent;
-
 
     public VrpAgentLogic(VrpOptimizer optimizer, DynActionCreator dynActionCreator, Vehicle vehicle)
     {
@@ -98,6 +107,30 @@ public class VrpAgentLogic
 
         return action;
     }
+    
+    public DynAction computeNextAction(DynAction oldAction, double now, Schedule<?> schedule)
+    {
+        //Schedule<?> schedule = vehicle.getSchedule();
+
+        if (schedule.getStatus() == ScheduleStatus.UNPLANNED) {
+            return createAfterScheduleActivity();// FINAL ACTIVITY (deactivate the agent in QSim)
+        }
+        // else: PLANNED or STARTED
+
+        optimizer.nextTask(schedule);
+        // remember to REFRESH status (after nextTask -> now it can be COMPLETED)!!!
+
+        if (schedule.getStatus() == ScheduleStatus.COMPLETED) {// no more tasks
+            return createAfterScheduleActivity();// FINAL ACTIVITY (deactivate the agent in QSim)
+        }
+
+        Task task = schedule.getCurrentTask();
+        DynAction action = dynActionCreator.createAction(task, now);
+
+        return action;
+    }
+    
+    
 
 
     private DynActivity createBeforeScheduleActivity()

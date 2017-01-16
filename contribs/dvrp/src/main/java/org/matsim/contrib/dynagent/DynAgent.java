@@ -28,7 +28,12 @@ public class DynAgent
 
     private EventsManager events;
 
-    private MobsimAgent.State state;
+    public EventsManager getEvents() {
+		return events;
+	}
+
+
+	private MobsimAgent.State state;
 
     // =====
 
@@ -110,6 +115,14 @@ public class DynAgent
                 new ActivityEndEvent(now, id, currentLinkId, null, dynActivity.getActivityType()));
         computeNextAction(dynActivity, now);
     }
+    
+    public void endActivity(double now)
+    {
+        events.processEvent(
+                new ActivityEndEvent(now, id, currentLinkId, null, dynActivity.getActivityType()));
+    }
+    
+
 
 
     @Override

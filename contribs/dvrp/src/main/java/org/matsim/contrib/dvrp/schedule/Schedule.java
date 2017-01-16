@@ -45,7 +45,7 @@ public interface Schedule<T extends Task>
 
 
     ScheduleStatus getStatus();
-
+   
 
     double getBeginTime();
 
@@ -65,6 +65,8 @@ public interface Schedule<T extends Task>
 
 
     void removeTask(T task);
+    
+    void clearTasks();
 
 
     T nextTask();//this one seems synchronous (will be executed when switching between DynActions)

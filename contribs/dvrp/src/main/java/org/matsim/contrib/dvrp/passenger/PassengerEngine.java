@@ -126,6 +126,15 @@ public class PassengerEngine
         if (!agent.getMode().equals(mode)) {
             return false;
         }
+        boolean isDyn = false;
+        for(Vehicle veh: vrpData.getVehicles().values()){
+        	if(veh.getT1() > now){
+        		isDyn = true;
+        	}
+        }
+        if(isDyn == false){
+        	return false;
+        }
 
         MobsimPassengerAgent passenger = (MobsimPassengerAgent)agent;
         
@@ -171,6 +180,20 @@ public class PassengerEngine
         PassengerRequest request = requestCreator.createRequest(id, passenger, fromLink, toLink,
                 departureTime, departureTime, now);
         vrpData.addRequest(request);
+        return request;
+    }
+    
+    public PassengerRequest createRequest(Id<Link> fromLinkId,
+            Id<Link> toLinkId, double departureTime, double now)
+    {
+        Map<Id<Link>, ? extends Link> links = network.getLinks();
+        Link fromLink = links.get(fromLinkId);
+        Link toLink = links.get(toLinkId);
+        Id<Request> id = Id.create(mode + "_" + nextId++, Request.class);
+
+        PassengerRequest request = requestCreator.createRequest(id,null , fromLink, toLink,
+                departureTime, departureTime, now);
+
         return request;
     }
 

@@ -43,6 +43,12 @@ public class ScheduleImpl<T extends AbstractTask>
     {
         this.vehicle = vehicle;
     }
+    
+    public void clearTasks(){
+    	tasks.removeAll(tasks.subList(currentTask.taskIdx +1, tasks.size()));
+ //   	status = ScheduleStatus.UNPLANNED;
+    }
+    
 
 
     @Override

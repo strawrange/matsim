@@ -37,8 +37,7 @@ public class Run {
         ConfigGroup rideShareCfg = new ConfigGroup(RIDE_SHARE_GROUP_NAME) {};
         OTFVisConfigGroup otfvisConfig = new OTFVisConfigGroup();
         Config config = ConfigUtils.loadConfig(configFile,otfvisConfig,rideShareCfg);
-        //config.qsim().setMainModes(Arrays.asList(T
-        //ransportMode.car,MODE_DRIVER));
+        config.qsim().setMainModes(Arrays.asList(TransportMode.car,MODE_DRIVER));
         config.addConfigConsistencyChecker(new DynQSimConfigConsistencyChecker());
         config.checkConsistency();
         Scenario scenario = ScenarioUtils.loadScenario(config);

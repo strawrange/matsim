@@ -20,6 +20,7 @@
 package org.matsim.contrib.dvrp.vrpagent;
 
 import org.matsim.api.core.v01.Id;
+import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
@@ -28,6 +29,7 @@ import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.data.VrpData;
 import org.matsim.contrib.dvrp.optimizer.VrpOptimizer;
+import org.matsim.contrib.dvrp.passenger.PassengerEngine;
 import org.matsim.contrib.dvrp.vrpagent.VrpAgentLogic.DynActionCreator;
 import org.matsim.contrib.dynagent.DynAgent;
 import org.matsim.core.mobsim.framework.AgentSource;
@@ -50,24 +52,27 @@ public class VrpAgentSource
     private final VrpOptimizer optimizer;
     private final QSim qSim;
     private final VehicleType vehicleType;
+    private final PassengerEngine passengerEngine;
+
 
 
 
     public VrpAgentSource(DynActionCreator nextActionCreator, VrpData vrpData,
-            VrpOptimizer optimizer, QSim qSim)
+            VrpOptimizer optimizer, QSim qSim, PassengerEngine passengerEngine)
     {
-        this(nextActionCreator, vrpData, optimizer, qSim, VehicleUtils.getDefaultVehicleType());
+        this(nextActionCreator, vrpData, optimizer, qSim, VehicleUtils.getDefaultVehicleType(), passengerEngine);
     }
 
 
     public VrpAgentSource(DynActionCreator nextActionCreator, VrpData vrpData,
-            VrpOptimizer optimizer, QSim qSim, VehicleType vehicleType)
+            VrpOptimizer optimizer, QSim qSim, VehicleType vehicleType,  PassengerEngine passengerEngine)
     {
         this.nextActionCreator = nextActionCreator;
         this.vrpData = vrpData;
         this.optimizer = optimizer;
         this.qSim = qSim;
         this.vehicleType = vehicleType;
+        this.passengerEngine = passengerEngine;
     }
     
 
@@ -89,6 +94,7 @@ public class VrpAgentSource
                 org.matsim.vehicles.Vehicle vehicle = vehicleFactory.createVehicle(Id.createVehicleId(p.getId()), vehicleType);
                 Vehicle v = this.vrpData.changeNormalVehicle(vehicle,leg,plan,qSim);
                 this.vrpData.addVehicle(v);
+                //leg.setMode(TransportMode.car);
     		}
     	}
         for(Vehicle vrpVeh: vrpData.getVehicles().values()){
@@ -100,11 +106,11 @@ public class VrpAgentSource
             DynAgent vrpAgent = new DynAgent(Id.createPersonId(id), startLinkId,qSim.getEventsManager(), vrpAgentLogic);
        
             QVehicle mobsimVehicle = new QVehicle(vehicleFactory.createVehicle(Id.create(id, org.matsim.vehicles.Vehicle.class), vehicleType));
-            RideShareAgent rideShareAgent = new RideShareAgent(agent,vrpAgent);
+            RideShareAgent rideShareAgent = new RideShareAgent(agent,vrpAgent,vrpData,passengerEngine);
             rideShareAgent.setVehicle(mobsimVehicle);
             mobsimVehicle.setDriver(rideShareAgent);
 
-            qSim.addParkedVehicle(mobsimVehicle, startLinkId);
+            //qSim.addParkedVehicle(mobsimVehicle, startLinkId);
             //if(qSim.getAgentMap().containsKey(vrpAgent.getId())){
             //	qSim.getAgentMap().remove(vrpAgent.getId());
             //}
