@@ -41,7 +41,7 @@
 			<leg mode="ride_share_driver" dep_time="00:05:00" trav_time="00:20:00" arr_time="00:25:00">
 				<route/>
 			</leg> 
-			<act type="dummy" link="119"/>
+			<act type="dummy" link="119" end_time="00:30:00" />
 		</plan>
 	</person>
 

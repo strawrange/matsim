@@ -92,7 +92,7 @@ public class VrpAgentSource
     		}
     		if(!leg.equals(null) && leg.getMode().equals(Run.MODE_DRIVER)){
                 org.matsim.vehicles.Vehicle vehicle = vehicleFactory.createVehicle(Id.createVehicleId(p.getId()), vehicleType);
-                Vehicle v = this.vrpData.changeNormalVehicle(vehicle,leg,plan,qSim);
+                Vehicle v = this.vrpData.changeNormalVehicle(vehicle,leg,qSim);
                 this.vrpData.addVehicle(v);
                 //leg.setMode(TransportMode.car);
     		}

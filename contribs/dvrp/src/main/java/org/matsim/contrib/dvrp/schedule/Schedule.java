@@ -21,6 +21,7 @@ package org.matsim.contrib.dvrp.schedule;
 
 import java.util.List;
 
+import org.matsim.api.core.v01.population.Activity;
 import org.matsim.contrib.dvrp.data.Vehicle;
 
 
@@ -70,4 +71,10 @@ public interface Schedule<T extends Task>
 
 
     T nextTask();//this one seems synchronous (will be executed when switching between DynActions)
+
+
+	T getNextTask();
+
+
+	T getDropoffTask();
 }

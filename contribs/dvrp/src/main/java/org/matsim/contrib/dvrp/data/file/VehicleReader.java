@@ -85,9 +85,9 @@ public class VehicleReader
         return new VehicleImpl(id, startLink, capacity, t0, t1);
     }
     
-    public Vehicle createVehicle(Id<Vehicle> id, Link startLink,double t0, double t1)
+    public Vehicle createVehicle(Id<Vehicle> id, Id<Link> startLink,double t0, double t1)
     {
-        return new VehicleImpl(id, startLink, DEFAULT_CAPACITY, t0, t1);
+        return new VehicleImpl(id, links.get(startLink), DEFAULT_CAPACITY, t0, t1);
     }
 
 }

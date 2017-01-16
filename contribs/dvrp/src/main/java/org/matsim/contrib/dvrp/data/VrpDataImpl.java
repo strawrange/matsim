@@ -29,6 +29,7 @@ import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.contrib.dvrp.data.file.VehicleReader;
+import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.qsim.QSim;
 
@@ -88,16 +89,10 @@ public class VrpDataImpl
 
 
 	@Override
-	public Vehicle changeNormalVehicle(org.matsim.vehicles.Vehicle vehicle, Leg leg, Plan plan, QSim qSim) {
+	public Vehicle changeNormalVehicle(org.matsim.vehicles.Vehicle vehicle, Leg leg, QSim qsim) {
 		// TODO Auto-generated method stub
-		for(PlanElement planElement: plan.getPlanElements()){
-			if(planElement instanceof Activity){
-			Link startLink = qSim.getScenario().getNetwork().getLinks().get(((Activity)planElement).getLinkId());
-			Vehicle v = new VehicleReader().createVehicle(Id.create(vehicle.getId(),Vehicle.class), startLink,leg.getDepartureTime(),(leg.getDepartureTime() + leg.getTravelTime()));
+			Vehicle v = new VehicleReader(qsim.getScenario().getNetwork(),this).createVehicle(Id.create(vehicle.getId(),Vehicle.class), leg.getRoute().getStartLinkId(),leg.getDepartureTime(),leg.getDepartureTime() + leg.getTravelTime());
 			return v;
-			}
-		}
-		return null;
 
 	}
 }

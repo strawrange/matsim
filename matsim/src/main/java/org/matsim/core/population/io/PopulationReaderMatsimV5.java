@@ -328,7 +328,8 @@ import org.xml.sax.Attributes;
 			String legMode = this.currleg.getMode();
 			if ("pt".equals(legMode)) {
 				routeType = "experimentalPt1";
-			} else if ("car".equals(legMode)) {
+				//change "car".equals(legMode)
+			} else if (this.scenario.getConfig().qsim().getMainModes().contains(legMode)) {
 				routeType = "links";
 			} else {
 				routeType = "generic";

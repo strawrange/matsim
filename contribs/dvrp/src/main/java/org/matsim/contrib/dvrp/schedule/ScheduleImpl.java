@@ -23,8 +23,11 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Activity;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.schedule.Task.TaskStatus;
+
+import rideSharing.RideShareServeTask;
 
 
 public class ScheduleImpl<T extends AbstractTask>
@@ -194,6 +197,16 @@ public class ScheduleImpl<T extends AbstractTask>
         failIfNotStarted();//status != ScheduleStatus.STARTED
         return currentTask;
     }
+    
+    @Override
+    public T getNextTask()
+    {
+        failIfNotStarted();//status != ScheduleStatus.STARTED
+        if (tasks.size() == currentTask.taskIdx){
+        	return null;
+        }
+        return tasks.get(currentTask.taskIdx + 1);
+    }
 
 
     @Override
@@ -285,4 +298,19 @@ public class ScheduleImpl<T extends AbstractTask>
             throw new IllegalStateException();
         }
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T getDropoffTask() {
+		// TODO Auto-generated method stub
+		for(int i = currentTask.taskIdx + 1; i < tasks.size(); i++){
+			if(tasks.get(i).getType().equals(Task.TaskType.STAY) ){
+				final RideShareServeTask serveTask = (RideShareServeTask)tasks.get(i);
+				if(!serveTask.isPickup()){
+					return (T) serveTask;
+				}
+			}
+		}
+		return null;
+	}
 }

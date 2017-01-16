@@ -23,21 +23,16 @@ import java.util.Map;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.population.Leg;
-import org.matsim.api.core.v01.population.Person;
-import org.matsim.api.core.v01.population.Plan;
-import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.qsim.QSim;
+import org.matsim.vehicles.Vehicle;
 
 
 public interface VrpData
 {
-    Map<Id<Vehicle>, Vehicle> getVehicles();
+    Map<Id<org.matsim.contrib.dvrp.data.Vehicle>, org.matsim.contrib.dvrp.data.Vehicle> getVehicles();
 
 
     Map<Id<Request>, Request> getRequests();
-
-
-    void addVehicle(Vehicle vehicle);
 
 
     void addRequest(Request request);
@@ -45,5 +40,10 @@ public interface VrpData
 
     void clearRequestsAndResetSchedules();
     
-    Vehicle changeNormalVehicle(org.matsim.vehicles.Vehicle vehicle, Leg leg, Plan plan, QSim qSim);
+
+	void addVehicle(org.matsim.contrib.dvrp.data.Vehicle vehicle);
+
+
+	org.matsim.contrib.dvrp.data.Vehicle changeNormalVehicle(Vehicle vehicle, Leg leg, QSim qsim);
+
 }

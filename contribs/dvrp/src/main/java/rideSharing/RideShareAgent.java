@@ -105,23 +105,22 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
 		double DynEndTime = logic.getVehicle().getT1();
 		double DynStartTime = logic.getVehicle().getT0();
-		if(now < DynEndTime && now >= DynStartTime && !isDyn){
+		if(now >= DynStartTime && now < DynEndTime && !isDyn){
 	    	pAgent.endActivityAndComputeNextState(now);
 	    	setIsDyn(true);
-		}
-		if(now >= DynEndTime && isDyn){
-			//dAgent.endActivity(now);
-			//pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());
-			Schedule<? extends Task> schedule = logic.getVehicle().getSchedule();
-			schedule.clearTasks();
-			//logic.getVehicle().resetSchedule();
-			//logic.getVehicle().setSchedule(schedule);
-			Request request = passengerEngine.createRequest(dAgent.getVehicle().getCurrentLink().getId(), pAgent.getDestinationLinkId(), now, now);
-			logic.driveRequestSubmitted(request, now);
-			dAgent.endActivityAndComputeNextState(now);
+		}else{
+		Schedule<? extends Task> schedule = logic.getVehicle().getSchedule();
+			if(isDyn && !schedule.getCurrentTask().equals(null) ){
+				if(schedule.getNextTask().equals(null)||schedule.getDropoffTask().equals(null)||schedule.getDropoffTask().getEndTime() >= DynEndTime){
+					schedule.clearTasks();
+					Request request = passengerEngine.createRequest(dAgent.getVehicle().getCurrentLink().getId(), pAgent.getDestinationLinkId(), now, now);
+					logic.driveRequestSubmitted(request, now);
+					dAgent.endActivityAndComputeNextState(now);
 			//endLegAndComputeNextState(now);
-			setIsDyn(false);
-			return;
+					setIsDyn(false);
+					return;
+				}
+			}
 		}
 
 

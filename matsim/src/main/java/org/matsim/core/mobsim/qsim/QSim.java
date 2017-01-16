@@ -256,6 +256,7 @@ public final class QSim extends Thread implements VisMobsim, Netsim, ActivityEnd
 			throw new RuntimeException(
 					"No valid Events Object (events == null)");
 		}
+		
 
 		createAgents();
 		this.initSimTimer();
