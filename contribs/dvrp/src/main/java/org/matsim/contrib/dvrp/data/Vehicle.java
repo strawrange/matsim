@@ -57,7 +57,9 @@ public interface Vehicle
 
     void setAgentLogic(VrpAgentLogic agentLogic);
 
-
     void resetSchedule();
 
+    public void removeT();
+    
+    public void addT(Double t0, Double t1);
 }

@@ -93,6 +93,5 @@ public class VrpDataImpl
 		// TODO Auto-generated method stub
 			Vehicle v = new VehicleReader(qsim.getScenario().getNetwork(),this).createVehicle(Id.create(vehicle.getId(),Vehicle.class), leg.getRoute().getStartLinkId(),leg.getDepartureTime(),leg.getDepartureTime() + leg.getTravelTime());
 			return v;
-
 	}
 }

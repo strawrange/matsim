@@ -87,15 +87,19 @@ public class VrpAgentSource
     		for(PlanElement planElement: plan.getPlanElements()){
     			if (planElement instanceof Leg) {
     				leg = ((Leg) planElement);
-    				break;
+    	    		if(!leg.equals(null) && leg.getMode().equals(Run.MODE_DRIVER)){
+    	                org.matsim.vehicles.Vehicle vehicle = vehicleFactory.createVehicle(Id.createVehicleId(p.getId()), vehicleType);
+    	                if (vrpData.getVehicles().containsKey(vehicle.getId())){
+    	                	vrpData.getVehicles().get(vehicle.getId()).addT(leg.getDepartureTime(), leg.getDepartureTime()+leg.getTravelTime());;
+    	                }else{
+    	                Vehicle v = this.vrpData.changeNormalVehicle(vehicle,leg,qSim);
+    	                vrpData.addVehicle(v);
+    	                }
+    	                //leg.setMode(TransportMode.car);
+    	    		}
     			}
     		}
-    		if(!leg.equals(null) && leg.getMode().equals(Run.MODE_DRIVER)){
-                org.matsim.vehicles.Vehicle vehicle = vehicleFactory.createVehicle(Id.createVehicleId(p.getId()), vehicleType);
-                Vehicle v = this.vrpData.changeNormalVehicle(vehicle,leg,qSim);
-                this.vrpData.addVehicle(v);
-                //leg.setMode(TransportMode.car);
-    		}
+
     	}
         for(Vehicle vrpVeh: vrpData.getVehicles().values()){
             Id<Vehicle> id = vrpVeh.getId();

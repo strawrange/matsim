@@ -19,6 +19,9 @@
 
 package org.matsim.contrib.dvrp.data;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.contrib.dvrp.schedule.*;
@@ -31,10 +34,11 @@ public class VehicleImpl
     private final Id<Vehicle> id;
     private final Link startLink;
     private final double capacity;
+    private final int index = 0;
 
     // TW for vehicle
-    private final double t0;
-    private double t1;
+    private ArrayList<Double> t0 = new ArrayList<Double>();
+    private ArrayList<Double> t1 = new ArrayList<Double>();
     
     //initialized
 
@@ -48,10 +52,20 @@ public class VehicleImpl
         this.id = id;
         this.startLink = startLink;
         this.capacity = capacity;
-        this.t0 = t0;
-        this.t1 = t1;
+        this.t0.add((Double)t0);
+        this.t1.add((Double)t1);
 
         //schedule = new ScheduleImpl<AbstractTask>(this);
+    }
+    
+    public void addT(Double t0, Double t1){
+    	this.t0.add(t0);
+    	this.t1.add(t1);
+    }
+    
+    public void removeT(){
+    	this.t0.remove(index);
+    	this.t1.remove(index);
     }
 
 
@@ -80,14 +94,14 @@ public class VehicleImpl
     @Override
     public double getT0()
     {
-        return t0;
+        return t0.get(index);
     }
 
 
     @Override
     public double getT1()
     {
-        return t1;
+        return t1.get(index);
     }
 
 
@@ -129,7 +143,7 @@ public class VehicleImpl
     @Override
     public void setT1(double t1)
     {
-        this.t1 = t1;
+        this.t1.add(t1);
     }
 
 

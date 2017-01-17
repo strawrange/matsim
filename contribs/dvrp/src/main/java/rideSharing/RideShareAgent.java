@@ -117,6 +117,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 					logic.driveRequestSubmitted(request, now);
 					dAgent.endActivityAndComputeNextState(now);
 			//endLegAndComputeNextState(now);
+					schedule.getVehicle().removeT();
 					setIsDyn(false);
 					return;
 				}
