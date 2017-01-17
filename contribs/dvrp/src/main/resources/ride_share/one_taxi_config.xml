@@ -39,7 +39,9 @@
 		<param name="activityType_2" value="RideShareDropoff" /><param
 			name="activityTypicalDuration_2" value="00:01:00" /><param
 			name="activityType_3" value="BeforeVrpSchedule" /><param
-			name="activityTypicalDuration_3" value="00:01:00" />
+			name="activityTypicalDuration_3" value="00:01:00" /><param
+			name="activityType_4" value="RideShareStay" /><param name="activityTypicalDuration_4"
+			value="00:01:00" />
 	</module>
 
 	<module name="strategy">

@@ -206,7 +206,7 @@ public class ScheduleImpl<T extends AbstractTask>
     public T getNextTask()
     {
         failIfNotStarted();//status != ScheduleStatus.STARTED
-        if (tasks.size() == currentTask.taskIdx){
+        if (tasks.size() == currentTask.taskIdx + 1){
         	return null;
         }
         return tasks.get(currentTask.taskIdx + 1);
@@ -307,14 +307,23 @@ public class ScheduleImpl<T extends AbstractTask>
 	@Override
 	public T getDropoffTask() {
 		// TODO Auto-generated method stub
+		if(currentTask == null ){
+			return null;
+		}
 		for(int i = currentTask.taskIdx + 1; i < tasks.size(); i++){
 			if(tasks.get(i).getType().equals(Task.TaskType.STAY) ){
-				final RideShareServeTask serveTask = (RideShareServeTask)tasks.get(i);
-				if(!serveTask.isPickup()){
-					return (T) serveTask;
+				if(tasks.get(i) instanceof RideShareServeTask){
+					final RideShareServeTask serveTask = (RideShareServeTask)tasks.get(i);
+					if(!serveTask.isPickup()){
+						return (T) serveTask;
+					}
 				}
 			}
 		}
 		return null;
+	}
+	@Override
+	public T getLastTask(){
+		return tasks.get(getTaskCount() - 1);
 	}
 }

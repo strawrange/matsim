@@ -19,6 +19,7 @@
 
 package org.matsim.contrib.dvrp.optimizer;
 
+import org.matsim.api.core.v01.Id;
 import org.matsim.contrib.dvrp.data.Request;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.data.VrpData;
@@ -38,7 +39,7 @@ public interface VrpOptimizer
     
     void requestSubmitted(Request request);
     
-    public void driveRequestSubmitted(Request request, double now);
+    public void driveRequestSubmitted(Request request, double now, Id<org.matsim.contrib.dvrp.data.Vehicle> id);
 
     void nextTask(Schedule<? extends Task> schedule);
 }
