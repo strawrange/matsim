@@ -77,4 +77,6 @@ public interface Schedule<T extends Task>
 
 
 	T getDropoffTask();
+	
+	public void resetSchedule();
 }

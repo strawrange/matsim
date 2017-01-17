@@ -33,7 +33,7 @@ public class DynAgent
 	}
 
 
-	private MobsimAgent.State state;
+	private MobsimAgent.State state = null;
 
     // =====
 
@@ -54,11 +54,14 @@ public class DynAgent
         this.currentLinkId = startLinkId;
         this.agentLogic = agentLogic;
         this.events = events;
-
-        // initial activity
         dynActivity = this.agentLogic.computeInitialActivity(this);
         state = dynActivity.getEndTime() != Time.UNDEFINED_TIME ? 
                 MobsimAgent.State.ACTIVITY : MobsimAgent.State.ABORT;
+
+    }
+    
+    public void initialActivity(){
+        // initial activity
     }
     
     public void finishDynAction(DynAction oldDynAction, double now){
@@ -156,7 +159,7 @@ public class DynAgent
                 return dynLeg;
 
             default:
-                throw new IllegalStateException();
+                return null;
         }
     }
 

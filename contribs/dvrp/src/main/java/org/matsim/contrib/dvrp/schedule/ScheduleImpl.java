@@ -40,6 +40,10 @@ public class ScheduleImpl<T extends AbstractTask>
 
     private ScheduleStatus status = ScheduleStatus.UNPLANNED;
     private T currentTask = null;
+    
+    public void resetSchedule(){
+    	this.status = ScheduleStatus.PLANNED;
+    }
 
 
     public ScheduleImpl(Vehicle vehicle)
@@ -48,7 +52,7 @@ public class ScheduleImpl<T extends AbstractTask>
     }
     
     public void clearTasks(){
-    	tasks.removeAll(tasks.subList(currentTask.taskIdx +1, tasks.size()));
+    	tasks.removeAll(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
  //   	status = ScheduleStatus.UNPLANNED;
     }
     

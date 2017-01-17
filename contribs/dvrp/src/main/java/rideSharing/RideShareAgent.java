@@ -106,20 +106,32 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		double DynEndTime = logic.getVehicle().getT1();
 		double DynStartTime = logic.getVehicle().getT0();
 		if(now >= DynStartTime && now < DynEndTime && !isDyn){
+			//dAgent.initialActivity();
 	    	pAgent.endActivityAndComputeNextState(now);
 	    	setIsDyn(true);
+			if(dAgent.getCurrentAction() instanceof DynLeg){
+				dAgent.endLegAndComputeNextState(now);
+				return;
+			}
+
+	    	//logic.getVehicle().getSchedule().resetSchedule();
+	    	//logic.getVehicle().getSchedule().nextTask();
+
 		}else{
 		Schedule<? extends Task> schedule = logic.getVehicle().getSchedule();
-			if(isDyn && !schedule.getCurrentTask().equals(null) ){
-				if(schedule.getNextTask().equals(null)||schedule.getDropoffTask().equals(null)||schedule.getDropoffTask().getEndTime() >= DynEndTime){
-					schedule.clearTasks();
-					Request request = passengerEngine.createRequest(dAgent.getVehicle().getCurrentLink().getId(), pAgent.getDestinationLinkId(), now, now);
-					logic.driveRequestSubmitted(request, now);
-					dAgent.endActivityAndComputeNextState(now);
+			if(isDyn && !schedule.getCurrentTask().equals(null)){
+				Task task = schedule.getCurrentTask();
+				if(!(task instanceof RideShareServeTask) || !((RideShareServeTask)task).isPickup()){
+					if(schedule.getNextTask().equals(null)||schedule.getDropoffTask().equals(null)||schedule.getDropoffTask().getEndTime() >= DynEndTime){
+						schedule.clearTasks();
+						Request request = passengerEngine.createRequest(dAgent.getVehicle().getCurrentLink().getId(), pAgent.getDestinationLinkId(), now, now);
+						logic.driveRequestSubmitted(request, now);
+						dAgent.endActivityAndComputeNextState(now);
+						schedule.getVehicle().removeT();
 			//endLegAndComputeNextState(now);
-					schedule.getVehicle().removeT();
-					setIsDyn(false);
-					return;
+						setIsDyn(false);
+						return;
+					}
 				}
 			}
 		}

@@ -126,15 +126,20 @@ public class PassengerEngine
         if (!agent.getMode().equals(mode)) {
             return false;
         }
-        boolean isDyn = false;
+        /*boolean isDyn = false;
         for(Vehicle veh: vrpData.getVehicles().values()){
         	if(veh.getT1() > now){
         		isDyn = true;
+        	}else{
+        		veh.resetSchedule();
         	}
         }
         if(isDyn == false){
         	return false;
         }
+        */
+        
+        
 
         MobsimPassengerAgent passenger = (MobsimPassengerAgent)agent;
         

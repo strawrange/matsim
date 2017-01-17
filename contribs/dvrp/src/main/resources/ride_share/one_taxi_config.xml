@@ -14,7 +14,7 @@
 		<param name="simStarttimeInterpretation" value="onlyUseStarttime" />
 		<param name="insertingWaitingVehiclesBeforeDrivingVehicles" value="true" />
 		<param name="snapshotStyle" value="queue" /><param name="endTime"
-			value="00:40:00" />
+			value="00:50:00" />
 		<param name="startTime"
 			value="00:00:00" />
 	</module>

@@ -94,14 +94,14 @@ public class VehicleImpl
     @Override
     public double getT0()
     {
-        return t0.get(index);
+        return t0.size()==0?0:t0.get(index);
     }
 
 
     @Override
     public double getT1()
     {
-        return t1.get(index);
+        return t1.size()==0?0:t1.get(index);
     }
 
 
