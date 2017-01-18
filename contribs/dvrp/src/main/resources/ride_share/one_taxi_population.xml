@@ -38,14 +38,10 @@
 	<person id="passenger_3" employed="no">
 		<plan selected="yes">
 			<act type="dummy" link="234" end_time="00:05:00" />
-			<leg mode="ride_share_driver" dep_time="00:05:00" trav_time="00:20:00" arr_time="00:25:00">
+			<leg mode="ride_share_passenger" dep_time="00:05:00" trav_time="00:20:00" arr_time="00:25:00">
 				<route/>
 			</leg> 
-			<act type="dummy" link="119" end_time="00:30:00" /><leg
-				mode="ride_share_driver" arr_time="00:38:00" dep_time="00:30:00" trav_time="00:08:00">
-	<route>route</route>
-</leg>
-			<act type="dummy" link="234" />
+			<act type="dummy" link="119" end_time="00:30:00" />
 		</plan>
 	</person>
 
@@ -81,16 +77,11 @@
 
 	<person id="passenger_7" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="412" end_time="00:08:00" />
-			<leg mode="ride_share_driver" dep_time="00:08:00" trav_time="00:12:00" arr_time="00:20:00">
+			<act type="dummy" link="412" end_time="00:09:00" />
+			<leg mode="ride_share_driver" dep_time="00:09:00" trav_time="00:12:00" arr_time="00:21:00">
 				<route/>
 			</leg> 
 			<act type="dummy" link="318" end_time="00:28:00"></act>
-			<leg mode="ride_share_driver" arr_time="00:38:00" dep_time="00:28:00"
-				trav_time="00:10:00">
-				<route>route</route>
-			</leg>
-			<act type="dummy" link="455" />
 		</plan>
 	</person>
 

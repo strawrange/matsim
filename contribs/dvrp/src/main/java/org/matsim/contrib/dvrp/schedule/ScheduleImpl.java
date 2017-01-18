@@ -275,10 +275,18 @@ public class ScheduleImpl<T extends AbstractTask>
     		prepareTasks.clear();
     	}
     	
-    	else{
-    		int currentTaskIdx = this.getCurrentTask().getTaskIdx();
-    		int cycleIdx = (currentTaskIdx - this.getEndRideShareNumber()) / 4 + 1;
-    		if (cycleIdx * 4 == tasks.size()){
+    	else {
+    		int currentTaskIdx = 0;
+    		int cycleIdx = 0;
+    		
+    		AbstractTask test= this.currentTask;
+    		
+    		if(test != null){
+    			currentTaskIdx = this.getCurrentTask().getTaskIdx();
+    			cycleIdx = (currentTaskIdx - this.getEndRideShareNumber()) / 4 + 1;
+    		}
+    		
+    		if ((cycleIdx * 4 + this.getEndRideShareNumber()) == tasks.size()){
     			for(int j = 0; j < 4; j++){
     				addTask(prepareTasks.get(j));
     			}
@@ -404,14 +412,23 @@ public class ScheduleImpl<T extends AbstractTask>
 		final LeastCostPathCalculator router = this.vehicle.getAgentLogic().getOptimizer().getRouter();
 		final TravelTime travelTime = new FreeSpeedTravelTime();;
 		
-    	for(int i = cycleIdx * 4; i < tasks.size(); i++){
+    	for(int i = cycleIdx * 4 + this.getEndRideShareNumber(); i < tasks.size(); i++){
     		if(tasks.get(i) instanceof DriveTask){		    
-    		    
+
     			DriveTaskImpl tempTask = (DriveTaskImpl)tasks.get(i);
     			Link fromLink = tempTask.getFromLink();
     			double startTime = tempTask.getBeginTime();
+    		    
+    			if (cycleIdx == 0 && i == 0){
+    				DriveTask lastDriveTask = (DriveTask)tasks.get(4);
+        			fromLink = lastDriveTask.getPath().getFromLink();
+        			VrpPathWithTravelData path = (VrpPathWithTravelData) lastDriveTask.getPath();
+        			startTime = path.getDepartureTime();
+    		    }
     			
-    			if(tasks.get(i - 1) instanceof RideShareServeTask){
+    			else {
+    				if(tasks.get(i - 1) instanceof RideShareServeTask){
+    			
     				RideShareServeTask lastStayTask = (RideShareServeTask)tasks.get(i - 1);
     				fromLink = lastStayTask.getLink();
     				startTime = lastStayTask.getEndTime();
@@ -423,6 +440,8 @@ public class ScheduleImpl<T extends AbstractTask>
         			VrpPathWithTravelData path = (VrpPathWithTravelData) lastDriveTask.getPath();
         			startTime = path.getArrivalTime();
         		}
+    			
+    			}
     			
     			Link toLink = tempTask.getPath().getToLink();
     			

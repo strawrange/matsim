@@ -139,14 +139,6 @@ public class RideShareOptimizer  implements VrpOptimizer{
                 throw new IllegalStateException();
         }
         
-        boolean test = false;
-        boolean test2 = false;
-        
-        int size = s.getTasks().size();
-        if(size > 0){
-        	test = s.getLastTask().getOnWayToActivity();
-        	test2 = s.getTasks().get(s.getTasks().size() - 1).getOnWayToActivity();
-        }
         
         if(s.getTasks().size() > 0 && s.getTasks().get(s.getTasks().size() - 1).getOnWayToActivity()){
     		return;
@@ -299,6 +291,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 		Link destination = qsim.getScenario().getNetwork().getLinks().get(destinationId);
 		
 		Link departure = vehicle.getStartLink();
+	
 		
 		double departureDis = Math.pow((req.getFromLink().getCoord().getX() - departure.getCoord().getX()), 2) + 
 				Math.pow((req.getFromLink().getCoord().getY() - departure.getCoord().getY()), 2);
