@@ -449,7 +449,12 @@ public class ScheduleImpl<T extends AbstractTask>
     			VrpPathWithTravelData newPath = VrpPaths.calcAndCreatePath(fromLink, toLink, startTime, router,
     	                travelTime);
     			
-    			tasks.set(i, (T) new DriveTaskImpl(newPath, fromLink, toLink));
+    			double dis = tempTask.getDistanceDifference();
+    			tempTask = new DriveTaskImpl(newPath, fromLink, toLink);
+    			tempTask.setDistanceDifference(dis);
+    			
+    			
+    			tasks.set(i, (T) tempTask);
     		}
     		
     		if(tasks.get(i) instanceof RideShareServeTask){
