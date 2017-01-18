@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v2.dtd">
+<config>
+
+	<module name="network">
+		<param name="inputNetworkFile" value="../grid_network.xml" />
+	</module>
+
+	<module name="plans">
+		<param name="inputPlansFile" value="one_taxi_population.xml" />
+	</module>
+
+	<module name="qsim">
+		<param name="simStarttimeInterpretation" value="onlyUseStarttime" />
+		<param name="insertingWaitingVehiclesBeforeDrivingVehicles" value="true" />
+		<param name="snapshotStyle" value="queue" /><param name="endTime"
+			value="00:30:00" />
+		<param name="startTime"
+			value="00:00:00" />
+	</module>
+	
+	<module name="otfvis">
+		<param name="coloringScheme" value="taxicab" />
+		<param name="drawNonMovingItems" value="true" />
+	</module>
+
+	<module name="controler">
+		<param name="outputDirectory" value="test/output/ride_share" />
+		<param name="overwriteFiles" value="deleteDirectoryIfExists" />
+		<param name="firstIteration" value="0" ></param>
+		<param name="lastIteration" value="4" />
+	</module>
+
+	<module name="planCalcScore">
+		<param name="activityType_0" value="dummy" />
+		<param name="activityTypicalDuration_0" value="24:00:00" /><param
+			name="activityType_1" value="RideSharePickup" ></param>
+		<param name="activityTypicalDuration_1" value="00:01:00" />
+		<param name="activityType_2" value="RideShareDropoff" /><param
+			name="activityTypicalDuration_2" value="00:01:00" /><param
+			name="activityType_3" value="BeforeVrpSchedule" /><param
+			name="activityTypicalDuration_3" value="00:01:00" /><parameterset
+			type="modeParams">
+	<param name="constant" value="-0.5" ></param>
+	<param name="mode" value="ride_share_driver" />
+</parameterset>
+	</module>
+
+	<module name="strategy">
+		<!-- We focus only on DynAgents. "Standard" agents do not change their behaviour --><parameterset
+			type="strategysettings">
+	<param name="strategyName" value="ChangeTripMode" /><param name="weight"
+		value="1.0" />
+</parameterset>
+	</module>
+	<module name="ride_share">
+		<param name="rideShareFile" value="src/main/resources/ride_share/one_taxi_vehicles.xml" /></module>
+	<module name="changeMode">
+		<param name="modes" value="car,ride_share_driver,ride_share_passenger" /><param
+			name="ignoreCarAvailability" value="true" /></module>
+	<module name="planscalcroute">
+		<param name="networkModes" value="car,ride_share_driver" /></module>
+	<module name="travelTimeCalculator">
+		<param name="analyzedModes" value="car,ride_share_driver" /></module>
+</config>
