@@ -27,8 +27,7 @@ public class DriveTaskImpl
     implements DriveTask
 {
     private VrpPath path;
-
-
+    
     public DriveTaskImpl(VrpPathWithTravelData path)
     {
         super(path.getDepartureTime(), path.getArrivalTime());

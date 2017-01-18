@@ -36,6 +36,8 @@ public abstract class AbstractTask
     private double endTime;
 
     private TaskTracker taskTracker;
+    
+    private double distanceDifference;
 
 
     public AbstractTask(double beginTime, double endTime)
@@ -105,6 +107,15 @@ public abstract class AbstractTask
         this.endTime = endTime;
     }
 
+    @Override
+    public void setDistanceDifference(double distanceDifference){
+    	this.distanceDifference = distanceDifference;
+    }
+    
+    @Override
+    public double getDistanceDifference(){
+    	return this.distanceDifference;
+    }
 
     @Override
     public TaskTracker getTaskTracker()
