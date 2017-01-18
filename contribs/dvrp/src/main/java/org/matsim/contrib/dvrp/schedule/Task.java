@@ -54,6 +54,11 @@ public interface Task
 
 
     int getTaskIdx();
+    
+    boolean getOnWayToActivity();
+    
+    void onWayToActivity();
+
 
 
     // SETTERS:

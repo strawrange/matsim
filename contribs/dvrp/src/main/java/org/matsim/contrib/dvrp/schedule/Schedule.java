@@ -63,11 +63,19 @@ public interface Schedule<T extends Task>
 
 
     void removeLastTask();
+    
+    void addTaskInOrder(List<T> prepareTasks);
 
 
     void removeTask(T task);
     
     void clearTasks();
+    
+    void reroute(int cycleIdx);
+    
+    int getEndRideShareNumber();
+    
+    void addEndRideShareNumber();
 
 
     T nextTask();//this one seems synchronous (will be executed when switching between DynActions)

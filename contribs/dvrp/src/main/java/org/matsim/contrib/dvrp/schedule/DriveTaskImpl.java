@@ -32,6 +32,7 @@ public class DriveTaskImpl
     private Link fromLink;
     private Link toLink;
     
+   
     public DriveTaskImpl(VrpPathWithTravelData path)
     {
         super(path.getDepartureTime(), path.getArrivalTime());
@@ -72,6 +73,7 @@ public class DriveTaskImpl
         return TaskType.DRIVE;
     }
 
+    
 
     @Override
     public VrpPath getPath()

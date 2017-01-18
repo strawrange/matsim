@@ -138,6 +138,19 @@ public class RideShareOptimizer  implements VrpOptimizer{
             default:
                 throw new IllegalStateException();
         }
+        
+        boolean test = false;
+        boolean test2 = false;
+        
+        int size = s.getTasks().size();
+        if(size > 0){
+        	test = s.getLastTask().getOnWayToActivity();
+        	test2 = s.getTasks().get(s.getTasks().size() - 1).getOnWayToActivity();
+        }
+        
+        if(s.getTasks().size() > 0 && s.getTasks().get(s.getTasks().size() - 1).getOnWayToActivity()){
+    		return;
+    	} // if driver on his way home, he will not recieve any request
 
         RideShareRequest req = (RideShareRequest)request;
         Link fromLink = req.getFromLink();
@@ -183,6 +196,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
         //	tEnd = t4;
         //}
         //s.addTask(new StayTaskImpl(t4, tEnd, toLink, "wait"));
+        s.addTaskInOrder(prepareTasks);
     }
 
     public void driveRequestSubmitted(Request request, double now, Id<Vehicle> vehId)
@@ -194,12 +208,16 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
         VrpPathWithTravelData p1 = VrpPaths.calcAndCreatePath(fromLink, toLink, request.getT0(),
                 router, travelTime);
-        schedule.get(vehId).addTask(new DriveTaskImpl(p1));
+        DriveTaskImpl tempTask = new DriveTaskImpl(p1);
+        tempTask.onWayToActivity();
+        schedule.get(vehId).addTask(tempTask);
         
         //just wait (and be ready) till the end of the vehicle's time window (T1)
         double t1 = p1.getArrivalTime() + STAY_DURATION;
         double tEnd = Math.max(t1, vehicle.getT1());
         schedule.get(vehId).addTask(new StayTaskImpl(t1, tEnd, toLink, "wait"));
+        
+        schedule.get(vehId).addEndRideShareNumber();
     }
 
     @Override
