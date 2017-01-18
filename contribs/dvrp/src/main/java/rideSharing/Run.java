@@ -21,7 +21,7 @@ import org.matsim.vis.otfvis.OTFVisConfigGroup;
 public class Run {
 	public static final String MODE_DRIVER = "ride_share_driver";
 	public static final String MODE_PASSENGER = "ride_share_passenger";
-    private static final String RIDE_SHARE_GROUP_NAME = "ride_share";
+    //private static final String RIDE_SHARE_GROUP_NAME = "ride_share";
     //private static final String RIDE_SHARE_FILE = "rideShareFile";
 
 
@@ -34,9 +34,9 @@ public class Run {
 
     public static void run(String configFile,  boolean otfvis)
     {
-        ConfigGroup rideShareCfg = new ConfigGroup(RIDE_SHARE_GROUP_NAME) {};
+        //ConfigGroup rideShareCfg = new ConfigGroup(RIDE_SHARE_GROUP_NAME) {};
         OTFVisConfigGroup otfvisConfig = new OTFVisConfigGroup();
-        Config config = ConfigUtils.loadConfig(configFile,otfvisConfig,rideShareCfg);
+        Config config = ConfigUtils.loadConfig(configFile,otfvisConfig);
         config.qsim().setMainModes(Arrays.asList(TransportMode.car,MODE_DRIVER));
         config.addConfigConsistencyChecker(new DynQSimConfigConsistencyChecker());
         config.checkConsistency();
