@@ -19,6 +19,7 @@
 
 package org.matsim.contrib.dvrp.schedule;
 
+import org.matsim.api.core.v01.network.Link;
 import org.matsim.contrib.dvrp.path.*;
 
 
@@ -28,13 +29,43 @@ public class DriveTaskImpl
 {
     private VrpPath path;
     
+    private Link fromLink;
+    private Link toLink;
+    
     public DriveTaskImpl(VrpPathWithTravelData path)
     {
         super(path.getDepartureTime(), path.getArrivalTime());
         this.path = path;
     }
 
+    public DriveTaskImpl(VrpPathWithTravelData path, Link fromLink, Link toLink)
+    {
+        super(path.getDepartureTime(), path.getArrivalTime());
+        this.path = path;
+        this.fromLink = fromLink;
+        this.toLink = toLink;
+    }
 
+    @Override
+    public void setFromLink(Link fromLink){
+    	this.fromLink = fromLink;
+    }
+    
+    @Override
+    public Link getFromLink(){
+    	return this.fromLink;
+    }
+    
+    @Override
+    public void setToLink(Link toLink){
+    	this.toLink = toLink;
+    }
+    
+    @Override
+    public Link getToLink(){
+    	return this.toLink;
+    }
+    
     @Override
     public TaskType getType()
     {

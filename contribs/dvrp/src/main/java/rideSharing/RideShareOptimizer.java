@@ -1,5 +1,6 @@
 package rideSharing;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,6 +123,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
     		return;
     	}
         StayTask lastTask = (StayTask)Schedules.getLastTask(s);// only WaitTask possible here
+        
         double currentTime = qsim.getSimTimer().getTimeOfDay();
 
         switch (lastTask.getStatus()) {
@@ -140,6 +142,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
         RideShareRequest req = (RideShareRequest)request;
         Link fromLink = req.getFromLink();
         Link toLink = req.getToLink();
+        List <AbstractTask> prepareTasks = new ArrayList<>();
 
         double t0 = s.getStatus() == ScheduleStatus.UNPLANNED ? //
                 Math.max(veh.getT0(), currentTime) : //
@@ -147,28 +150,39 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
         VrpPathWithTravelData p1 = VrpPaths.calcAndCreatePath(lastTask.getLink(), fromLink, t0,
                 router, travelTime);
-        s.addTask(new DriveTaskImpl(p1));
+        AbstractTask tempTask = new DriveTaskImpl(p1, lastTask.getLink(), fromLink);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
 
         double t1 = p1.getArrivalTime();
         double t2 = t1 + PICKUP_DURATION;// 2 minutes for picking up the passenger
-        s.addTask(new RideShareServeTask(t1, t2, fromLink, true, req));
+        tempTask = new RideShareServeTask(t1, t2, fromLink, true, req);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
+
 
         VrpPathWithTravelData p2 = VrpPaths.calcAndCreatePath(fromLink, toLink, t2, router,
                 travelTime);
-        s.addTask(new DriveTaskImpl(p2));
+        tempTask = new DriveTaskImpl(p2, fromLink, toLink);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
+
 
         double t3 = p2.getArrivalTime();
         double t4 = t3 + DROPOFF_DURATION;// 1 minute for dropping off the passenger
-        s.addTask(new RideShareServeTask(t3, t4, toLink, false, req));
+        tempTask = new RideShareServeTask(t3, t4, toLink, false, req);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
+
 
         //just wait (and be ready) till the end of the vehicle's time window (T1)
-        double tEnd;
-        if(veh.getT1() != 0){
-        tEnd = Math.max(t4, veh.getT1());
-        }else{
-        	tEnd = t4;
-        }
-        s.addTask(new StayTaskImpl(t4, tEnd, toLink, "wait"));
+        //double tEnd;
+        //if(veh.getT1() != 0){
+        //tEnd = Math.max(t4, veh.getT1());
+        //}else{
+        //	tEnd = t4;
+        //}
+        //s.addTask(new StayTaskImpl(t4, tEnd, toLink, "wait"));
     }
 
     public void driveRequestSubmitted(Request request, double now, Id<Vehicle> vehId)
@@ -249,6 +263,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 		}
 	}
 
+	@Override
 	public void distanceCalculator(AbstractTask task, Request request, Vehicle vehicle){
 		RideShareRequest req = (RideShareRequest)request;
 		
