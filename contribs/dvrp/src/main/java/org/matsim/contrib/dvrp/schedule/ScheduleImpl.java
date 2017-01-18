@@ -129,7 +129,7 @@ public class ScheduleImpl<T extends AbstractTask>
         if (taskIdx > 0) {
             Task previousTask = tasks.get(taskIdx - 1);
 
-            if (previousTask.getEndTime() != beginTime) {
+            if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
                 throw new IllegalArgumentException();
             }
 
@@ -147,7 +147,7 @@ public class ScheduleImpl<T extends AbstractTask>
         if (taskIdx < taskCount) {
             Task nextTask = tasks.get(taskIdx);// currently at taskIdx, but soon at taskIdx+1
 
-            if (nextTask.getBeginTime() != endTime) {
+            if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
                 throw new IllegalArgumentException();
             }
 
@@ -324,6 +324,10 @@ public class ScheduleImpl<T extends AbstractTask>
 	}
 	@Override
 	public T getLastTask(){
-		return tasks.get(getTaskCount() - 1);
+		if(getTaskCount() <= 1){
+			return null;
+		}else{
+			return tasks.get(getTaskCount() - 2);
+		}
 	}
 }
