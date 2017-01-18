@@ -230,9 +230,9 @@ public class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identifiable<
 		}
 		
 		//Change Biyu
-		for(PlanElement PlanElement:plan.getPlanElements()) {
-			if (PlanElement instanceof Leg) {
-				return ((Leg) PlanElement).getMode() ;
+		for(int i = this.getCurrentPlanElementIndex(); i < this.plan.getPlanElements().size(); i++ ) {
+			if (this.plan.getPlanElements().get(i) instanceof Leg) {
+				return ((Leg)plan.getPlanElements().get(i)).getMode() ;
 			}
 		}
 		return null;

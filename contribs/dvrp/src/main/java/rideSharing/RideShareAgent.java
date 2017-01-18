@@ -105,7 +105,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
 		double DynEndTime = logic.getVehicle().getT1();
 		double DynStartTime = logic.getVehicle().getT0();
-		if(now >= DynStartTime && now < DynEndTime && !isDyn){
+		if(now >= DynStartTime && now <= DynEndTime && !isDyn){
 			//dAgent.initialActivity();
 	    	pAgent.endActivityAndComputeNextState(now);
 	    	setIsDyn(true);
@@ -124,7 +124,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 				if(!(task instanceof RideShareServeTask) || !((RideShareServeTask)task).isPickup()){
 					if(schedule.getNextTask() == null||schedule.getDropoffTask() == null||schedule.getDropoffTask().getEndTime() >= DynEndTime){
 						schedule.clearTasks();
-						Request request = passengerEngine.createRequest(dAgent.getVehicle().getCurrentLink().getId(), pAgent.getDestinationLinkId(), now, now);
+						Request request = passengerEngine.createRequest(dAgent.getCurrentLinkId(), pAgent.getDestinationLinkId(), now, now);
 						logic.driveRequestSubmitted(request, now);
 						dAgent.endActivityAndComputeNextState(now);
 						schedule.getVehicle().removeT();

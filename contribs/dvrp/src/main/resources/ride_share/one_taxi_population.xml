@@ -18,10 +18,18 @@
 	<person id="passenger_1" employed="no">
 		<plan selected="yes">
 			<act type="dummy" link="144" end_time="00:05:00" />
-			<leg mode="ride_share_passenger" dep_time="00:05:00" trav_time="00:01:00" arr_time="00:06:00">
+			<leg mode="ride_share_driver" dep_time="00:01:00" trav_time="00:13:00" arr_time="00:14:00">
 				<route/>
 			</leg> 
-			<act type="dummy" link="437"/>
+			<act type="dummy" link="437" end_time="00:18:00" /><leg
+				mode="car" arr_time="00:35:00" dep_time="00:18:00" trav_time="00:17:00">
+	<route></route>
+</leg>
+			<act type="dummy" end_time="00:38:00" link="213" /><leg
+				mode="ride_share_driver" arr_time="00:48:00" dep_time="00:38:00" trav_time="00:10:00">
+	<route>route</route>
+</leg>
+			<act type="dummy" link="343" />
 		</plan>
 	</person>
 
@@ -62,10 +70,9 @@
 	<person id="passenger_5" employed="no">
 		<plan selected="yes">
 			<act type="dummy" link="333" end_time="00:25:00" />
-			<leg mode="ride_share_passenger" dep_time="00:20:00" trav_time="00:06:00" arr_time="00:26:00">
-				<route/>
+			<leg mode="car" dep_time="00:20:00" trav_time="00:06:00" arr_time="00:26:00">
 			</leg> 
-			<act type="dummy" link="438"/>
+			<act type="dummy" link="438"></act>
 		</plan>
 	</person>
 

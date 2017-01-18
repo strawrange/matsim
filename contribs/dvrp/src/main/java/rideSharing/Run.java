@@ -27,7 +27,7 @@ public class Run {
 
     public static void run(boolean otfvis)
     {
-        String configFile = "./src/main/resources/ride_share/one_taxi_config.xml";
+        String configFile = "./src/main/resources/ride_share/ride_share_config.xml";
         run(configFile, otfvis);
     }
 
