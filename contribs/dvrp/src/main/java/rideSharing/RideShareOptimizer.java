@@ -7,6 +7,9 @@ import java.util.Map;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Activity;
+import org.matsim.api.core.v01.population.Leg;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.contrib.dvrp.data.Request;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.data.VrpData;
@@ -244,6 +247,35 @@ public class RideShareOptimizer  implements VrpOptimizer{
 			vehicle.setSchedule(s);
 			this.schedule.put(vehicle.getId(),s);
 		}
+	}
+
+	public void distanceCalculator(AbstractTask task, Request request, Vehicle vehicle){
+		RideShareRequest req = (RideShareRequest)request;
+		
+		RideShareAgent agent = (RideShareAgent) qsim.getAgentMap().get(vehicle.getId());
+		
+		Id<Link> destinationId = null;
+		
+		PlanElement currentPlan = agent.getCurrentPlanElement();
+		if(currentPlan instanceof Activity){
+			Leg nextLeg = (Leg) agent.getNextPlanElement();
+			destinationId = nextLeg.getRoute().getEndLinkId();
+		}else if (currentPlan instanceof Leg){
+			destinationId = agent.getDestinationLinkId();
+		}
+		Link destination = qsim.getScenario().getNetwork().getLinks().get(destinationId);
+		
+		Link departure = vehicle.getStartLink();
+		
+		double departureDis = Math.pow((req.getFromLink().getCoord().getX() - departure.getCoord().getX()), 2) + 
+				Math.pow((req.getFromLink().getCoord().getY() - departure.getCoord().getY()), 2);
+		
+		double destinationDis = Math.pow((req.getToLink().getCoord().getX() - destination.getCoord().getX()), 2) + 
+				Math.pow((req.getToLink().getCoord().getY() - destination.getCoord().getY()), 2);
+		
+		double distanceDif = Math.pow(departureDis, 0.5) + Math.pow(destinationDis, 0.5);
+		
+		task.setDistanceDifference(distanceDif);
 	}
 
 
