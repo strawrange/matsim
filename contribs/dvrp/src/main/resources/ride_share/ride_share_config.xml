@@ -35,7 +35,7 @@
 		<param name="activityType_0" value="dummy" />
 		<param name="activityTypicalDuration_0" value="24:00:00" /><param
 			name="activityType_1" value="RideSharePickup" ></param>
-		<param name="activityTypicalDuration_1" value="00:01:00" />
+		<param name="activityTypicalDuration_1" value="00:01:00" ></param>
 		<param name="activityType_2" value="RideShareDropoff" /><param
 			name="activityTypicalDuration_2" value="00:01:00" /><param
 			name="activityType_3" value="BeforeVrpSchedule" /><param
@@ -57,10 +57,10 @@
 </parameterset>
 	</module>
 	<module name="changeMode">
-		<param name="modes" value="car,ride_share_driver,ride_share_passenger" /><param
+		<param name="modes" value="ride_share_passenger,ride_share_driver,car" /><param
 			name="ignoreCarAvailability" value="true" /></module>
 	<module name="planscalcroute">
-		<param name="networkModes" value="car,ride_share_driver" /></module>
+		</module>
 	<module name="travelTimeCalculator">
 		<param name="analyzedModes" value="car,ride_share_driver" /></module>
 </config>

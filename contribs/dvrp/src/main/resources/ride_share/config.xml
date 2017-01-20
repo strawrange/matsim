@@ -41,9 +41,9 @@
 		<param name="timeStepSize" value="00:00:01" />
 
 		<!-- `queue' for the standard queue model, `withHolesExperimental' (experimental!!) for the queue model with holes -->
-		<param name="trafficDynamics" value="queue" />
+		<param name="trafficDynamics" value="queue" /><param name="simStarttimeInterpretation" value="onlyUseStarttime"></param>
 
-	</module>
+ 	</module>
 
 	<module name="planCalcScore">
         <param name="writeExperiencedPlans" value="true" />
@@ -173,7 +173,7 @@
 		<param name="considerCarAvailability" value="true" />
 
 		<!-- Defines all the modes available, including chain-based modes, seperated by commas -->
-		<param name="modes" value="car,pt,walk" />
+		<param name="modes" value="car,pt,walk,ride_share_driver,ride_share_passenger" />
 	</module>
 
   	<module name="transit">

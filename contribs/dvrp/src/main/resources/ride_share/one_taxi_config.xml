@@ -50,8 +50,6 @@
 		<param name="ModuleProbability_1" value="1.0" />
 		<param name="Module_1" value="KeepLastSelected" />
 	</module>
-	<module name="ride_share">
-		<param name="rideShareFile" value="src/main/resources/ride_share/one_taxi_vehicles.xml" /></module>
 	<module name="changeMode">
 		<param name="modes" value="car,pt,walk,ride_share_driver,ride_share_passenger" /><param
 			name="ignoreCarAvailability" value="true" /></module>
