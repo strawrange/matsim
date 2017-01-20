@@ -142,35 +142,35 @@ public class ScheduleImpl<T extends AbstractTask>
             throw new IllegalArgumentException();
         }
 
-        if (taskIdx > 0) {
-            Task previousTask = tasks.get(taskIdx - 1);
+        //if (taskIdx > 0) {
+            //Task previousTask = tasks.get(taskIdx - 1);
 
-            if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
-                throw new IllegalArgumentException();
-            }
+            //if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
+                //throw new IllegalArgumentException();
+            //}
 
-            if (Tasks.getEndLink(previousTask) != beginLink) {
-            	Logger.getLogger(getClass()).error("Last task End link: "+Tasks.getEndLink(previousTask).getId()+ " ; next Task start link: "+ beginLink.getId());
-                throw new IllegalArgumentException();
-            }
-        }
-        else { // taskIdx == 0
-            if (vehicle.getStartLink() != beginLink) {
-                throw new IllegalArgumentException();
-            }
-        }
+            //if (Tasks.getEndLink(previousTask) != beginLink) {
+            	//Logger.getLogger(getClass()).error("Last task End link: "+Tasks.getEndLink(previousTask).getId()+ " ; next Task start link: "+ beginLink.getId());
+                //throw new IllegalArgumentException();
+            //}
+       // }
+        //else { taskIdx == 0
+            //if (vehicle.getStartLink() != beginLink) {
+                //throw new IllegalArgumentException();
+            //}
+        //}
 
-        if (taskIdx < taskCount) {
-            Task nextTask = tasks.get(taskIdx);// currently at taskIdx, but soon at taskIdx+1
+        //if (taskIdx < taskCount) {
+           // Task nextTask = tasks.get(taskIdx);// currently at taskIdx, but soon at taskIdx+1
 
-            if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
-                throw new IllegalArgumentException();
-            }
+            //if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
+               // throw new IllegalArgumentException();
+            //}
 
-            if (Tasks.getBeginLink(nextTask) != endLink) {
-                throw new IllegalArgumentException();
-            }
-        }
+            //if (Tasks.getBeginLink(nextTask) != endLink) {
+               // throw new IllegalArgumentException();
+           // }
+        //}
     }
 
 
@@ -296,7 +296,7 @@ public class ScheduleImpl<T extends AbstractTask>
     	
     			if(prepareTasks.get(0).getDistanceDifference() < tasks.get(i).getDistanceDifference()){
     				for(int j = 0; j < 4; j++){
-    					tasks.add(i+j, prepareTasks.get(j));
+    					addTask(i+j, prepareTasks.get(j));
     				}
     				prepareTasks.clear();
     				this.reroute(cycleIdx);
@@ -453,8 +453,8 @@ public class ScheduleImpl<T extends AbstractTask>
     			tempTask = new DriveTaskImpl(newPath, fromLink, toLink);
     			tempTask.setDistanceDifference(dis);
     			
-    			
-    			tasks.set(i, (T) tempTask);
+    			tasks.remove(i);
+    			addTask(i, (T) tempTask);
     		}
     		
     		if(tasks.get(i) instanceof RideShareServeTask){
@@ -483,7 +483,8 @@ public class ScheduleImpl<T extends AbstractTask>
     			tempTask.setBeginTime(t1);
     			tempTask.setEndTime(t2);
     			
-    			tasks.set(i, (T) tempTask);   			
+    			tasks.remove(i);
+    			addTask(i, (T) tempTask);   			
     		}
     		
     	}
