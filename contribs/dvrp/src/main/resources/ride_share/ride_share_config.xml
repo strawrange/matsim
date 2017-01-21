@@ -14,7 +14,7 @@
 		<param name="simStarttimeInterpretation" value="onlyUseStarttime" />
 		<param name="insertingWaitingVehiclesBeforeDrivingVehicles" value="true" />
 		<param name="snapshotStyle" value="queue" /><param name="endTime"
-			value="00:50:00" />
+			value="01:00:00" />
 		<param name="startTime"
 			value="00:00:00" />
 	</module>
@@ -28,7 +28,7 @@
 		<param name="outputDirectory" value="test/output/ride_share" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" />
 		<param name="firstIteration" value="0" ></param>
-		<param name="lastIteration" value="4" />
+		<param name="lastIteration" value="20" />
 	</module>
 
 	<module name="planCalcScore">

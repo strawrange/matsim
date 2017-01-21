@@ -7,7 +7,7 @@
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="population.xml.gz" />
+		<param name="inputPlansFile" value="population_1prct.xml.gz" />
 	</module>
 
 	<module name="facilities" >
@@ -18,7 +18,7 @@
 		<param name="writeEventsInterval" value="5" />
 		<param name="writePlansInterval" value="5" />
 		<param name="eventsFileFormat" value="xml" />
-		<param name="outputDirectory" value="output"/>
+		<param name="outputDirectory" value="output_20170120"/>
 		<param name="firstIteration" value="0" />
 		<param name="lastIteration" value="5" />
 		<param name="mobsim" value="qsim" />
@@ -118,14 +118,31 @@
 		<param name="activityMinimalDuration_2" value="00:30:00" />
 		<param name="activityOpeningTime_2"     value="08:00:00" />
 		<param name="activityClosingTime_2" value="20:00:00" />
+		
+		<param
+			name="activityType_3" value="RideSharePickup" ></param>
+		<param name="activityTypicalDuration_3" value="00:01:00" ></param>
+		<param name="activityType_4" value="RideShareDropoff" /><param
+			name="activityTypicalDuration_4" value="00:01:00" /><param
+			name="activityType_5" value="BeforeVrpSchedule" /><param
+			name="activityTypicalDuration_5" value="00:01:00" /><param
+			name="activityType_6" value="RideShareStay" ></param>
+		<param name="activityTypicalDuration_6" value="00:02:00" />
+				<parameterset
+			type="modeParams">
+	<param name="constant" value="-0.5" ></param>
+	<param name="mode" value="ride_share_driver" /></parameterset>
 
 	</module>
 
 	<module name="strategy">
         <param name="maxAgentPlanMemorySize" value="5" /> <!-- 0 means unlimited -->
 
-		<param name="ModuleProbability_1" value="0.75" />
+		<param name="ModuleProbability_1" value="0.05" />
 		<param name="Module_1" value="ChangeExpBeta" />
+		
+				<param name="ModuleProbability_5" value="0.70" />
+		<param name="Module_5" value="ChangeTripMode" />
 
 		<param name="ModuleProbability_2" value="0.05" />
 		<param name="Module_2" value="ReRoute" />
@@ -167,7 +184,7 @@
 	<module name="subtourModeChoice" >
 
 		<!-- Defines the chain-based modes, seperated by commas -->
-		<param name="chainBasedModes" value="car" />
+		<param name="chainBasedModes" value="car, ride_share_driver" />
 
 		<!-- Defines whether car availability must be considered or not. A agent has no car only if it has no license, or never access to a car -->
 		<param name="considerCarAvailability" value="true" />
@@ -182,6 +199,11 @@
  		<param name="vehiclesFile" value="vehicles.xml" />
   	 	<param name="transitModes" value="pt,bus" />
   	</module>
+  	
+  		<module name="changeMode">
+		<param name="modes" value="ride_share_passenger,ride_share_driver,car" /><param
+			name="ignoreCarAvailability" value="false" /></module>
 
-
+	<module name="travelTimeCalculator">
+		<param name="analyzedModes" value="car,ride_share_driver" /></module>
 </config>

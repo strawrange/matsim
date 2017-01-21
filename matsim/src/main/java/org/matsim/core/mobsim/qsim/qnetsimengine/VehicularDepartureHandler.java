@@ -108,9 +108,12 @@ class VehicularDepartureHandler implements DepartureHandler {
 			if (cntTeleportVehicle < 9) {
 				cntTeleportVehicle++;
 				log.info("teleport vehicle " + vehicle.getId() + " from link " + vehicle.getCurrentLink().getId() + " to link " + linkId);
+				
 				if (cntTeleportVehicle == 9) {
 					log.info("No more occurrences of teleported vehicles will be reported.");
 				}
+				
+				throw new RuntimeException();
 			}
 			QLinkI qlinkOld = (QLinkI) qNetsimEngine.getNetsimNetwork().getNetsimLink(vehicle.getCurrentLink().getId());
 			QVehicle result = qlinkOld.removeParkedVehicle(vehicle.getId());

@@ -20,6 +20,8 @@
 
 package org.matsim.core.mobsim.qsim.agents;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
@@ -30,8 +32,14 @@ import org.matsim.core.mobsim.framework.MobsimPassengerAgent;
 import org.matsim.core.mobsim.framework.PlanAgent;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 import org.matsim.core.mobsim.qsim.interfaces.Netsim;
+import org.matsim.core.mobsim.qsim.pt.MobsimDriverPassengerAgent;
+import org.matsim.core.mobsim.qsim.pt.TransitVehicle;
 import org.matsim.core.population.PopulationUtils;
 import org.matsim.facilities.Facility;
+import org.matsim.pt.transitSchedule.api.TransitLine;
+import org.matsim.pt.transitSchedule.api.TransitRoute;
+import org.matsim.pt.transitSchedule.api.TransitRouteStop;
+import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 import org.matsim.vehicles.Vehicle;
 
 /**
@@ -39,7 +47,7 @@ import org.matsim.vehicles.Vehicle;
  * <p></p>
  * I think this class is reasonable in terms of what is public and/or final and what not.
  */
-public class PersonDriverAgentImpl implements MobsimDriverAgent, MobsimPassengerAgent, HasPerson, PlanAgent {
+public class PersonDriverAgentImpl implements MobsimDriverAgent, MobsimPassengerAgent, HasPerson, PlanAgent, MobsimDriverPassengerAgent {
 	// yy cannot make this final since it is overridden at 65 locations
 	// (but since all methods are final, it seems that all of these could be solved by delegation).
 	// kai, nov'14
@@ -210,6 +218,37 @@ public class PersonDriverAgentImpl implements MobsimDriverAgent, MobsimPassenger
 	
 	public void setCurrentLinkId( Id<Link> linkId ) {
 		this.basicAgentDelegate.setCurrentLinkId(linkId); 
+	}
+
+	@Override
+	public boolean getEnterTransitRoute(TransitLine line, TransitRoute transitRoute, List<TransitRouteStop> stopsToCome,
+			TransitVehicle transitVehicle) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean getExitAtStop(TransitStopFacility stop) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Id<TransitStopFacility> getDesiredAccessStopId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Id<TransitStopFacility> getDesiredDestinationStopId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double getWeight() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 

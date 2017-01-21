@@ -13,6 +13,9 @@ import org.matsim.core.mobsim.framework.Mobsim;
 import org.matsim.core.mobsim.qsim.AbstractQSimPlugin;
 import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.mobsim.qsim.QSimUtils;
+import org.matsim.core.population.routes.NetworkRoute;
+import org.matsim.core.population.routes.RouteFactories;
+import org.matsim.core.router.DefaultRoutingModules;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -55,7 +58,7 @@ public class RideShareQSimProvider implements Provider<Mobsim>{
 	        RideShareActionCreator actionCreator = new RideShareActionCreator(passengerEngine,
 	                qSim.getSimTimer());
 	        qSim.addAgentSource(new VrpAgentSource(actionCreator, vrpData, optimizer, qSim, passengerEngine));
-
+	        
 	        return qSim;
 	    }
 }

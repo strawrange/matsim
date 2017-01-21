@@ -22,6 +22,7 @@ package org.matsim.contrib.dvrp.vrpagent;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Activity;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
@@ -37,6 +38,7 @@ import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.mobsim.qsim.agents.BasicPlanAgentImpl;
 import org.matsim.core.mobsim.qsim.agents.PersonDriverAgentImpl;
+import org.matsim.core.mobsim.qsim.agents.TransitAgent;
 import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
 import org.matsim.vehicles.*;
 
@@ -79,12 +81,16 @@ public class VrpAgentSource
     @Override
     public void insertAgentsIntoMobsim()
     {
+    	vrpData.clear();
+    	
     	VehiclesFactory vehicleFactory = VehicleUtils.getFactory();
     	for(Person p: qSim.getScenario().getPopulation().getPersons().values()){
     		//need to be changed
     		Leg leg = null;
     		Plan plan = p.getSelectedPlan();
-    		for(PlanElement planElement: plan.getPlanElements()){
+    		PlanElement planElement;
+    		for(int i = 0; i < plan.getPlanElements().size(); i++){
+    			planElement = plan.getPlanElements().get(i);
     			if (planElement instanceof Leg) {
     				leg = ((Leg) planElement);
     	    		if(!leg.equals(null) && leg.getMode().equals(Run.MODE_DRIVER)){
@@ -106,11 +112,18 @@ public class VrpAgentSource
             Id<Link> startLinkId = vrpVeh.getStartLink().getId();
 
             VrpAgentLogic vrpAgentLogic = new VrpAgentLogic(optimizer, nextActionCreator, vrpVeh);
-            PersonDriverAgentImpl agent = (PersonDriverAgentImpl) qSim.getAgentMap().get(Id.createPersonId(id));
             DynAgent vrpAgent = new DynAgent(Id.createPersonId(id), startLinkId,qSim.getEventsManager(), vrpAgentLogic);
-       
+            
+            RideShareAgent rideShareAgent;
             QVehicle mobsimVehicle = new QVehicle(vehicleFactory.createVehicle(Id.create(id, org.matsim.vehicles.Vehicle.class), vehicleType));
-            RideShareAgent rideShareAgent = new RideShareAgent(agent,vrpAgent,vrpData,passengerEngine);
+            if(qSim.getAgentMap().get(Id.createPersonId(id)) instanceof PersonDriverAgentImpl){
+            	PersonDriverAgentImpl agent = (PersonDriverAgentImpl) qSim.getAgentMap().get(Id.createPersonId(id));
+                rideShareAgent = new RideShareAgent(agent,vrpAgent,vrpData,passengerEngine);
+            }else{
+            	TransitAgent agent = (TransitAgent) qSim.getAgentMap().get(Id.createPersonId(id));
+                rideShareAgent = new RideShareAgent(agent,vrpAgent,vrpData,passengerEngine);
+            }
+
             rideShareAgent.setVehicle(mobsimVehicle);
             mobsimVehicle.setDriver(rideShareAgent);
 

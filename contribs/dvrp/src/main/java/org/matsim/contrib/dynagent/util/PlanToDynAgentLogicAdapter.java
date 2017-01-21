@@ -84,4 +84,11 @@ public class PlanToDynAgentLogicAdapter
             throw new IllegalStateException();
         }
     }
+
+
+	@Override
+	public DynAction finishDynAction(DynAction oldDynAction, double now) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -10,8 +10,6 @@ import org.matsim.api.core.v01.network.Link;
 import org.matsim.contrib.dvrp.data.Request;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.data.VrpData;
-import org.matsim.contrib.dvrp.examples.onetaxi.OneTaxiRequest;
-import org.matsim.contrib.dvrp.examples.onetaxi.OneTaxiServeTask;
 import org.matsim.contrib.dvrp.optimizer.VrpOptimizer;
 import org.matsim.contrib.dvrp.path.VrpPathWithTravelData;
 import org.matsim.contrib.dvrp.path.VrpPaths;
@@ -81,6 +79,10 @@ public class RideShareOptimizer  implements VrpOptimizer{
 				if(vehicle.getSchedule().getLastTask() == null){
 					continue;
 				}
+				if(veh.getSchedule().getLastTask() == null){
+					vehicle = veh;
+					continue;
+				}
 				if(veh.getSchedule().getLastTask() == null
 						&& veh.getT0() < vehicle.getSchedule().getLastTask().getEndTime()){
 					vehicle = veh;
@@ -88,6 +90,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 				}
 				if(veh.getSchedule().getLastTask().getEndTime() < 
 						vehicle.getSchedule().getLastTask().getEndTime()){
+
 					vehicle = veh;
 					continue;
 				}

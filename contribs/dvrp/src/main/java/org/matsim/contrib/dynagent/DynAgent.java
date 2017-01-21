@@ -65,6 +65,8 @@ public class DynAgent
     }
     
     public void finishDynAction(DynAction oldDynAction, double now){
+    	System.err.println("finish" + oldDynAction.toString());
+    	
         oldDynAction.finalizeAction(now);
 
         state = null;// !!! this is important
@@ -73,6 +75,8 @@ public class DynAgent
 
         DynAction nextDynAction = agentLogic.finishDynAction(oldDynAction, now);
 
+        System.err.println("next" + nextDynAction.toString());
+        
         if (nextDynAction instanceof DynActivity) {
             dynActivity = (DynActivity)nextDynAction;
             state = MobsimAgent.State.ACTIVITY;
@@ -352,6 +356,18 @@ public class DynAgent
 
 	@Override
 	public PlanElement getNextPlanElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCurrentLinkId(Id<Link> currentLinkId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public PlanElement getCurrentPlanElement() {
 		// TODO Auto-generated method stub
 		return null;
 	}
