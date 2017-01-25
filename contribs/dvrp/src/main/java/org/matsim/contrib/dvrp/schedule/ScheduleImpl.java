@@ -22,6 +22,7 @@ package org.matsim.contrib.dvrp.schedule;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Activity;
 import org.matsim.contrib.dvrp.data.Vehicle;
@@ -362,14 +363,14 @@ public class ScheduleImpl<T extends AbstractTask>
     			}
     			prepareTasks.clear();
     		}
-    		else for (int i = cycleIdx * 4 + this.getEndRideShareNumber(); i < tasks.size(); i= i+1){
+    		else for (int i = cycleIdx * 4 + this.getEndRideShareNumber(); i < tasks.size(); i++){
     	
     			if(prepareTasks.get(0).getDistanceDifference() < tasks.get(i).getDistanceDifference()){
     				for(int j = 0; j < 4; j++){
     					addTaskWithoutCheck(i+j, prepareTasks.get(j));
     				}
     				prepareTasks.clear();
-    				this.reroute(cycleIdx);
+    				this.reroute(i); //reroute from the fist inserted task
     				break;
     			}
     		}
@@ -477,19 +478,19 @@ public class ScheduleImpl<T extends AbstractTask>
 
 
 	@Override
-	public void reroute(int cycleIdx) {
+	public void reroute(int rerouteIdx) {
 		
 		final LeastCostPathCalculator router = this.vehicle.getAgentLogic().getOptimizer().getRouter();
 		final TravelTime travelTime = new FreeSpeedTravelTime();;
 		
-    	for(int i = cycleIdx * 4 + this.getEndRideShareNumber(); i < tasks.size(); i++){
+    	for(int i = rerouteIdx; i < tasks.size(); i++){
     		if(tasks.get(i) instanceof DriveTask){		    
 
     			DriveTaskImpl tempTask = (DriveTaskImpl)tasks.get(i);
     			Link fromLink = tempTask.getFromLink();
     			double startTime = tempTask.getBeginTime();
     		    
-    			if (cycleIdx == 0 && i == 0){
+    			if (rerouteIdx == 0 && i == 0){
     				DriveTask lastDriveTask = (DriveTask)tasks.get(4);
         			fromLink = lastDriveTask.getPath().getFromLink();
         			VrpPathWithTravelData path = (VrpPathWithTravelData) lastDriveTask.getPath();
