@@ -48,6 +48,7 @@ public class ScheduleImpl<T extends AbstractTask>
     private T currentTask = null;
     
     private int endRideShareNumber = 0;
+    private int stayStartedNumber = 0;
     
     public void resetSchedule(){
     	this.status = ScheduleStatus.PLANNED;
@@ -94,6 +95,16 @@ public class ScheduleImpl<T extends AbstractTask>
     @Override
     public void addEndRideShareNumber(){
     	this.endRideShareNumber ++;
+    };
+    
+    @Override
+    public int getStayStartedNumber(){
+    	return this.stayStartedNumber;
+    };
+    
+    @Override
+    public void addStayStartedNumber(){
+    	this.stayStartedNumber ++;
     };
 
     public void addTask(T task)
@@ -339,7 +350,7 @@ public class ScheduleImpl<T extends AbstractTask>
 
     @Override
     public void addTaskInOrder(List<T> prepareTasks){
-    	if (tasks.size() == 0 ){
+    	if (tasks.size() == 0 || tasks.size() == this.getStayStartedNumber()){
     		for(int i = 0; i < 4; i++){
     			addTask(prepareTasks.get(i));
     		}
@@ -354,16 +365,16 @@ public class ScheduleImpl<T extends AbstractTask>
     		
     		if(test != null){
     			currentTaskIdx = this.getCurrentTask().getTaskIdx();
-    			cycleIdx = (currentTaskIdx - this.getEndRideShareNumber()) / 4 + 1;
+    			cycleIdx = (currentTaskIdx - this.getStayStartedNumber() - this.getEndRideShareNumber()) / 4 + 1;
     		}
     		
-    		if ((cycleIdx * 4 + this.getEndRideShareNumber()) == tasks.size()){
+    		if ((cycleIdx * 4 + this.getStayStartedNumber() + this.getEndRideShareNumber()) == tasks.size()){
     			for(int j = 0; j < 4; j++){
     				addTask(prepareTasks.get(j));
     			}
     			prepareTasks.clear();
     		}
-    		else for (int i = cycleIdx * 4 + this.getEndRideShareNumber(); i < tasks.size(); i++){
+    		else for (int i = cycleIdx * 4 + this.getStayStartedNumber() + this.getEndRideShareNumber(); i < tasks.size(); i++){
     	
     			if(prepareTasks.get(0).getDistanceDifference() < tasks.get(i).getDistanceDifference()){
     				for(int j = 0; j < 4; j++){

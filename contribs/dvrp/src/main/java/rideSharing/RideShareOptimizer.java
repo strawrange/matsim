@@ -141,6 +141,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
             case STARTED:
                 lastTask.setEndTime(currentTime);// shorten waiting
+                s.addStayStartedNumber();
                 break;
 
             default:
@@ -210,6 +211,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
             case STARTED:
                 lastTask.setEndTime(currentTime);// shorten waiting
+                s.addStayStartedNumber();
                 break;
 
             default:
