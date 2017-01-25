@@ -119,6 +119,24 @@ public class ScheduleImpl<T extends AbstractTask>
             tasks.get(i).taskIdx = i;
         }
     }
+    
+    public void addTaskWithoutCheck(int taskIdx, T task)
+    {
+
+        if (status == ScheduleStatus.UNPLANNED) {
+            status = ScheduleStatus.PLANNED;
+        }
+
+        tasks.add(taskIdx, task);
+        task.schedule = this;
+        task.taskIdx = taskIdx;
+        task.status = TaskStatus.PLANNED;
+
+        // update idx of the existing tasks
+        for (int i = taskIdx + 1; i < tasks.size(); i++) {
+            tasks.get(i).taskIdx = i;
+        }
+    }
 
 
     private void validateArgsBeforeAddingTask(int taskIdx, Task task)
@@ -142,35 +160,87 @@ public class ScheduleImpl<T extends AbstractTask>
             throw new IllegalArgumentException();
         }
 
-        //if (taskIdx > 0) {
-            //Task previousTask = tasks.get(taskIdx - 1);
+        if (taskIdx > 0) {
+            Task previousTask = tasks.get(taskIdx - 1);
 
-            //if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
-                //throw new IllegalArgumentException();
-            //}
+            if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
+                throw new IllegalArgumentException();
+            }
 
-            //if (Tasks.getEndLink(previousTask) != beginLink) {
-            	//Logger.getLogger(getClass()).error("Last task End link: "+Tasks.getEndLink(previousTask).getId()+ " ; next Task start link: "+ beginLink.getId());
-                //throw new IllegalArgumentException();
-            //}
-       // }
-        //else { taskIdx == 0
-            //if (vehicle.getStartLink() != beginLink) {
-                //throw new IllegalArgumentException();
-            //}
-        //}
+            if (Tasks.getEndLink(previousTask) != beginLink) {
+            	Logger.getLogger(getClass()).error("Last task End link: "+Tasks.getEndLink(previousTask).getId()+ " ; next Task start link: "+ beginLink.getId());
+                throw new IllegalArgumentException();
+            }
+        }
+        else  { //taskIdx == 0
+            if (vehicle.getStartLink() != beginLink) {
+                throw new IllegalArgumentException();
+            }
+        }
 
-        //if (taskIdx < taskCount) {
-           // Task nextTask = tasks.get(taskIdx);// currently at taskIdx, but soon at taskIdx+1
+        if (taskIdx < taskCount) {
+            Task nextTask = tasks.get(taskIdx);// currently at taskIdx, but soon at taskIdx+1
 
-            //if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
-               // throw new IllegalArgumentException();
-            //}
+            if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
+                throw new IllegalArgumentException();
+            }
 
-            //if (Tasks.getBeginLink(nextTask) != endLink) {
-               // throw new IllegalArgumentException();
-           // }
-        //}
+            if (Tasks.getBeginLink(nextTask) != endLink) {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    private void validateArgsAfterReroute(List<T> tasks)
+    {
+    	for(int taskIdx = 0; taskIdx < tasks.size(); taskIdx++){
+    		T task = tasks.get(taskIdx);
+    		failIfCompleted();
+    		//if (status == ScheduleStatus.STARTED) {
+    			//throw new IllegalStateException();
+    		//}
+
+    		double beginTime = task.getBeginTime();
+    		double endTime = task.getEndTime();
+    		Link beginLink = Tasks.getBeginLink(task);
+    		Link endLink = Tasks.getEndLink(task);
+    		int taskCount = tasks.size();
+
+
+    		if (beginTime > endTime) {
+    			throw new IllegalArgumentException();
+    		}
+
+    		if (taskIdx > 0) {
+    			Task previousTask = tasks.get(taskIdx - 1);
+
+    			if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
+    				throw new IllegalArgumentException();
+    			}
+
+    			if (Tasks.getEndLink(previousTask) != beginLink) {
+    				Logger.getLogger(getClass()).error("Last task End link: "+Tasks.getEndLink(previousTask).getId()+ " ; next Task start link: "+ beginLink.getId());
+    				throw new IllegalArgumentException();
+    			}
+    		}
+    		else  { //taskIdx == 0
+    			if (vehicle.getStartLink() != beginLink) {
+    				throw new IllegalArgumentException();
+    			}
+    		}
+
+    		if (taskIdx < taskCount - 1) {
+    			Task nextTask = tasks.get(taskIdx + 1);
+
+    			if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
+    				throw new IllegalArgumentException();
+    			}
+
+    			if (Tasks.getBeginLink(nextTask) != endLink) {
+    				throw new IllegalArgumentException();
+    			}
+    		}
+    	}
     }
 
 
@@ -296,7 +366,7 @@ public class ScheduleImpl<T extends AbstractTask>
     	
     			if(prepareTasks.get(0).getDistanceDifference() < tasks.get(i).getDistanceDifference()){
     				for(int j = 0; j < 4; j++){
-    					addTask(i+j, prepareTasks.get(j));
+    					addTaskWithoutCheck(i+j, prepareTasks.get(j));
     				}
     				prepareTasks.clear();
     				this.reroute(cycleIdx);
@@ -454,7 +524,7 @@ public class ScheduleImpl<T extends AbstractTask>
     			tempTask.setDistanceDifference(dis);
     			
     			tasks.remove(i);
-    			addTask(i, (T) tempTask);
+    			addTaskWithoutCheck(i, (T) tempTask);
     		}
     		
     		if(tasks.get(i) instanceof RideShareServeTask){
@@ -484,11 +554,9 @@ public class ScheduleImpl<T extends AbstractTask>
     			tempTask.setEndTime(t2);
     			
     			tasks.remove(i);
-    			addTask(i, (T) tempTask);   			
-    		}
-    		
+    			addTaskWithoutCheck(i, (T) tempTask); 
+    		}    		
     	}
-
-		
+    	validateArgsAfterReroute(tasks);
 	}
 }

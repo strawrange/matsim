@@ -60,6 +60,8 @@ public interface Schedule<T extends Task>
 
 
     void addTask(int taskIdx, T task);
+    
+    void addTaskWithoutCheck(int taskIdx, T task);
 
 
     void removeLastTask();
