@@ -15,6 +15,8 @@ import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
+import org.matsim.core.router.NetworkRouting;
+import org.matsim.core.router.NetworkRoutingModule;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.vis.otfvis.OTFVisConfigGroup;
 
@@ -27,7 +29,9 @@ public class Run {
 
     public static void run(boolean otfvis)
     {
-        String configFile = "./src/main/resources/ride_share/ride_share_config.xml";
+        String configFile = "./src/main/resources/ride_share/config.xml";
+        //System.err.println(configFile);
+        //System.exit(1);
         run(configFile, otfvis);
     }
 
@@ -52,7 +56,8 @@ public class Run {
             public void install()
             {
                 addRoutingModuleBinding(MODE_PASSENGER).toInstance(new DynRoutingModule(MODE_PASSENGER));
-                //addRoutingModuleBinding(MODE_DRIVER).toInstance(new DynRoutingModule(MODE_DRIVER));
+                //addRoutingModuleBinding(MODE_DRIVER).toProvider(new NetworkRouting(MODE_DRIVER));
+                addRoutingModuleBinding(MODE_DRIVER).toInstance(new RideShareRoutingModule(MODE_DRIVER));
                 bind(VrpData.class).toInstance(vrpData);
             }
         });

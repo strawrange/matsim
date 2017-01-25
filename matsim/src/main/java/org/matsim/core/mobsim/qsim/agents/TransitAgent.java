@@ -193,4 +193,10 @@ public final class TransitAgent implements MobsimDriverPassengerAgent, PlanAgent
 		return this.basicAgentDelegate.getDestinationFacility();
 	}
 
+	@Override
+	public void setCurrentLinkId(Id<Link> currentLinkId) {
+		this.basicAgentDelegate.setCurrentLinkId(currentLinkId); 
+		
+	}
+
 }

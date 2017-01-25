@@ -20,6 +20,9 @@
 
 package org.matsim.core.mobsim.qsim.pt;
 
+import org.matsim.api.core.v01.Id;
+import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.mobsim.framework.MobsimDriverAgent;
 import org.matsim.core.mobsim.framework.MobsimPassengerAgent;
 
@@ -28,8 +31,12 @@ import org.matsim.core.mobsim.framework.MobsimPassengerAgent;
  *
  */
 public interface MobsimDriverPassengerAgent extends PTPassengerAgent, MobsimDriverAgent, MobsimPassengerAgent {
+
+	void setCurrentLinkId(Id<Link> currentLinkId);
 	// note: this needs the combined interfaces (currently: MobsimDriverAgent) in addition to the atomistic interfaces
 	// because of "instanceof" conditions.  kai, nov'10
+
+	PlanElement getCurrentPlanElement();
 	
 	// yy One should consider renaming this into MobsimPTPassengerAgent and make it extend PTPassengerAgent, MobsimAgent only
 	// (modular interface for PT Passengers).  kai, nov'14

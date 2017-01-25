@@ -28,6 +28,7 @@ import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.Route;
 import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.framework.MobsimDriverAgent;
@@ -56,6 +57,8 @@ public class FakeAgent implements MobsimDriverAgent, PTPassengerAgent {
 	private final Person dummyPerson = PopulationUtils.getFactory().createPerson(Id.create(1, Person.class));
 	// as long as all instance variables are final, the "resetCaches" method can remain empty.  kai, oct'10
 
+	
+	
 	/**
 	 * Creates a new fake Agent. If enterStop or exitStop are <code>null</code>,
 	 * the leg will have no route.
@@ -196,6 +199,12 @@ public class FakeAgent implements MobsimDriverAgent, PTPassengerAgent {
 	public Facility<? extends Facility<?>> getDestinationFacility() {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("not implemented") ;
+	}
+
+	@Override
+	public PlanElement getNextPlanElement() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

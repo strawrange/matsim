@@ -164,7 +164,7 @@ public final class TripRouter implements MatsimExtensionPoint {
 	 * given mode.
 	 */
 	public List<? extends PlanElement> calcRoute(
-			final String mainMode,
+			String mainMode,
 			final Facility fromFacility,
 			final Facility toFacility,
 			final double departureTime,
@@ -172,6 +172,13 @@ public final class TripRouter implements MatsimExtensionPoint {
 		
 		Gbl.assertNotNull( fromFacility );
 		Gbl.assertNotNull( toFacility );
+		
+		//boolean reset = false;
+		
+		//if (mainMode.equals("ride_share_driver")) {
+		//	mainMode = "car";
+		//	reset = true;
+		//}
 		
 		RoutingModule module = routingModules.get( mainMode );
 
@@ -182,6 +189,10 @@ public final class TripRouter implements MatsimExtensionPoint {
 						toFacility,
 						departureTime,
 						person);
+			
+			//if (reset) {
+			//	((Leg)trip.get(0)).setMode("ride_share_driver");
+			//}
 
 			if ( trip == null ) {
 				throw new NullPointerException( "Routing module "+module+" returned a null Trip for main mode "+mainMode );

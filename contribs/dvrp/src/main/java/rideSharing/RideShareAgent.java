@@ -25,6 +25,7 @@ import org.matsim.contrib.dvrp.vrpagent.VrpAgentLogic;
 import org.matsim.contrib.dynagent.DynActivity;
 import org.matsim.contrib.dynagent.DynAgent;
 import org.matsim.contrib.dynagent.DynLeg;
+import org.matsim.core.mobsim.framework.PlanAgent;
 import org.matsim.core.mobsim.qsim.agents.PersonDriverAgentImpl;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 import org.matsim.core.mobsim.qsim.pt.MobsimDriverPassengerAgent;
@@ -40,10 +41,11 @@ import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 
 public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	
-	PersonDriverAgentImpl pAgent;
+	MobsimDriverPassengerAgent pAgent;
 	DynAgent dAgent;
 	State status;
 	Boolean isDyn = false;
+	Boolean legDyn = false;
 	VrpData vrpData;
 	PassengerEngine passengerEngine;
 	
@@ -55,7 +57,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		this.isDyn = isDyn;
 	}
 
-	public RideShareAgent(PersonDriverAgentImpl pAgent, DynAgent dAgent, VrpData vrpData, PassengerEngine passengerEngine){
+	public RideShareAgent(MobsimDriverPassengerAgent pAgent, DynAgent dAgent, VrpData vrpData, PassengerEngine passengerEngine){
 		this.pAgent = pAgent;
 		this.dAgent = dAgent;
 		this.vrpData = vrpData;
@@ -128,8 +130,8 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 						logic.driveRequestSubmitted(request, now);
 						dAgent.endActivityAndComputeNextState(now);
 						schedule.getVehicle().removeT();
+						legDyn = true;
 			//endLegAndComputeNextState(now);
-						setIsDyn(false);
 						return;
 					}
 				}
@@ -147,9 +149,13 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	@Override
 	public void endLegAndComputeNextState(double now) {
 		// TODO Auto-generated method stub
-		PlanElement plan = getCurrentPlanElement();
-		if(plan instanceof Leg && ((Leg)plan).getMode().equals(Run.MODE_DRIVER)){
+		//PlanElement plan = getCurrentPlanElement();
+		//double DynStartTime = logic.getVehicle().getT0();
+		//if(plan instanceof Leg && ((Leg)plan).getMode().equals(Run.MODE_DRIVER) && isDyn){
+		if(legDyn){
 			pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());
+			setIsDyn(false);
+			legDyn = false;
 		}
 			//dAgent.endLegAndComputeNextState(now);
 		//}else{
@@ -213,7 +219,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		return pAgent.getDestinationFacility();
 	}
 
-	public PersonDriverAgentImpl getpAgent() {
+	public MobsimDriverPassengerAgent getpAgent() {
 		return pAgent;
 	}
 
@@ -266,14 +272,14 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	@Override
 	public void setVehicle(MobsimVehicle veh) {
 		// TODO Auto-generated method stub
-		//pAgent.setVehicle(veh);
+		pAgent.setVehicle(veh);
 		dAgent.setVehicle(veh);
 	}
 
 	@Override
 	public MobsimVehicle getVehicle() {
 		// TODO Auto-generated method stub
-		return dAgent.getVehicle();
+		return isDyn ?dAgent.getVehicle():pAgent.getVehicle();
 	}
 
 	@Override
@@ -285,22 +291,32 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	@Override
 	public Id<Link> chooseNextLinkId() {
 		// TODO Auto-generated method stub
-		return dAgent.chooseNextLinkId();
+		return isDyn ?dAgent.chooseNextLinkId():pAgent.chooseNextLinkId();
 	}
 
 	@Override
 	public void notifyMoveOverNode(Id<Link> newLinkId) {
 		// TODO Auto-generated method stub
+		if(isDyn){
 		dAgent.notifyMoveOverNode(newLinkId);
+		}else{
+			pAgent.notifyMoveOverNode(newLinkId);
+		}
 	}
 
 	@Override
 	public boolean isWantingToArriveOnCurrentLink() {
 		// TODO Auto-generated method stub
-		return dAgent.isWantingToArriveOnCurrentLink();
+		return isDyn ?dAgent.isWantingToArriveOnCurrentLink():pAgent.isWantingToArriveOnCurrentLink();
 	}
 
 	public void doSimStep(double time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setCurrentLinkId(Id<Link> currentLinkId) {
 		// TODO Auto-generated method stub
 		
 	}
