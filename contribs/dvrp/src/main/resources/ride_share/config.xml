@@ -123,12 +123,15 @@
 			name="activityType_3" value="RideSharePickup" ></param>
 		<param name="activityTypicalDuration_3" value="00:01:00" ></param>
 		<param name="activityType_4" value="RideShareDropoff" /><param
-			name="activityTypicalDuration_4" value="00:01:00" /><param
+			name="activityTypicalDuration_4" value="00:01:00" />
+		<param
 			name="activityType_5" value="BeforeVrpSchedule" /><param
-			name="activityTypicalDuration_5" value="00:01:00" /><param
+			name="activityTypicalDuration_5" value="00:01:00" />
+		<param
 			name="activityType_6" value="RideShareStay" ></param>
-		<param name="activityTypicalDuration_6" value="00:02:00" />
-				<parameterset
+		<param name="activityTypicalDuration_6" value="00:02:00" /><param name="activityType_7" value="AfterVrpSchedule"></param>
+		<param name="activityTypicalDuration_7" value="00:01:00"></param>
+		<parameterset
 			type="modeParams">
 	<param name="constant" value="-0.5" ></param>
 	<param name="mode" value="ride_share_driver" /></parameterset>
