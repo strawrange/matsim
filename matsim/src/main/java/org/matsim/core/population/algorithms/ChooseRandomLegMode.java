@@ -86,7 +86,7 @@ public class ChooseRandomLegMode implements PlanAlgorithm {
 				if (!(forbidCar && (TransportMode.car.equals(newMode)) || TransportMode.ride_share_driver.equals(newMode))) {
 					break;
 				} else {
-					if (this.possibleModes.length == 2) {
+					if (this.possibleModes.length == 3) {
 						newMode = currentMode; // there is no other mode available
 						break;
 					}
