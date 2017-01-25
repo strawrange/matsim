@@ -78,10 +78,10 @@
 	<person id="passenger_7" employed="no">
 		<plan selected="yes">
 			<act type="dummy" link="412" end_time="00:06:00" />
-			<leg mode="ride_share_driver" dep_time="00:06:00" trav_time="00:40:00" arr_time="00:46:00">
+			<leg mode="ride_share_driver" dep_time="00:06:00" trav_time="00:20:00" arr_time="00:26:00">
 				<route/>
 			</leg> 
-			<act type="dummy" link="318" end_time="00:50:00"></act>
+			<act type="dummy" link="318" end_time="00:36:00"></act>
 		</plan>
 	</person>
 
