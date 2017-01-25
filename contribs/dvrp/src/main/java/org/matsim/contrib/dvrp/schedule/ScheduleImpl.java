@@ -25,7 +25,12 @@ import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Activity;
 import org.matsim.contrib.dvrp.data.Vehicle;
+import org.matsim.contrib.dvrp.path.VrpPathWithTravelData;
+import org.matsim.contrib.dvrp.path.VrpPaths;
 import org.matsim.contrib.dvrp.schedule.Task.TaskStatus;
+import org.matsim.core.router.util.LeastCostPathCalculator;
+import org.matsim.core.router.util.TravelTime;
+import org.matsim.core.trafficmonitoring.FreeSpeedTravelTime;
 
 import rideSharing.RideShareServeTask;
 
@@ -40,6 +45,8 @@ public class ScheduleImpl<T extends AbstractTask>
 
     private ScheduleStatus status = ScheduleStatus.UNPLANNED;
     private T currentTask = null;
+    
+    private int endRideShareNumber = 0;
     
     public void resetSchedule(){
     	this.status = ScheduleStatus.PLANNED;
@@ -78,6 +85,15 @@ public class ScheduleImpl<T extends AbstractTask>
         return tasks.size();
     }
 
+    @Override
+    public int getEndRideShareNumber(){
+    	return this.endRideShareNumber;
+    };
+    
+    @Override
+    public void addEndRideShareNumber(){
+    	this.endRideShareNumber ++;
+    };
 
     public void addTask(T task)
     {
@@ -126,35 +142,35 @@ public class ScheduleImpl<T extends AbstractTask>
             throw new IllegalArgumentException();
         }
 
-        if (taskIdx > 0) {
-            Task previousTask = tasks.get(taskIdx - 1);
+        //if (taskIdx > 0) {
+            //Task previousTask = tasks.get(taskIdx - 1);
 
-            if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
-                throw new IllegalArgumentException();
-            }
+            //if (Math.round(previousTask.getEndTime() * 100.0) / 100.0 != Math.round(beginTime * 100.0) / 100.0)  {
+                //throw new IllegalArgumentException();
+            //}
 
-            if (Tasks.getEndLink(previousTask) != beginLink) {
-            	Logger.getLogger(getClass()).error("Last task End link: "+Tasks.getEndLink(previousTask).getId()+ " ; next Task start link: "+ beginLink.getId());
-                throw new IllegalArgumentException();
-            }
-        }
-        else { // taskIdx == 0
-            if (vehicle.getStartLink() != beginLink) {
-                throw new IllegalArgumentException();
-            }
-        }
+            //if (Tasks.getEndLink(previousTask) != beginLink) {
+            	//Logger.getLogger(getClass()).error("Last task End link: "+Tasks.getEndLink(previousTask).getId()+ " ; next Task start link: "+ beginLink.getId());
+                //throw new IllegalArgumentException();
+            //}
+       // }
+        //else { taskIdx == 0
+            //if (vehicle.getStartLink() != beginLink) {
+                //throw new IllegalArgumentException();
+            //}
+        //}
 
-        if (taskIdx < taskCount) {
-            Task nextTask = tasks.get(taskIdx);// currently at taskIdx, but soon at taskIdx+1
+        //if (taskIdx < taskCount) {
+           // Task nextTask = tasks.get(taskIdx);// currently at taskIdx, but soon at taskIdx+1
 
-            if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
-                throw new IllegalArgumentException();
-            }
+            //if (Math.round(nextTask.getBeginTime() * 100.0) / 100.0 != Math.round(endTime * 100.0) / 100.0) {
+               // throw new IllegalArgumentException();
+            //}
 
-            if (Tasks.getBeginLink(nextTask) != endLink) {
-                throw new IllegalArgumentException();
-            }
-        }
+            //if (Tasks.getBeginLink(nextTask) != endLink) {
+               // throw new IllegalArgumentException();
+           // }
+        //}
     }
 
 
@@ -251,6 +267,64 @@ public class ScheduleImpl<T extends AbstractTask>
 
 
     @Override
+    public void addTaskInOrder(List<T> prepareTasks){
+    	if (tasks.size() == 0 ){
+    		for(int i = 0; i < 4; i++){
+    			addTask(prepareTasks.get(i));
+    		}
+    		prepareTasks.clear();
+    	}
+    	
+    	else {
+    		int currentTaskIdx = 0;
+    		int cycleIdx = 0;
+    		
+    		AbstractTask test= this.currentTask;
+    		
+    		if(test != null){
+    			currentTaskIdx = this.getCurrentTask().getTaskIdx();
+    			cycleIdx = (currentTaskIdx - this.getEndRideShareNumber()) / 4 + 1;
+    		}
+    		
+    		if ((cycleIdx * 4 + this.getEndRideShareNumber()) == tasks.size()){
+    			for(int j = 0; j < 4; j++){
+    				addTask(prepareTasks.get(j));
+    			}
+    			prepareTasks.clear();
+    		}
+    		else for (int i = cycleIdx * 4 + this.getEndRideShareNumber(); i < tasks.size(); i= i+1){
+    	
+    			if(prepareTasks.get(0).getDistanceDifference() < tasks.get(i).getDistanceDifference()){
+    				for(int j = 0; j < 4; j++){
+    					addTask(i+j, prepareTasks.get(j));
+    				}
+    				prepareTasks.clear();
+    				this.reroute(cycleIdx);
+    				break;
+    			}
+    		}
+    		if(prepareTasks.size()!=0){
+    			for(int j = 0; j < 4; j++){
+    				addTask(prepareTasks.get(j));
+    			}  
+    			prepareTasks.clear();
+    		}
+    	}
+    	
+ 	
+	//just wait (and be ready) till the end of the vehicle's time window (T1)
+    	int size = tasks.size();
+    	RideShareServeTask lastTask = (RideShareServeTask)tasks.get(size - 1);
+    	double t = lastTask.getEndTime();
+    	Link lastLink = lastTask.getLink();
+        double tEnd = Math.max(t, vehicle.getT1());
+        addTask((T) new StayTaskImpl(t, tEnd, lastLink, "wait")) ;    	
+    }
+
+
+
+    
+    @Override
     public ScheduleStatus getStatus()
     {
         return status;
@@ -329,5 +403,92 @@ public class ScheduleImpl<T extends AbstractTask>
 		}else{
 			return tasks.get(getTaskCount() - 2);
 		}
+	}
+
+
+	@Override
+	public void reroute(int cycleIdx) {
+		
+		final LeastCostPathCalculator router = this.vehicle.getAgentLogic().getOptimizer().getRouter();
+		final TravelTime travelTime = new FreeSpeedTravelTime();;
+		
+    	for(int i = cycleIdx * 4 + this.getEndRideShareNumber(); i < tasks.size(); i++){
+    		if(tasks.get(i) instanceof DriveTask){		    
+
+    			DriveTaskImpl tempTask = (DriveTaskImpl)tasks.get(i);
+    			Link fromLink = tempTask.getFromLink();
+    			double startTime = tempTask.getBeginTime();
+    		    
+    			if (cycleIdx == 0 && i == 0){
+    				DriveTask lastDriveTask = (DriveTask)tasks.get(4);
+        			fromLink = lastDriveTask.getPath().getFromLink();
+        			VrpPathWithTravelData path = (VrpPathWithTravelData) lastDriveTask.getPath();
+        			startTime = path.getDepartureTime();
+    		    }
+    			
+    			else {
+    				if(tasks.get(i - 1) instanceof RideShareServeTask){
+    			
+    				RideShareServeTask lastStayTask = (RideShareServeTask)tasks.get(i - 1);
+    				fromLink = lastStayTask.getLink();
+    				startTime = lastStayTask.getEndTime();
+    			}
+    			
+    			if(tasks.get(i - 1) instanceof DriveTask){
+        			DriveTask lastDriveTask = (DriveTask)tasks.get(i - 1);
+        			fromLink = lastDriveTask.getPath().getToLink();
+        			VrpPathWithTravelData path = (VrpPathWithTravelData) lastDriveTask.getPath();
+        			startTime = path.getArrivalTime();
+        		}
+    			
+    			}
+    			
+    			Link toLink = tempTask.getPath().getToLink();
+    			
+    			
+    			VrpPathWithTravelData newPath = VrpPaths.calcAndCreatePath(fromLink, toLink, startTime, router,
+    	                travelTime);
+    			
+    			double dis = tempTask.getDistanceDifference();
+    			tempTask = new DriveTaskImpl(newPath, fromLink, toLink);
+    			tempTask.setDistanceDifference(dis);
+    			
+    			tasks.remove(i);
+    			addTask(i, (T) tempTask);
+    		}
+    		
+    		if(tasks.get(i) instanceof RideShareServeTask){
+    			
+    			RideShareServeTask tempTask = (RideShareServeTask)tasks.get(i);
+    			double t1 = tempTask.getBeginTime();
+    			double t2;
+    			
+    			if(tasks.get(i - 1) instanceof RideShareServeTask){
+    				RideShareServeTask lastStayTask = (RideShareServeTask)tasks.get(i - 1);
+    				t1 = lastStayTask.getEndTime();
+    			}
+    			
+    			if(tasks.get(i - 1) instanceof DriveTask){
+        			DriveTask lastDriveTask = (DriveTask)tasks.get(i - 1);
+        			VrpPathWithTravelData path = (VrpPathWithTravelData) lastDriveTask.getPath();
+        			t1 = path.getArrivalTime();
+        		}
+    			
+    			
+    			if(tempTask.isPickup())
+    				t2 = t1 + 120; //PICKUP_DURATION
+    			else
+    				t2 = t1 + 60;//DROPOFF_DURATION
+    			
+    			tempTask.setBeginTime(t1);
+    			tempTask.setEndTime(t2);
+    			
+    			tasks.remove(i);
+    			addTask(i, (T) tempTask);   			
+    		}
+    		
+    	}
+
+		
 	}
 }

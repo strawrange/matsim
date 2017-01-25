@@ -7,87 +7,101 @@
 
 	<person id="passenger_0" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="114" end_time="00:02:00" />
-			<leg mode="ride_share_passenger" >
+			<act type="dummy" link="114" end_time="00:00:00" />
+			<leg mode="ride_share_passenger" dep_time="00:00:00" trav_time="00:01:00" arr_time="00:01:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="349" start_time="00:15:00"/>
+			<act type="dummy" link="349"/>
 		</plan>
 	</person>
 
 	<person id="passenger_1" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="144" end_time="00:01:00" />
-			<leg mode="ride_share_driver" >
+			<act type="dummy" link="144" end_time="00:05:00" />
+			<leg mode="ride_share_passenger" dep_time="00:05:00" trav_time="00:01:00" arr_time="00:06:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="437" end_time="00:18:00" start_time="00:14:00"/><leg
-				mode="ride_share_driver" >
-</leg>
-			<act type="dummy" link="343" start_time="00:38:00"/>
+			<act type="dummy" link="437"/>
+		</plan>
+	</person>
+
+	<person id="passenger_2" employed="no">
+		<plan selected="yes">
+			<act type="dummy" link="223" end_time="00:10:00" />
+			<leg mode="ride_share_passenger" dep_time="00:10:00" trav_time="00:01:00" arr_time="00:11:00">
+				<route/>
+			</leg> 
+			<act type="dummy" link="347"/>
 		</plan>
 	</person>
 
 	<person id="passenger_3" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="234" end_time="00:10:00" />
-			<leg mode="ride_share_driver">
+			<act type="dummy" link="234" end_time="00:05:00" />
+			<leg mode="ride_share_passenger" dep_time="00:05:00" trav_time="00:20:00" arr_time="00:25:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="119" start_time="00:40:00"/>
+			<act type="dummy" link="119" end_time="00:30:00" />
 		</plan>
 	</person>
 
 	<person id="passenger_4" employed="no">
 		<plan selected="yes">
 			<act type="dummy" link="314" end_time="00:20:00" />
-			<leg mode="ride_share_passenger" >
+			<leg mode="ride_share_passenger" dep_time="00:20:00" trav_time="00:01:00" arr_time="00:21:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="260" start_time="00:21:00"/>
+			<act type="dummy" link="260"/>
 		</plan>
 	</person>
 
 	<person id="passenger_5" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="137" end_time="00:06:00" ></act><leg mode="ride_share_passenger">
+			<act type="dummy" link="333" end_time="00:20:00" />
+			<leg mode="ride_share_passenger" dep_time="00:20:00" trav_time="00:06:00" arr_time="00:26:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="438" start_time="00:26:00"></act>
+			<act type="dummy" link="438"/>
 		</plan>
 	</person>
 
 	<person id="passenger_6" employed="no">
 		<plan selected="yes">
 			<act type="dummy" link="325" end_time="00:30:00" />
-			<leg mode="ride_share_passenger">
+			<leg mode="ride_share_passenger" dep_time="00:12:00" trav_time="00:07:00" arr_time="00:19:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="111" start_time="00:31:00"/>
+			<act type="dummy" link="111"/>
 		</plan>
 	</person>
 
 	<person id="passenger_7" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="412" end_time="00:08:00" />
-			<leg mode="ride_share_passenger" >
+			<act type="dummy" link="412" end_time="00:06:00" />
+			<leg mode="ride_share_driver" dep_time="00:06:00" trav_time="00:40:00" arr_time="00:46:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="318" end_time="00:28:00" start_time="00:20:00"></act>
-			<leg mode="ride_share_passenger" >
-			</leg>
-			<act type="dummy" link="455" start_time="00:38:00"></act>
+			<act type="dummy" link="318" end_time="00:50:00"></act>
 		</plan>
 	</person>
 
 	<person id="passenger_8" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="455" end_time="00:40:00" />
-			<leg mode="ride_share_passenger" >
+			<act type="dummy" link="455" end_time="00:17:00" />
+			<leg mode="ride_share_passenger" dep_time="00:17:00" trav_time="00:01:00" arr_time="00:18:00">
+				<route/>
 			</leg> 
-			<act type="dummy" link="236" start_time="00:41:00"/>
+			<act type="dummy" link="236"></act>
 		</plan>
 	</person>
 
 	<person id="passenger_9" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="139" end_time="00:45:00" />
-			<leg mode="ride_share_passenger" >
+			<act type="dummy" link="139" end_time="00:19:00" />
+			<leg mode="ride_share_passenger" dep_time="00:19:00" trav_time="00:01:00" arr_time="00:20:00">
+				<route></route>
 			</leg> 
-			<act type="dummy" link="330" start_time="00:46:00"/>
+			<act type="dummy" link="330"/>
 		</plan>
 	</person>
 

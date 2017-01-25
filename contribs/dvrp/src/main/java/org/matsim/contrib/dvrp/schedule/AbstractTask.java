@@ -36,6 +36,10 @@ public abstract class AbstractTask
     private double endTime;
 
     private TaskTracker taskTracker;
+    
+    private double distanceDifference;
+    
+    private boolean isOnWayToActivity = false;
 
 
     public AbstractTask(double beginTime, double endTime)
@@ -55,7 +59,16 @@ public abstract class AbstractTask
         return status;
     }
 
+    @Override
+    public boolean getOnWayToActivity(){
+    	return this.isOnWayToActivity;
+    }
 
+    @Override
+    public  void onWayToActivity(){
+    	this.isOnWayToActivity = true;
+    }
+    
     @Override
     public final int getTaskIdx()
     {
@@ -105,6 +118,15 @@ public abstract class AbstractTask
         this.endTime = endTime;
     }
 
+    @Override
+    public void setDistanceDifference(double distanceDifference){
+    	this.distanceDifference = distanceDifference;
+    }
+    
+    @Override
+    public double getDistanceDifference(){
+    	return this.distanceDifference;
+    }
 
     @Override
     public TaskTracker getTaskTracker()

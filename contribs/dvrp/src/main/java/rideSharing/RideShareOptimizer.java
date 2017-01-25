@@ -1,5 +1,6 @@
 package rideSharing;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,9 @@ import java.util.Map;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Activity;
+import org.matsim.api.core.v01.population.Leg;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.contrib.dvrp.data.Request;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.data.VrpData;
@@ -133,10 +137,16 @@ public class RideShareOptimizer  implements VrpOptimizer{
             default:
                 throw new IllegalStateException();
         }
+        
+        
+        if(s.getTasks().size() > 0 && s.getTasks().get(s.getTasks().size() - 1).getOnWayToActivity()){
+    		return;
+    	} // if driver on his way home, he will not recieve any request
 
         RideShareRequest req = (RideShareRequest)request;
         Link fromLink = req.getFromLink();
         Link toLink = req.getToLink();
+        List <AbstractTask> prepareTasks = new ArrayList<>();
 
         double t0 = s.getStatus() == ScheduleStatus.UNPLANNED ? //
                 Math.max(veh.getT0(), currentTime) : //
@@ -144,28 +154,40 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
         VrpPathWithTravelData p1 = VrpPaths.calcAndCreatePath(lastTask.getLink(), fromLink, t0,
                 router, travelTime);
-        s.addTask(new DriveTaskImpl(p1));
+        AbstractTask tempTask = new DriveTaskImpl(p1, lastTask.getLink(), fromLink);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
 
         double t1 = p1.getArrivalTime();
         double t2 = t1 + PICKUP_DURATION;// 2 minutes for picking up the passenger
-        s.addTask(new RideShareServeTask(t1, t2, fromLink, true, req));
+        tempTask = new RideShareServeTask(t1, t2, fromLink, true, req);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
+
 
         VrpPathWithTravelData p2 = VrpPaths.calcAndCreatePath(fromLink, toLink, t2, router,
                 travelTime);
-        s.addTask(new DriveTaskImpl(p2));
+        tempTask = new DriveTaskImpl(p2, fromLink, toLink);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
+
 
         double t3 = p2.getArrivalTime();
         double t4 = t3 + DROPOFF_DURATION;// 1 minute for dropping off the passenger
-        s.addTask(new RideShareServeTask(t3, t4, toLink, false, req));
+        tempTask = new RideShareServeTask(t3, t4, toLink, false, req);
+        distanceCalculator(tempTask, request, veh);
+        prepareTasks.add(tempTask);
+
 
         //just wait (and be ready) till the end of the vehicle's time window (T1)
-        double tEnd;
-        if(veh.getT1() != 0){
-        tEnd = Math.max(t4, veh.getT1());
-        }else{
-        	tEnd = t4;
-        }
-        s.addTask(new StayTaskImpl(t4, tEnd, toLink, "wait"));
+        //double tEnd;
+        //if(veh.getT1() != 0){
+        //tEnd = Math.max(t4, veh.getT1());
+        //}else{
+        //	tEnd = t4;
+        //}
+        //s.addTask(new StayTaskImpl(t4, tEnd, toLink, "wait"));
+        s.addTaskInOrder(prepareTasks);
     }
 
     public void driveRequestSubmitted(Request request, double now, Id<Vehicle> vehId)
@@ -195,12 +217,16 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
         VrpPathWithTravelData p1 = VrpPaths.calcAndCreatePath(fromLink, toLink, request.getT0(),
                 router, travelTime);
-        schedule.get(vehId).addTask(new DriveTaskImpl(p1));
+        DriveTaskImpl tempTask = new DriveTaskImpl(p1);
+        tempTask.onWayToActivity();
+        schedule.get(vehId).addTask(tempTask);
         
         //just wait (and be ready) till the end of the vehicle's time window (T1)
         double t1 = p1.getArrivalTime() + STAY_DURATION;
         double tEnd = Math.max(t1, vehicle.getT1());
         schedule.get(vehId).addTask(new StayTaskImpl(t1, tEnd, toLink, "wait"));
+        
+        schedule.get(vehId).addEndRideShareNumber();
     }
 
     @Override
@@ -262,6 +288,37 @@ public class RideShareOptimizer  implements VrpOptimizer{
 			vehicle.setSchedule(s);
 			this.schedule.put(vehicle.getId(),s);
 		}
+	}
+
+	@Override
+	public void distanceCalculator(AbstractTask task, Request request, Vehicle vehicle){
+		RideShareRequest req = (RideShareRequest)request;
+		
+		RideShareAgent agent = (RideShareAgent) qsim.getAgentMap().get(vehicle.getId());
+		
+		Id<Link> destinationId = null;
+		
+		PlanElement currentPlan = agent.getCurrentPlanElement();
+		if(currentPlan instanceof Activity){
+			Leg nextLeg = (Leg) agent.getNextPlanElement();
+			destinationId = nextLeg.getRoute().getEndLinkId();
+		}else if (currentPlan instanceof Leg){
+			destinationId = agent.getDestinationLinkId();
+		}
+		Link destination = qsim.getScenario().getNetwork().getLinks().get(destinationId);
+		
+		Link departure = vehicle.getStartLink();
+	
+		
+		double departureDis = Math.pow((req.getFromLink().getCoord().getX() - departure.getCoord().getX()), 2) + 
+				Math.pow((req.getFromLink().getCoord().getY() - departure.getCoord().getY()), 2);
+		
+		double destinationDis = Math.pow((req.getToLink().getCoord().getX() - destination.getCoord().getX()), 2) + 
+				Math.pow((req.getToLink().getCoord().getY() - destination.getCoord().getY()), 2);
+		
+		double distanceDif = Math.pow(departureDis, 0.5) + Math.pow(destinationDis, 0.5);
+		
+		task.setDistanceDifference(distanceDif);
 	}
 
 

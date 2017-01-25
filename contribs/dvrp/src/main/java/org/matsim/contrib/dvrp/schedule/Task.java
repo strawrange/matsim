@@ -54,6 +54,11 @@ public interface Task
 
 
     int getTaskIdx();
+    
+    boolean getOnWayToActivity();
+    
+    void onWayToActivity();
+
 
 
     // SETTERS:
@@ -61,11 +66,14 @@ public interface Task
 
 
     void setEndTime(double endTime);
+    
+    void setDistanceDifference(double distanceDifference);
 
 
     //
     TaskTracker getTaskTracker();
 
+    double getDistanceDifference();
 
     void initTaskTracker(TaskTracker taskTracker);
 }
