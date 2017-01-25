@@ -129,7 +129,11 @@ public class RideShareOptimizer  implements VrpOptimizer{
     	//}
         StayTask lastTask = (StayTask)Schedules.getLastTask(s);// only WaitTask possible here
         double currentTime = qsim.getSimTimer().getTimeOfDay();
-
+        
+        if(s.getTasks().size() > 1 && s.getTasks().get(s.getTasks().size() - 2).getOnWayToActivity()){
+    		return;
+    	} 
+        
         switch (lastTask.getStatus()) {
             case PLANNED:
                 s.removeLastTask();// remove waiting
@@ -143,10 +147,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
                 throw new IllegalStateException();
         }
         
-        
-        if(s.getTasks().size() > 0 && s.getTasks().get(s.getTasks().size() - 1).getOnWayToActivity()){
-    		return;
-    	} // if driver on his way to next activity (e.g.home), he will not receive any request
+        // if driver on his way to next activity (e.g.home), he will not receive any request
 
         RideShareRequest req = (RideShareRequest)request;
         Link fromLink = req.getFromLink();
