@@ -67,7 +67,7 @@
 
 	<person id="passenger_6" employed="no">
 		<plan selected="yes">
-			<act type="dummy" link="325" end_time="00:30:00" />
+			<act type="dummy" link="325" end_time="00:12:00" />
 			<leg mode="ride_share_passenger" dep_time="00:12:00" trav_time="00:07:00" arr_time="00:19:00">
 				<route/>
 			</leg> 

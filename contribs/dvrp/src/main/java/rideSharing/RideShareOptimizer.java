@@ -32,6 +32,8 @@ import org.matsim.core.router.util.LeastCostPathCalculator;
 import org.matsim.core.router.util.TravelTime;
 import org.matsim.core.trafficmonitoring.FreeSpeedTravelTime;
 
+import org.matsim.core.mobsim.framework.MobsimAgent.State;
+
 public class RideShareOptimizer  implements VrpOptimizer{
 	private final QSim qsim;
 
@@ -144,7 +146,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
         
         if(s.getTasks().size() > 0 && s.getTasks().get(s.getTasks().size() - 1).getOnWayToActivity()){
     		return;
-    	} // if driver on his way home, he will not recieve any request
+    	} // if driver on his way to next activity (e.g.home), he will not receive any request
 
         RideShareRequest req = (RideShareRequest)request;
         Link fromLink = req.getFromLink();
@@ -302,11 +304,13 @@ public class RideShareOptimizer  implements VrpOptimizer{
 		Id<Link> destinationId = null;
 		
 		PlanElement currentPlan = agent.getCurrentPlanElement();
+		//State currentState  = agent.getState();
+		
 		if(currentPlan instanceof Activity){
 			Leg nextLeg = (Leg) agent.getNextPlanElement();
 			destinationId = nextLeg.getRoute().getEndLinkId();
 		}else if (currentPlan instanceof Leg){
-			destinationId = agent.getDestinationLinkId();
+			destinationId = agent.getpAgent().getDestinationLinkId();   		
 		}
 		Link destination = qsim.getScenario().getNetwork().getLinks().get(destinationId);
 		

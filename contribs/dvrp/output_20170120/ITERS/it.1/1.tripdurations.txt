@@ -1,0 +1,10 @@
+pattern	0+	5+	10+	15+	20+	25+	30+	35+	40+	45+	50+	55+	60+
+BeforeVrpSchedule---RideSharePickup	0	3	0	0	0	0	0	0	0	0	0	0	0
+RideShareDropoff---work	1	0	0	0	0	0	0	0	0	0	0	0	0
+RideSharePickup---RideShareDropoff	1	0	0	0	0	0	0	0	0	0	0	0	0
+home---pt interaction	0	1	1	1	0	0	0	0	0	0	0	0	0
+home---work	1	2	0	0	0	1	0	0	0	0	0	0	0
+pt interaction---pt interaction	3	1	0	0	0	0	0	0	0	0	0	0	0
+pt interaction---work	1	0	0	0	0	0	0	0	0	0	0	0	0
+
+average trip duration: 455.3529411764706 seconds = 00:07:35
