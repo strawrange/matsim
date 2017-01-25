@@ -110,11 +110,13 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		if(now >= DynStartTime && now <= DynEndTime && !isDyn){
 			//dAgent.initialActivity();
 	    	pAgent.endActivityAndComputeNextState(now);
+	    	dAgent.setCurrentLinkId(getCurrentLinkId());
 	    	setIsDyn(true);
-			if(dAgent.getCurrentAction() instanceof DynLeg){
-				dAgent.endLegAndComputeNextState(now);
-				return;
-			}
+	    	dAgent.setCurrentLinkId(getCurrentLinkId());
+			//if(dAgent.getCurrentAction() instanceof DynLeg){
+			//	dAgent.endLegAndComputeNextState(now);
+			//	return;
+			//}
 
 	    	//logic.getVehicle().getSchedule().resetSchedule();
 	    	//logic.getVehicle().getSchedule().nextTask();
@@ -154,6 +156,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		//if(plan instanceof Leg && ((Leg)plan).getMode().equals(Run.MODE_DRIVER) && isDyn){
 		if(legDyn){
 			pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());
+			dAgent.endLegAndComputeNextState(now);
 			setIsDyn(false);
 			legDyn = false;
 		}
