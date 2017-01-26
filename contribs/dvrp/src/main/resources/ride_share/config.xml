@@ -7,7 +7,7 @@
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="population_10prct.xml.gz" />
+		<param name="inputPlansFile" value="population_1prct.xml.gz" />
 	</module>
 
 	<module name="facilities" >
@@ -18,9 +18,9 @@
 		<param name="writeEventsInterval" value="5" />
 		<param name="writePlansInterval" value="5" />
 		<param name="eventsFileFormat" value="xml" />
-		<param name="outputDirectory" value="output_20170120"/>
+		<param name="outputDirectory" value="output_20170126"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="20" />
+		<param name="lastIteration" value="5" />
 		<param name="mobsim" value="qsim" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" />
 	</module>
