@@ -108,13 +108,17 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		double DynEndTime = logic.getVehicle().getT1();
 		double DynStartTime = Double.min(logic.getVehicle().getT0(),pAgent.getActivityEndTime());
 		Schedule<? extends Task> schedule = logic.getVehicle().getSchedule();
-		if(!isDyn && pAgent.getActivityEndTime() > DynEndTime){
+		if(!isDyn && pAgent.getActivityEndTime() > DynEndTime && DynEndTime > 0){
+	    	pAgent.endActivityAndComputeNextState(now);
+	    	dAgent.setCurrentLinkId(getCurrentLinkId());
+			setIsDyn(true);
 			schedule.clearTasks();
 			Request request = passengerEngine.createRequest(dAgent.getCurrentLinkId(), pAgent.getDestinationLinkId(), now, now);
 			logic.driveRequestSubmitted(request, now);
 			dAgent.endActivityAndComputeNextState(now);
 			schedule.getVehicle().removeT();
-			legDyn = true; 
+			legDyn = true;
+			return;
 		}
 		if(now >= DynStartTime && now <= DynEndTime && !isDyn){
 			//dAgent.initialActivity();
