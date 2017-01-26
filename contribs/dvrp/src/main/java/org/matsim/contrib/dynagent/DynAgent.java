@@ -7,6 +7,8 @@ import org.matsim.api.core.v01.events.*;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
+import org.matsim.contrib.dvrp.schedule.ServeRequestTask;
+import org.matsim.contrib.dvrp.vrpagent.VrpAgentLogic;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
@@ -15,6 +17,9 @@ import org.matsim.core.utils.misc.Time;
 import org.matsim.facilities.Facility;
 import org.matsim.pt.transitSchedule.api.*;
 import org.matsim.vehicles.Vehicle;
+
+import rideSharing.RideShareServeTask;
+import rideSharing.Run;
 
 
 public class DynAgent
@@ -135,6 +140,14 @@ public class DynAgent
     @Override
     public void endLegAndComputeNextState(double now)
     {
+    	VrpAgentLogic logic = ((VrpAgentLogic)agentLogic);
+    	if(logic.getVehicle().getSchedule().getNextTask() instanceof RideShareServeTask){
+    		if(!((RideShareServeTask)logic.getVehicle().getSchedule().getNextTask()).isPickup()){
+    			events.processEvent(new PersonArrivalEvent(now, id, currentLinkId, Run.MODE_DRIVER));
+    			computeNextAction(dynLeg, now);
+    			return;
+    		}
+    	}
         events.processEvent(new PersonArrivalEvent(now, id, currentLinkId, dynLeg.getMode()));
         computeNextAction(dynLeg, now);
     }
