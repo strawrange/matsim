@@ -76,6 +76,8 @@ public final class PlanCalcScoreConfigGroup extends ConfigGroup {
 		this.addParameterSet( new ModeParams( TransportMode.walk ) );
 		this.addParameterSet( new ModeParams( TransportMode.bike ) );
 		this.addParameterSet( new ModeParams( TransportMode.other ) );
+		this.addParameterSet( new ModeParams( TransportMode.ride_share_driver));
+		this.addParameterSet( new ModeParams( TransportMode.ride_share_passenger));
 		
 		// yyyyyy find better solution for this. kai, dec'15
 		{
@@ -222,6 +224,12 @@ public final class PlanCalcScoreConfigGroup extends ConfigGroup {
 		else if ("travelingBike".equals(key)) {
 			this.getModes().get(TransportMode.bike).setMarginalUtilityOfTraveling(Double.parseDouble(value));
 		}
+		else if ("travelingRideShareDriver".equals(key)) {
+			this.getModes().get(TransportMode.ride_share_driver).setMarginalUtilityOfTraveling(Double.parseDouble(value));
+		}
+		else if ("travelingRideSharePassenger".equals(key)) {
+			this.getModes().get(TransportMode.ride_share_passenger).setMarginalUtilityOfTraveling(Double.parseDouble(value));
+		}
 
 		// backward compatibility: "typed" util of distance
 		else if ("marginalUtlOfDistanceCar".equals(key)){
@@ -235,6 +243,12 @@ public final class PlanCalcScoreConfigGroup extends ConfigGroup {
 		}
 		else if ("marginalUtlOfDistanceOther".equals(key)){
 			this.getModes().get(TransportMode.other).setMarginalUtilityOfDistance(Double.parseDouble(value));
+		}
+		else if ("marginalUtlOfDistanceRideShareDriver".equals(key)){
+			this.getModes().get(TransportMode.ride_share_driver).setMarginalUtilityOfDistance(Double.parseDouble(value));
+		}
+		else if ("marginalUtlOfDistanceRideSharePassenger".equals(key)){
+			this.getModes().get(TransportMode.ride_share_passenger).setMarginalUtilityOfDistance(Double.parseDouble(value));
 		}
 
 		// backward compatibility: "typed" constants
@@ -252,6 +266,12 @@ public final class PlanCalcScoreConfigGroup extends ConfigGroup {
 		}
 		else if ( "constantBike".equals(key)) {
 			getModes().get(TransportMode.bike).setConstant(Double.parseDouble(value));
+		}
+		else if ( "constantRideShareDriver".equals(key)) {
+			getModes().get(TransportMode.ride_share_driver).setConstant(Double.parseDouble(value));
+		}
+		else if ( "constantRideSharePassenger".equals(key)) {
+			getModes().get(TransportMode.ride_share_passenger).setConstant(Double.parseDouble(value));
 		}
 
 		// old-fashioned scoring parameters: default subpopulation
