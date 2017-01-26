@@ -61,6 +61,10 @@ public class ScheduleImpl<T extends AbstractTask>
     }
     
     public void clearTasks(){
+    	if(currentTask == null){
+    		tasks.removeAll(tasks.subList(0, tasks.size() - 1));
+    		return;
+    	}
     	tasks.removeAll(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
  //   	status = ScheduleStatus.UNPLANNED;
     }
