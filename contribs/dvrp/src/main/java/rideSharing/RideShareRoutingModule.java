@@ -50,7 +50,7 @@ public class RideShareRoutingModule implements RoutingModule{
 				next = (Activity) person.getSelectedPlan().getPlanElements().get(i + 1); 
 				Leg leg = (Leg) person.getSelectedPlan().getPlanElements().get(i);
 				if(leg.getDepartureTime() == departureTime){
-					leg.setDepartureTime(Double.min(departureTime,last.getEndTime()));
+					leg.setDepartureTime(Math.min(departureTime,last.getEndTime()));
 					if(next.getStartTime() != Double.NEGATIVE_INFINITY){
 						leg.setTravelTime(Math.max(next.getStartTime() - departureTime,1));
 					}else{

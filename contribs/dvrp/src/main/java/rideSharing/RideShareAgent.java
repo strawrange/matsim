@@ -106,7 +106,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		// TODO Auto-generated method stub
 		VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
 		double DynEndTime = logic.getVehicle().getT1();
-		double DynStartTime = Double.min(logic.getVehicle().getT0(),pAgent.getActivityEndTime());
+		double DynStartTime = Math.min(logic.getVehicle().getT0(),pAgent.getActivityEndTime());
 		Schedule<? extends Task> schedule = logic.getVehicle().getSchedule();
 		if(!isDyn && pAgent.getActivityEndTime() > DynEndTime && DynEndTime > 0){
 	    	pAgent.endActivityAndComputeNextState(now);
