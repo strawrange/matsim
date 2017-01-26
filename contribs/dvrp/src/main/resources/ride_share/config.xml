@@ -7,7 +7,7 @@
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="population_10prct.xml.gz" />
+		<param name="inputPlansFile" value="population_1prct.xml.gz" />
 	</module>
 
 	<module name="facilities" >
@@ -89,6 +89,10 @@
 		<!-- [utils/hr] additional marginal utility offset of traveling by pt.  normally negative.  this comes on top of the opportunity cost of time -->
 		<param name="travelingPt" value="-0.18" />
 
+		
+		<param name="travelingRideSharePassenger" value="-2"></param>
+		<param name="travelingRideShareDriver" value="1"></param>
+		
 		<!-- [utils/hr] additional marginal utility offset of traveling by foot.  normally negative.  this comes on top of the opportunity cost of time.  also see marginalUtlOfDistanceWalk -->
 		<param name="travelingWalk" value="-1.14"/>
 
@@ -121,9 +125,10 @@
 		
 		<param
 			name="activityType_3" value="RideSharePickup" ></param>
-		<param name="activityTypicalDuration_3" value="00:01:00" ></param>
-		<param name="activityType_4" value="RideShareDropoff" /><param
-			name="activityTypicalDuration_4" value="00:01:00" />
+		<param name="activityTypicalDuration_3" value="00:02:00" ></param>
+		<param
+			name="activityType_4" value="RideShareDropoff" ></param>
+		<param name="activityTypicalDuration_4" value="00:01:00" ></param>
 		<param
 			name="activityType_5" value="BeforeVrpSchedule" /><param
 			name="activityTypicalDuration_5" value="00:01:00" />
