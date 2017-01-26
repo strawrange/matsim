@@ -80,7 +80,8 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	@Override
 	public String getMode() {
 		// TODO Auto-generated method stub
-		return isDyn?dAgent.getMode():TransportMode.car;
+		return Run.MODE_DRIVER;
+				//isDyn?dAgent.getMode():TransportMode.car;
 	}
 
 	@Override
