@@ -207,9 +207,9 @@ public class ScheduleImpl<T extends AbstractTask>
         }
     }
 
-    private void validateArgsAfterReroute(List<T> tasks)
+    private void validateArgsAfterReroute(List<T> tasks, int rerouteIdx)
     {
-    	for(int taskIdx = 0; taskIdx < tasks.size(); taskIdx++){
+    	for(int taskIdx = rerouteIdx; taskIdx < tasks.size(); taskIdx++){
     		T task = tasks.get(taskIdx);
     		failIfCompleted();
     		//if (status == ScheduleStatus.STARTED) {
@@ -573,6 +573,6 @@ public class ScheduleImpl<T extends AbstractTask>
     			addTaskWithoutCheck(i, (T) tempTask); 
     		}    		
     	}
-    	validateArgsAfterReroute(tasks);
+    	validateArgsAfterReroute(tasks, rerouteIdx);
 	}
 }
