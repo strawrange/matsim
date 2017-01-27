@@ -20,9 +20,9 @@
 		<param name="eventsFileFormat" value="xml" />
 		<param name="outputDirectory" value="output_20170126"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="5" />
+		<param name="lastIteration" value="20" />
 		<param name="mobsim" value="qsim" />
-		<param name="overwriteFiles" value="deleteDirectoryIfExists" />
+		<param name="overwriteFiles" value="deleteDirectoryIfExists" ></param>
 	</module>
 
  	<module name="qsim" >
@@ -72,7 +72,7 @@
 		<param name="lateArrival" value="-2.0" />
 
 		<!-- new_score = (1-learningRate)*old_score + learningRate * score_from_mobsim.  learning rates close to zero emulate score averaging, but slow down initial convergence -->
-		<param name="learningRate" value="0.4" />
+		<param name="learningRate" value="1" />
 
 		<!-- [utils/unit_of_money] conversion of money (e.g. toll, distance cost) into utils -->
 		<param name="marginalUtilityOfMoney" value="0.062" />
@@ -117,7 +117,7 @@
 		<param name="waitingPt" value="-0.18" />
 		
 		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
-		<param name="waiting" value="-0.18" />
+		<param name="waiting" value="-0.2" />
 
 		<param name="activityType_0"            value="home" /> <!-- home -->
 		<param name="activityPriority_0"        value="1" />
