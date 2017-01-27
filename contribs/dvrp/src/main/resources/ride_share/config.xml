@@ -17,10 +17,10 @@
 	<module name="controler">
 		<param name="writeEventsInterval" value="5" />
 		<param name="writePlansInterval" value="5" />
-		<param name="eventsFileFormat" value="xml" />
+		<param name="eventsFileFormat" value="xml" ></param>
 		<param name="outputDirectory" value="output_20170126"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="20" />
+		<param name="lastIteration" value="50" />
 		<param name="mobsim" value="qsim" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" ></param>
 	</module>
@@ -102,7 +102,7 @@
 		<param name="travelingPt" value="-0.18" />
 
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share passenger.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="travelingRideSharePassenger" value="-2"></param>
+		<param name="travelingRideSharePassenger" value="-3"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share driver.  due to extra income normally positive -->
 		<param name="travelingRideShareDriver" value="1"></param>
