@@ -58,15 +58,21 @@
 
 		<!-- [utils] alternative-specific constant for walk.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
 		<param name="constantWalk" value="0.0" />
+		
+		<!-- [utils] alternative-specific constant for ride share driver.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
+		<param name="constantRideShareDriver" value="-0.562" />
+		
+		<!-- [utils] alternative-specific constant for ride share passenger.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
+		<param name="constantRideSharePassenger" value="0.0" />
 
 		<!-- [utils/hr] utility for departing early (i.e. before the earliest end time).  Probably implemented correctly, but not tested. -->
 		<param name="earlyDeparture" value="0.0" />
 
 		<!-- [utils/hr] utility for arriving late (i.e. after the latest start time).  normally negative -->
-		<param name="lateArrival" value="0.0" />
+		<param name="lateArrival" value="-2.0" />
 
 		<!-- new_score = (1-learningRate)*old_score + learningRate * score_from_mobsim.  learning rates close to zero emulate score averaging, but slow down initial convergence -->
-		<param name="learningRate" value="1.0" />
+		<param name="learningRate" value="0.4" />
 
 		<!-- [utils/unit_of_money] conversion of money (e.g. toll, distance cost) into utils -->
 		<param name="marginalUtilityOfMoney" value="0.062" />
@@ -79,6 +85,12 @@
 
 		<!-- [unit_of_money/m] conversion of pt distance into money -->
 		<param name="monetaryDistanceRatePt" value="0.0" />
+		
+		<!-- [unit_of_money/m] conversion of ride share driver distance into money -->
+		<param name="monetaryDistanceRateRideShareDriver" value="0.0" />
+		
+		<!-- [unit_of_money/m] conversion of ride share passenger distance into money -->
+		<param name="monetaryDistanceRateRideSharePassenger" value="0.0" />
 
 		<!-- [utils/hr] marginal utility of doing an activity.  normally positive.  also the opportunity cost of time if agent is doing nothing. -->
 		<param name="performing" value="0.96" />
@@ -89,8 +101,10 @@
 		<!-- [utils/hr] additional marginal utility offset of traveling by pt.  normally negative.  this comes on top of the opportunity cost of time -->
 		<param name="travelingPt" value="-0.18" />
 
-		
+		<!-- [utils/hr] additional marginal utility offset of traveling by ride share passenger.  normally negative.  this comes on top of the opportunity cost of time -->
 		<param name="travelingRideSharePassenger" value="-2"></param>
+		
+		<!-- [utils/hr] additional marginal utility offset of traveling by ride share driver.  due to extra income normally positive -->
 		<param name="travelingRideShareDriver" value="1"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by foot.  normally negative.  this comes on top of the opportunity cost of time.  also see marginalUtlOfDistanceWalk -->
@@ -101,6 +115,9 @@
 
 		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
 		<param name="waitingPt" value="-0.18" />
+		
+		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
+		<param name="waiting" value="-0.18" />
 
 		<param name="activityType_0"            value="home" /> <!-- home -->
 		<param name="activityPriority_0"        value="1" />

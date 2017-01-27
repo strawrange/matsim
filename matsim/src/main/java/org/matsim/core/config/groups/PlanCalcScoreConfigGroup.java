@@ -203,6 +203,14 @@ public final class PlanCalcScoreConfigGroup extends ConfigGroup {
 			ModeParams modeParams = getOrCreateModeParams( TransportMode.pt ) ;
 			modeParams.setMonetaryDistanceRate(Double.parseDouble(value));
 		}
+		else if ( "monetaryDistanceRateRideShareDriver".equals(key) ){
+			ModeParams modeParams = getOrCreateModeParams( TransportMode.ride_share_driver ) ;
+			modeParams.setMonetaryDistanceRate(Double.parseDouble(value));
+		}
+		else if ( "monetaryDistanceRateRideSharePassenger".equals(key) ){
+			ModeParams modeParams = getOrCreateModeParams( TransportMode.ride_share_passenger ) ;
+			modeParams.setMonetaryDistanceRate(Double.parseDouble(value));
+		}
 		else if (key.startsWith("constant_")) {
 			ModeParams modeParams = getOrCreateModeParams(key.substring("constant_".length()));
 			modeParams.setConstant(Double.parseDouble(value));
