@@ -29,6 +29,7 @@ import org.matsim.core.mobsim.framework.VehicleUsingAgent;
 import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 import org.matsim.core.population.PopulationUtils;
+import org.matsim.core.population.routes.GenericRouteImpl;
 import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.router.ActivityWrapperFacility;
 import org.matsim.core.utils.misc.Time;
@@ -211,6 +212,9 @@ public class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identifiable<
 	@Override
 	//Biyu -final
 	public Id<Vehicle> getPlannedVehicleId() {
+		if(getCurrentLeg().getRoute() instanceof GenericRouteImpl){
+			System.err.println("stop!");
+		}
 		NetworkRoute route = (NetworkRoute) this.getCurrentLeg().getRoute(); // if casts fail: illegal state.
 		if (route.getVehicleId() != null) {
 			return route.getVehicleId();
