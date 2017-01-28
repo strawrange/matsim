@@ -112,6 +112,12 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	public void endActivityAndComputeNextState(double now) {
 		// TODO Auto-generated method stub
 		VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
+		if(pAgent.getNextPlanElement() instanceof Leg){
+			if(!((Leg)pAgent.getNextPlanElement()).getMode().equals(Run.MODE_DRIVER)){
+				pAgent.endActivityAndComputeNextState(now);
+				return;
+			}
+		}
 		double DynEndTime = logic.getVehicle().getT1();
 		double DynStartTime = Math.min(logic.getVehicle().getT0(),pAgent.getActivityEndTime());
 		Schedule<? extends Task> schedule = logic.getVehicle().getSchedule();
