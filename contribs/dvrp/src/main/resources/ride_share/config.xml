@@ -20,7 +20,7 @@
 		<param name="eventsFileFormat" value="xml" ></param>
 		<param name="outputDirectory" value="output_20170126"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="5" />
+		<param name="lastIteration" value="50" />
 		<param name="mobsim" value="qsim" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" ></param>
 	</module>
@@ -96,7 +96,7 @@
 		<param name="performing" value="0.96" />
 
 		<!-- [utils/hr] additional marginal utility of traveling by car.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="traveling" value="-1.44" />
+		<param name="traveling" value="-0.992" />
 
 		<!-- [utils/hr] additional marginal utility offset of traveling by pt.  normally negative.  this comes on top of the opportunity cost of time -->
 		<param name="travelingPt" value="-0.18" />
@@ -105,7 +105,7 @@
 		<param name="travelingRideSharePassenger" value="-2.98"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share driver.  due to extra income normally positive -->
-		<param name="travelingRideShareDriver" value="1.04"></param>
+		<param name="travelingRideShareDriver" value="1.48"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by foot.  normally negative.  this comes on top of the opportunity cost of time.  also see marginalUtlOfDistanceWalk -->
 		<param name="travelingWalk" value="-1.14"/>
