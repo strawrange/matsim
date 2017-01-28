@@ -79,10 +79,11 @@ public interface Schedule<T extends Task>
     
     void addEndRideShareNumber();
     
-    int getStayStartedNumber();
+    int getStayTaskNumber();
     
-    void addStayStartedNumber();
-
+    void addStayTaskNumber();
+    
+    void reduceStayTaskNumber();
 
     T nextTask();//this one seems synchronous (will be executed when switching between DynActions)
 

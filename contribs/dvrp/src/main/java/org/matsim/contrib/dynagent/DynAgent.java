@@ -147,10 +147,11 @@ public class DynAgent
     			computeNextAction(dynLeg, now);
     			return;
     		}
-    		if(logic.getVehicle().getSchedule().getCurrentTask().getOnWayToActivity()){
-    			logic.getVehicle().getSchedule().getCurrentTask().endWayToActivity();
-    		}
+    		
     	}
+    	//if(logic.getVehicle().getSchedule().getCurrentTask().getOnWayToActivity()){
+			//logic.getVehicle().getSchedule().getCurrentTask().endWayToActivity();
+		//}
         events.processEvent(new PersonArrivalEvent(now, id, currentLinkId, dynLeg.getMode()));
         computeNextAction(dynLeg, now);
     }

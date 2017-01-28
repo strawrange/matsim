@@ -130,18 +130,21 @@ public class RideShareOptimizer  implements VrpOptimizer{
         StayTask lastTask = (StayTask)Schedules.getLastTask(s);// only WaitTask possible here
         double currentTime = qsim.getSimTimer().getTimeOfDay();
         
-        if(s.getTasks().size() > 1 && s.getTasks().get(s.getTasks().size() - 2).getOnWayToActivity()){
+
+        
+        if(s.getTasks().size() > 1 && s.getTasks().get(s.getTasks().size() - 2).getOnWayToActivity() && 
+        		(!s.getTasks().get(s.getTasks().size() - 2).getStatus().equals(Task.TaskStatus.PERFORMED))){
     		return;
     	} 
         
         switch (lastTask.getStatus()) {
             case PLANNED:
                 s.removeLastTask();// remove waiting
+                s.reduceStayTaskNumber();
                 break;
 
             case STARTED:
                 lastTask.setEndTime(currentTime);// shorten waiting
-                s.addStayStartedNumber();
                 break;
 
             default:
@@ -201,7 +204,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
     {
     	Schedule<AbstractTask> s = schedule.get(vehId);
     	
-        StayTask lastTask = (StayTask)Schedules.getLastTask(s);// only WaitTask possible here
+        StayTask lastTask = (StayTask)Schedules.getLastTask(s);// last is not stay task
         double currentTime = qsim.getSimTimer().getTimeOfDay();
 
         switch (lastTask.getStatus()) {
@@ -211,7 +214,6 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
             case STARTED:
                 lastTask.setEndTime(currentTime);// shorten waiting
-                s.addStayStartedNumber();
                 break;
 
             default:
@@ -233,8 +235,10 @@ public class RideShareOptimizer  implements VrpOptimizer{
         double t1 = p1.getArrivalTime() + STAY_DURATION;
         double tEnd = Math.max(t1, vehicle.getT1());
         schedule.get(vehId).addTask(new StayTaskImpl(t1, tEnd, toLink, "wait"));
+        //schedule.get(vehId).addStayTaskNumber();
         
         schedule.get(vehId).addEndRideShareNumber();
+        
     }
 
     @Override
