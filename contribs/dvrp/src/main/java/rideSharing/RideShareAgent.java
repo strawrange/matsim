@@ -185,7 +185,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		//if(plan instanceof Leg && ((Leg)plan).getMode().equals(Run.MODE_DRIVER) && isDyn){
 		if(legDyn){
 			pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());
-			dAgent.endLegAndComputeNextState(now);
+			//dAgent.endLegAndComputeNextState(now);
 			setIsDyn(false);
 			legDyn = false;
 		}
