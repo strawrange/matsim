@@ -61,19 +61,25 @@ public class ScheduleImpl<T extends AbstractTask>
     }
     
     public void clearTasks(){
+    	int size = tasks.size();
     	if(currentTask == null){
     		tasks.removeAll(tasks.subList(0, tasks.size() - 1));
     		return;
     	}
-    	tasks.removeAll(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
+    	else {
+    		tasks.removeAll(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
+    		if(currentTask instanceof StayTask){
+        		StayTaskImpl currentStayTask = (StayTaskImpl)currentTask;
+        		if(!currentStayTask.getName().equals("wait")){
+        			this.reduceStayTaskNumber();
+        		}else if(getCurrentTask().taskIdx != size - 1){
+        			this.reduceStayTaskNumber();
+        		}
+        	}else
+        		throw new IllegalStateException(); //current task need to be drop off
+    	}
     	
-    	if(currentTask instanceof StayTask){
-    		StayTaskImpl currentStayTask = (StayTaskImpl)currentTask;
-    		if(!currentStayTask.getName().equals("wait")){
-    			this.reduceStayTaskNumber();
-    		}
-    	}else
-    		this.reduceStayTaskNumber();
+    	
     	
  //   	status = ScheduleStatus.UNPLANNED;
     }

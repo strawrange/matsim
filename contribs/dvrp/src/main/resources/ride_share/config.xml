@@ -66,7 +66,7 @@
 		<param name="constantRideSharePassenger" value="0.0" />
 
 		<!-- [utils/hr] utility for departing early (i.e. before the earliest end time).  Probably implemented correctly, but not tested. -->
-		<param name="earlyDeparture" value="0.0" />
+		<param name="earlyDeparture" value="-1.5" />
 
 		<!-- [utils/hr] utility for arriving late (i.e. after the latest start time).  normally negative -->
 		<param name="lateArrival" value="-2.0" />
