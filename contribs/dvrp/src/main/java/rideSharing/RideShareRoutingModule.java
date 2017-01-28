@@ -28,7 +28,7 @@ import org.matsim.facilities.Facility;
 public class RideShareRoutingModule implements RoutingModule{
 	
     private final String mode;
-    private final double MaxRideSharingTravelTime = 3600;
+    private final double MaxRideSharingTravelTime = Double.POSITIVE_INFINITY;
 
     
     public RideShareRoutingModule(String mode)
@@ -42,7 +42,7 @@ public class RideShareRoutingModule implements RoutingModule{
 	public List<? extends PlanElement> calcRoute(Facility<?> fromFacility, Facility<?> toFacility, double departureTime,
 			Person person) {
 		// TODO Auto-generated method stub
-		Activity last;
+		/*Activity last;
 		Activity next;
 		for(int i = 0; i < person.getSelectedPlan().getPlanElements().size(); i++){
 			if(person.getSelectedPlan().getPlanElements().get(i) instanceof Leg ){
@@ -61,6 +61,7 @@ public class RideShareRoutingModule implements RoutingModule{
 				}
 			}
 		}
+		*/
 		Leg leg = PopulationUtils.createLeg(mode);
 		leg.setDepartureTime(departureTime);
 		leg.setTravelTime(MaxRideSharingTravelTime);

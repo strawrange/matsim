@@ -95,8 +95,14 @@ public class VrpAgentSource
     				leg = ((Leg) planElement);
     	    		if(!leg.equals(null) && leg.getMode().equals(Run.MODE_DRIVER)){
     	                org.matsim.vehicles.Vehicle vehicle = vehicleFactory.createVehicle(Id.createVehicleId(p.getId()), vehicleType);
+    	                Activity next = (Activity) plan.getPlanElements().get(i + 1);
+    	                if(next.getStartTime() != Double.NEGATIVE_INFINITY){
+    	                	leg.setTravelTime(Math.max((next.getStartTime() - leg.getDepartureTime()),1));
+    	                }else{
+    	                	leg.setTravelTime(3600);
+    	                }
     	                if (vrpData.getVehicles().containsKey(vehicle.getId())){
-    	                	vrpData.getVehicles().get(vehicle.getId()).addT(leg.getDepartureTime(), leg.getDepartureTime()+leg.getTravelTime());;
+    	                		vrpData.getVehicles().get(vehicle.getId()).addT(leg.getDepartureTime(), leg.getDepartureTime() + leg.getTravelTime());
     	                }else{
     	                Vehicle v = this.vrpData.changeNormalVehicle(vehicle,leg,qSim);
     	                vrpData.addVehicle(v);

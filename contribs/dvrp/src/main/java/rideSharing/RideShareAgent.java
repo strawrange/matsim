@@ -111,11 +111,6 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	@Override
 	public void endActivityAndComputeNextState(double now) {
 		// TODO Auto-generated method stub
-		if(pAgent.getNextPlanElement() instanceof Leg){
-			if(((Leg)pAgent.getNextPlanElement()).getMode().equals(Run.MODE_DRIVER) && ((Activity)pAgent.getCurrentPlanElement()).getType().equals("work")){
-				System.err.println("stop");
-			}
-		}
 		VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
 		if(pAgent.getNextPlanElement() instanceof Leg){
 			if(!((Leg)pAgent.getNextPlanElement()).getMode().equals(Run.MODE_DRIVER)){
@@ -127,6 +122,9 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		double DynStartTime = logic.getVehicle().getT0();
 		if(pAgent.getActivityEndTime() != Double.NEGATIVE_INFINITY && pAgent.getActivityEndTime() < DynStartTime ){
 			DynStartTime = pAgent.getActivityEndTime();
+		}
+		if(DynEndTime == Double.POSITIVE_INFINITY){
+			System.err.println("stop");
 		}
 		Schedule<? extends Task> schedule = logic.getVehicle().getSchedule();
 		if(!isDyn && pAgent.getActivityEndTime() > DynEndTime && DynEndTime > 0){
