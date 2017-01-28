@@ -70,6 +70,11 @@ public abstract class AbstractTask
     }
     
     @Override
+    public void endWayToActivity(){
+    	this.isOnWayToActivity = false;
+    }
+    
+    @Override
     public final int getTaskIdx()
     {
         return taskIdx;

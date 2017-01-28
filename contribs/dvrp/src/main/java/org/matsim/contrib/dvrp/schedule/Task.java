@@ -58,6 +58,8 @@ public interface Task
     boolean getOnWayToActivity();
     
     void onWayToActivity();
+    
+    void endWayToActivity();
 
 
 

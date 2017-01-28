@@ -20,7 +20,7 @@
 		<param name="eventsFileFormat" value="xml" ></param>
 		<param name="outputDirectory" value="output_20170126"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="50" />
+		<param name="lastIteration" value="5" />
 		<param name="mobsim" value="qsim" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" ></param>
 	</module>
@@ -114,7 +114,7 @@
 		<param name="utilityOfLineSwitch" value="0.0"/>
 
 		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
-		<param name="waitingPt" value="-0.18" />
+		<param name="waitingPt" value="-0.18" ></param>
 		
 		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
 		<param name="waiting" value="-0.2" />
