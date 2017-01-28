@@ -20,7 +20,7 @@
 		<param name="eventsFileFormat" value="xml" ></param>
 		<param name="outputDirectory" value="output_20170126"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="50" />
+		<param name="lastIteration" value="200" />
 		<param name="mobsim" value="qsim" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" ></param>
 	</module>

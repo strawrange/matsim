@@ -142,6 +142,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
             
     		s = (Schedule<AbstractTask>) veh.getSchedule();
 			s.addTask(new StayTaskImpl(veh.getT0(), veh.getT1(), veh.getStartLink(), "wait"));
+			s.addStayTaskNumber();
 			veh.setSchedule(s);
 			this.schedule.put(veh.getId(),s);
             
@@ -223,8 +224,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 
         switch (lastTask.getStatus()) {
             case PLANNED:
-                s.removeLastTask();// remove waiting
-                break;
+            	throw new IllegalStateException();
 
             case STARTED:
                 lastTask.setEndTime(currentTime);// shorten waiting
@@ -249,7 +249,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
         double t1 = p1.getArrivalTime() + STAY_DURATION;
         double tEnd = Math.max(t1, vehicle.getT1());
         schedule.get(vehId).addTask(new StayTaskImpl(t1, tEnd, toLink, "wait"));
-        //schedule.get(vehId).addStayTaskNumber();
+        schedule.get(vehId).addStayTaskNumber();
         
         schedule.get(vehId).addEndRideShareNumber();
         
@@ -311,6 +311,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
 		for(Vehicle vehicle : vehicles.values()){
 			Schedule<AbstractTask> s = (Schedule<AbstractTask>) vehicle.getSchedule();
 			s.addTask(new StayTaskImpl(vehicle.getT0(), vehicle.getT1(), vehicle.getStartLink(), "wait"));
+			s.addStayTaskNumber();
 			vehicle.setSchedule(s);
 			this.schedule.put(vehicle.getId(),s);
 		}

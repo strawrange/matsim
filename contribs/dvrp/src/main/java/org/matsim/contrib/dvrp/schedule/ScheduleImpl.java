@@ -48,7 +48,7 @@ public class ScheduleImpl<T extends AbstractTask>
     private T currentTask = null;
     
     private int endRideShareNumber = 0;
-    private int stayTaskNumber = 1;
+    private int stayTaskNumber = 0;
     
     public void resetSchedule(){
     	this.status = ScheduleStatus.PLANNED;
@@ -66,6 +66,15 @@ public class ScheduleImpl<T extends AbstractTask>
     		return;
     	}
     	tasks.removeAll(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
+    	
+    	if(currentTask instanceof StayTask){
+    		StayTaskImpl currentStayTask = (StayTaskImpl)currentTask;
+    		if(!currentStayTask.getName().equals("wait")){
+    			this.reduceStayTaskNumber();
+    		}
+    	}else
+    		this.reduceStayTaskNumber();
+    	
  //   	status = ScheduleStatus.UNPLANNED;
     }
     
