@@ -135,7 +135,14 @@ public class RideShareOptimizer  implements VrpOptimizer{
         if(s.getTasks().size() > 1 && s.getTasks().get(s.getTasks().size() - 2).getOnWayToActivity() && 
         		(!s.getTasks().get(s.getTasks().size() - 2).getStatus().equals(Task.TaskStatus.PERFORMED))){
     		return;
-    	} 
+    	}else if(lastTask.getStatus().equals(Task.TaskStatus.PERFORMED)){
+        	double t = currentTime;
+        	Link lastLink = lastTask.getLink();
+            double tEnd = Math.max(t, veh.getT1());
+            s.addTask(new StayTaskImpl(t, tEnd, lastLink, "wait"));
+    	}
+        
+        lastTask = (StayTask)Schedules.getLastTask(s);
         
         switch (lastTask.getStatus()) {
             case PLANNED:
