@@ -63,7 +63,8 @@ public class ScheduleImpl<T extends AbstractTask>
     public void clearTasks(){
     	int size = tasks.size();
     	if(currentTask == null){
-    		tasks.removeAll(tasks.subList(0, tasks.size() - 1));
+    		tasks.removeAll(tasks.subList(0, tasks.size()));
+    		this.reduceStayTaskNumber();
     		return;
     	}
     	else {
@@ -178,7 +179,7 @@ public class ScheduleImpl<T extends AbstractTask>
     private void validateArgsBeforeAddingTask(int taskIdx, Task task)
     {
         failIfCompleted();
-        if (status == ScheduleStatus.STARTED && taskIdx <= currentTask.getTaskIdx()) {
+        if (status == ScheduleStatus.STARTED && taskIdx < currentTask.getTaskIdx()) {
             throw new IllegalStateException();
         }
 

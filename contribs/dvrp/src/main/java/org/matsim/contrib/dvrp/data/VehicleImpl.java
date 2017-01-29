@@ -32,7 +32,7 @@ public class VehicleImpl
     implements Vehicle
 {
     private final Id<Vehicle> id;
-    private final Link startLink;
+    private Link startLink;
     private final double capacity;
     private final int index = 0;
 
@@ -85,7 +85,12 @@ public class VehicleImpl
     {
         return startLink;
     }
-
+    
+    @Override
+    public void setStartLink(Link link)
+    {
+        this.startLink = link;
+    }
 
     @Override
     public double getCapacity()

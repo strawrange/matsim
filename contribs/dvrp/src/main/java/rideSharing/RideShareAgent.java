@@ -132,7 +132,6 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	    	dAgent.setCurrentLinkId(getCurrentLinkId());
 			setIsDyn(true);
 			schedule.clearTasks();
-			dAgent.endActivityAndComputeNextState(now);
 			Request request = passengerEngine.createRequest(dAgent.getCurrentLinkId(), pAgent.getDestinationLinkId(), now, now);
 			logic.driveRequestSubmitted(request, now);
 			dAgent.endActivityAndComputeNextState(now);
@@ -209,6 +208,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	    		veh.getAgentLogic().computeInitialActivity(veh.getAgentLogic().getDynAgent());
 	            
 	    		s = (Schedule<AbstractTask>) veh.getSchedule();
+	    		veh.setStartLink(dAgent.getVehicle().getCurrentLink());
 				s.addTask(new StayTaskImpl(veh.getT0(), veh.getT1(), veh.getStartLink(), "wait"));
 				s.addStayTaskNumber();
 				veh.setSchedule(s);

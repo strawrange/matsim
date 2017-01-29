@@ -7,7 +7,7 @@
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="population_1prct.xml.gz" />
+		<param name="inputPlansFile" value="population.xml.gz" />
 	</module>
 
 	<module name="facilities" >
@@ -20,7 +20,7 @@
 		<param name="eventsFileFormat" value="xml" ></param>
 		<param name="outputDirectory" value="output_20170126"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="200" />
+		<param name="lastIteration" value="5" />
 		<param name="mobsim" value="qsim" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" ></param>
 	</module>
@@ -117,7 +117,7 @@
 		<param name="waitingPt" value="-0.18" ></param>
 		
 		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
-		<param name="waiting" value="-0.2" />
+		<param name="waiting" value="-0.3" />
 
 		<param name="activityType_0"            value="home" /> <!-- home -->
 		<param name="activityPriority_0"        value="1" />

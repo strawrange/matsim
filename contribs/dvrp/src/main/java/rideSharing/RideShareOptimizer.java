@@ -204,22 +204,24 @@ public class RideShareOptimizer  implements VrpOptimizer{
     {
     	Schedule<AbstractTask> s = schedule.get(vehId);
     	
-        StayTask lastTask = (StayTask)Schedules.getLastTask(s);// last is not stay task
-        double currentTime = qsim.getSimTimer().getTimeOfDay();
+        if(s.getTasks().size() > 0){    	
+        	StayTask lastTask = (StayTask)Schedules.getLastTask(s);// last is not stay task
+        	double currentTime = qsim.getSimTimer().getTimeOfDay();
 
-        switch (lastTask.getStatus()) {
-            case PLANNED:
-            	s.removeLastTask();// remove waiting
-                s.reduceStayTaskNumber();
+        	switch (lastTask.getStatus()) {
+            	case PLANNED:
+            		s.removeLastTask();// remove waiting
+            		s.reduceStayTaskNumber();
 
-            case STARTED:
-                lastTask.setEndTime(currentTime);// shorten waiting
-                break;
+            	case STARTED:
+            		lastTask.setEndTime(currentTime);// shorten waiting
+            		break;
 
-            default:
-                throw new IllegalStateException();
+            	default:
+            		throw new IllegalStateException();
+        	}
         }
-
+        
         RideShareRequest req = (RideShareRequest)request;
         Link fromLink = req.getFromLink();
         Link toLink = req.getToLink();

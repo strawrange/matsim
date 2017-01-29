@@ -62,4 +62,7 @@ public interface Vehicle
     public void removeT();
     
     public void addT(Double t0, Double t1);
+
+
+	void setStartLink(Link link);
 }
