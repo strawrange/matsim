@@ -129,7 +129,10 @@ public class RideShareOptimizer  implements VrpOptimizer{
         double currentTime = qsim.getSimTimer().getTimeOfDay();
         
 
-        
+        if(s.getTasks().size() > 1 && s.getTasks().get(s.getTasks().size() - 2).getOnWayToActivity() && 
+        		(!s.getTasks().get(s.getTasks().size() - 2).getStatus().equals(Task.TaskStatus.PERFORMED))){
+    		return;
+        }// receive no request on way to next activity
 
         
         lastTask = (StayTask)Schedules.getLastTask(s);

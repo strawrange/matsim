@@ -197,7 +197,6 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 			legDyn = false;
 			@SuppressWarnings("unchecked")
 			Schedule<AbstractTask> s = (Schedule<AbstractTask>) logic.getVehicle().getSchedule();
-			StayTask lastTask = (StayTask)Schedules.getLastTask(s);
 			Vehicle veh = logic.getVehicle();
 			/*if(veh.getT0() == 0){
 				return;
