@@ -20,6 +20,9 @@ import org.matsim.contrib.dvrp.schedule.AbstractTask;
 import org.matsim.contrib.dvrp.schedule.DriveTaskImpl;
 import org.matsim.contrib.dvrp.schedule.Schedule;
 import org.matsim.contrib.dvrp.schedule.ScheduleImpl;
+import org.matsim.contrib.dvrp.schedule.Schedules;
+import org.matsim.contrib.dvrp.schedule.StayTask;
+import org.matsim.contrib.dvrp.schedule.StayTaskImpl;
 import org.matsim.contrib.dvrp.schedule.Task;
 import org.matsim.contrib.dvrp.vrpagent.VrpAgentLogic;
 import org.matsim.contrib.dynagent.DynActivity;
@@ -178,6 +181,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void endLegAndComputeNextState(double now) {
 		// TODO Auto-generated method stub
@@ -185,11 +189,31 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		//double DynStartTime = logic.getVehicle().getT0();
 		//if(plan instanceof Leg && ((Leg)plan).getMode().equals(Run.MODE_DRIVER) && isDyn){
 		if(legDyn){
-			pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());
+			VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
+			pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());			
 			dAgent.endLegAndComputeNextState(now);
+			//dAgent.endActivityAndComputeNextState(now);
 			setIsDyn(false);
 			legDyn = false;
-		}
+			@SuppressWarnings("unchecked")
+			Schedule<AbstractTask> s = (Schedule<AbstractTask>) logic.getVehicle().getSchedule();
+			StayTask lastTask = (StayTask)Schedules.getLastTask(s);
+			Vehicle veh = logic.getVehicle();
+			/*if(veh.getT0() == 0){
+				return;
+			}
+			if(s.getTasks().size() > 1 && s.getTasks().get(s.getTasks().size() - 2).getOnWayToActivity() && 
+	        		(!s.getTasks().get(s.getTasks().size() - 2).getStatus().equals(Task.TaskStatus.PERFORMED))){
+	    		return;
+	    	}else if(lastTask.getStatus().equals(Task.TaskStatus.PERFORMED)){*/
+	    		veh.resetSchedule();
+	    		veh.getAgentLogic().computeInitialActivity(veh.getAgentLogic().getDynAgent());
+	            
+	    		s = (Schedule<AbstractTask>) veh.getSchedule();
+				s.addTask(new StayTaskImpl(veh.getT0(), veh.getT1(), veh.getStartLink(), "wait"));
+				s.addStayTaskNumber();
+				veh.setSchedule(s);
+				logic.getOptimizer().updateSchedule(veh,s);        
 			//dAgent.endLegAndComputeNextState(now);
 		//}else{
 		//pAgent.endLegAndComputeNextState(now);
@@ -199,7 +223,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		//if(now >= DynEndTime && isDyn){
 		//	setIsDyn(false);
 		//	pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());
-		//}
+		}
 
 		if(isDyn){
 			dAgent.endLegAndComputeNextState(now);

@@ -130,23 +130,7 @@ public class RideShareOptimizer  implements VrpOptimizer{
         
 
         
-        if(s.getTasks().size() > 1 && s.getTasks().get(s.getTasks().size() - 2).getOnWayToActivity() && 
-        		(!s.getTasks().get(s.getTasks().size() - 2).getStatus().equals(Task.TaskStatus.PERFORMED))){
-    		return;
-    	}else if(lastTask.getStatus().equals(Task.TaskStatus.PERFORMED)){
 
-    		veh.resetSchedule();
-    		veh.getAgentLogic().computeInitialActivity(veh.getAgentLogic().getDynAgent());
-            
-    		s = (Schedule<AbstractTask>) veh.getSchedule();
-			s.addTask(new StayTaskImpl(veh.getT0(), veh.getT1(), veh.getStartLink(), "wait"));
-			s.addStayTaskNumber();
-			veh.setSchedule(s);
-			this.schedule.put(veh.getId(),s);
-            
-      
-            
-    	}
         
         lastTask = (StayTask)Schedules.getLastTask(s);
         
@@ -347,6 +331,10 @@ public class RideShareOptimizer  implements VrpOptimizer{
 		double distanceDif = Math.pow(departureDis, 0.5) + Math.pow(destinationDis, 0.5);
 		
 		task.setDistanceDifference(distanceDif);
+	}
+	
+	public void updateSchedule(Vehicle veh, Schedule<AbstractTask> s){
+		this.schedule.put(veh.getId(),s);    
 	}
 
 
