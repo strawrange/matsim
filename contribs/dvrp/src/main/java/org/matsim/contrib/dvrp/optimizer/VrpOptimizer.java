@@ -44,4 +44,6 @@ public interface VrpOptimizer
     void nextTask(Schedule<? extends Task> schedule);
     
     void distanceCalculator(AbstractTask task, Request request, Vehicle vehicle);
+    
+    public void updateSchedule(Vehicle veh, Schedule<AbstractTask> s);
 }

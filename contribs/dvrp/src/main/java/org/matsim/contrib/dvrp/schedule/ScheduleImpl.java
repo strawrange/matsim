@@ -68,7 +68,7 @@ public class ScheduleImpl<T extends AbstractTask>
     	}
     	else {
     		tasks.removeAll(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
-    		if(currentTask instanceof StayTask){
+    		if(currentTask instanceof StayTask ){
         		StayTaskImpl currentStayTask = (StayTaskImpl)currentTask;
         		if(!currentStayTask.getName().equals("wait")){
         			this.reduceStayTaskNumber();
