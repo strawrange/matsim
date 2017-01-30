@@ -630,4 +630,9 @@ public final class QSim extends Thread implements VisMobsim, Netsim, ActivityEnd
 			}
 		};
 	}
+
+	public double getStopTime() {
+		// TODO Auto-generated method stub
+		return stopTime;
+	}
 }

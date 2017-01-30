@@ -95,11 +95,11 @@ public class PassengerEngine
     @Override
     public void doSimStep(double time)
     {
-    	if(time >= 24 * 3600 ){
+    	if(time >= 30 * 3600 ){
         	for(MobsimAgent agent: qsim.getAgents()){
         		if(agent instanceof MobsimPassengerAgent &&agent.getMode() == mode){
         			if(!agent.getCurrentLinkId().equals(agent.getDestinationLinkId())){
-        			eventsManager.processEvent( new PersonStuckEvent(agent.getActivityEndTime(), agent.getId(), agent.getCurrentLinkId(), agent.getMode()));
+        			eventsManager.processEvent( new PersonStuckEvent(time, agent.getId(), agent.getCurrentLinkId(), agent.getMode()));
         			}
         		}
         	}
@@ -110,13 +110,13 @@ public class PassengerEngine
     @Override
     public void afterSim()
     {
-    	for(MobsimAgent agent: qsim.getAgents()){
-    		if(true){
+    	//for(MobsimAgent agent: qsim.getAgents()){
+    		//if(true){
     			//if(!agent.getCurrentLinkId().equals(agent.getDestinationLinkId())){
     			//	eventsManager.processEvent( new PersonStuckEvent(agent.getActivityEndTime(), agent.getId(), agent.getCurrentLinkId(), agent.getMode()));
     			//}
-    		}
-    	}
+    		//}
+    	//}
     }
 
 

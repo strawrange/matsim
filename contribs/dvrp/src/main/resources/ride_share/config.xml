@@ -18,9 +18,9 @@
 		<param name="writeEventsInterval" value="5" />
 		<param name="writePlansInterval" value="5" />
 		<param name="eventsFileFormat" value="xml" ></param>
-		<param name="outputDirectory" value="output_20170126"/>
+		<param name="outputDirectory" value="output_20170130"/>
 		<param name="firstIteration" value="0" />
-		<param name="lastIteration" value="5" />
+		<param name="lastIteration" value="100" />
 		<param name="mobsim" value="qsim" />
 		<param name="overwriteFiles" value="deleteDirectoryIfExists" ></param>
 	</module>
@@ -166,14 +166,11 @@
 		<param name="ModuleProbability_1" value="0.05" />
 		<param name="Module_1" value="ChangeExpBeta" />
 		
-				<param name="ModuleProbability_5" value="0.70" />
-		<param name="Module_5" value="ChangeTripMode" />
-
 		<param name="ModuleProbability_2" value="0.05" />
 		<param name="Module_2" value="ReRoute" />
 		<param name="ModuleDisableAfterIteration_2" value="420" />
 
-		<param name="ModuleProbability_3" value="0.05" />
+		<param name="ModuleProbability_3" value="0.5" />
  		<param name="Module_3" value="SubtourModeChoice"/>
 		<param name="ModuleDisableAfterIteration_3" value="420" />
 
