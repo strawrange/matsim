@@ -48,7 +48,7 @@ public class RideShareQSimProvider implements Provider<Mobsim>{
 	        //qSim.addQueueSimulationListeners(optimizer);
 	        
 	        PassengerEngine passengerEngine = new PassengerEngine(Run.MODE_PASSENGER, events,
-	                new RideShareRequestCreator(), optimizer,  vrpData,scenario.getNetwork());
+	                new RideShareRequestCreator(), optimizer,  vrpData,scenario.getNetwork(), qSim);
 	        qSim.addMobsimEngine(passengerEngine);
 	        qSim.addDepartureHandler(passengerEngine);
 	        

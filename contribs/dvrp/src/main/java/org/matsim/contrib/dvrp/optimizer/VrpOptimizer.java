@@ -24,6 +24,7 @@ import org.matsim.contrib.dvrp.data.Request;
 import org.matsim.contrib.dvrp.data.Vehicle;
 import org.matsim.contrib.dvrp.data.VrpData;
 import org.matsim.contrib.dvrp.schedule.*;
+import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.router.util.LeastCostPathCalculator;
 
 
@@ -46,4 +47,6 @@ public interface VrpOptimizer
     void distanceCalculator(AbstractTask task, Request request, Vehicle vehicle);
     
     public void updateSchedule(Vehicle veh, Schedule<AbstractTask> s);
+
+	double getQsimEndTime();
 }

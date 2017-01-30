@@ -21,6 +21,7 @@ package org.matsim.contrib.dvrp.passenger;
 
 import java.util.Map;
 
+import org.apache.log4j.jmx.Agent;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.events.*;
 import org.matsim.api.core.v01.network.*;
@@ -30,6 +31,7 @@ import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.mobsim.framework.*;
 import org.matsim.core.mobsim.framework.MobsimAgent.State;
 import org.matsim.core.mobsim.qsim.InternalInterface;
+import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.mobsim.qsim.interfaces.*;
 
 
@@ -47,11 +49,13 @@ public class PassengerEngine
 
     private final AdvanceRequestStorage advanceRequestStorage;
     private final AwaitingPickupStorage awaitingPickupStorage;
+    
+    private final QSim qsim;
 
 
     public PassengerEngine(String mode, EventsManager eventsManager,
             PassengerRequestCreator requestCreator, VrpOptimizer optimizer, VrpData vrpData,
-            Network network)
+            Network network, QSim qsim)
     {
         this.mode = mode;
         this.eventsManager = eventsManager;
@@ -59,6 +63,7 @@ public class PassengerEngine
         this.optimizer = optimizer;
         this.vrpData = vrpData;
         this.network = network;
+        this.qsim = qsim;
 
         advanceRequestStorage = new AdvanceRequestStorage();
         awaitingPickupStorage = new AwaitingPickupStorage();
@@ -89,12 +94,30 @@ public class PassengerEngine
 
     @Override
     public void doSimStep(double time)
-    {}
+    {
+    	if(time >= 24 * 3600 ){
+        	for(MobsimAgent agent: qsim.getAgents()){
+        		if(agent instanceof MobsimPassengerAgent &&agent.getMode() == mode){
+        			if(!agent.getCurrentLinkId().equals(agent.getDestinationLinkId())){
+        			eventsManager.processEvent( new PersonStuckEvent(agent.getActivityEndTime(), agent.getId(), agent.getCurrentLinkId(), agent.getMode()));
+        			}
+        		}
+        	}
+    	}
+    }
 
 
     @Override
     public void afterSim()
-    {}
+    {
+    	for(MobsimAgent agent: qsim.getAgents()){
+    		if(true){
+    			//if(!agent.getCurrentLinkId().equals(agent.getDestinationLinkId())){
+    			//	eventsManager.processEvent( new PersonStuckEvent(agent.getActivityEndTime(), agent.getId(), agent.getCurrentLinkId(), agent.getMode()));
+    			//}
+    		}
+    	}
+    }
 
 
     /**
@@ -137,9 +160,7 @@ public class PassengerEngine
         if(isDyn == false){
         	return false;
         }
-        */
-        
-        
+        */      
 
         MobsimPassengerAgent passenger = (MobsimPassengerAgent)agent;
         

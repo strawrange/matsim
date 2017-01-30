@@ -298,31 +298,31 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	public boolean getEnterTransitRoute(TransitLine line, TransitRoute transitRoute, List<TransitRouteStop> stopsToCome,
 			TransitVehicle transitVehicle) {
 		// TODO Auto-generated method stub
-		return dAgent.getEnterTransitRoute(line, transitRoute, stopsToCome, transitVehicle);
+		return pAgent.getEnterTransitRoute(line, transitRoute, stopsToCome, transitVehicle);
 	}
 
 	@Override
 	public boolean getExitAtStop(TransitStopFacility stop) {
 		// TODO Auto-generated method stub
-		return dAgent.getExitAtStop(stop);
+		return pAgent.getExitAtStop(stop);
 	}
 
 	@Override
 	public Id<TransitStopFacility> getDesiredAccessStopId() {
 		// TODO Auto-generated method stub
-		return dAgent.getDesiredAccessStopId();
+		return pAgent.getDesiredAccessStopId();
 	}
 
 	@Override
 	public Id<TransitStopFacility> getDesiredDestinationStopId() {
 		// TODO Auto-generated method stub
-		return dAgent.getDesiredDestinationStopId();
+		return pAgent.getDesiredDestinationStopId();
 	}
 
 	@Override
 	public double getWeight() {
 		// TODO Auto-generated method stub
-		return dAgent.getWeight();
+		return pAgent.getWeight();
 	}
 
 	@Override

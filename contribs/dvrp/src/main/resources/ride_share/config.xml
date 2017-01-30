@@ -7,7 +7,7 @@
 	</module>
 
 	<module name="plans">
-		<param name="inputPlansFile" value="population.xml.gz" />
+		<param name="inputPlansFile" value="population_10prct.xml.gz" />
 	</module>
 
 	<module name="facilities" >

@@ -341,7 +341,11 @@ public class RideShareOptimizer  implements VrpOptimizer{
 	public void updateSchedule(Vehicle veh, Schedule<AbstractTask> s){
 		this.schedule.put(veh.getId(),s);    
 	}
-
+	
+	@Override
+	public double getQsimEndTime(){
+		return this.qsim.getStopTime();
+	}
 
 
 }
