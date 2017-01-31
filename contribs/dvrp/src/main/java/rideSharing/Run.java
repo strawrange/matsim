@@ -66,6 +66,8 @@ public class Run {
         if (otfvis) {
             controler.addOverridingModule(new OTFVisLiveModule());
         }
+        
+        controler.setScoringFunctionFactory(new RideShareScoringFunctionFactory(scenario));
 
 
         controler.run();

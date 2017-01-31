@@ -27,6 +27,10 @@ public class RideShareScoringFunctionFactory implements ScoringFunctionFactory {
 		this.scenario = scenario;
 	}
 	
+	public RideShareScoringFunctionFactory(final Scenario scenario){
+		this.scenario = scenario;
+	}
+	
 	@Override
 	public ScoringFunction createNewScoringFunction(Person person) {
 				
@@ -39,9 +43,10 @@ public class RideShareScoringFunctionFactory implements ScoringFunctionFactory {
 		sumScoringFunction.addScoringFunction(new CharyparNagelMoneyScoring(params));
 		sumScoringFunction.addScoringFunction(new CharyparNagelAgentStuckScoring(params));
 		
-		boolean isRideShareDriver = false;
+		/*boolean isRideShareDriver = false;
 		
 		List<PlanElement> plans = person.getSelectedPlan().getPlanElements();
+		
 		for(PlanElement plan: plans){
 			if(plan instanceof Leg){
 				if(((Leg)plan).getMode().equals(Run.MODE_DRIVER)){
@@ -50,33 +55,53 @@ public class RideShareScoringFunctionFactory implements ScoringFunctionFactory {
 					}
 			}
 		}
-		
-		
-		if (isRideShareDriver) {
-			
-			sumScoringFunction.addScoringFunction(new SumScoringFunction.LegScoring() {
+		*/
+
+		//if (isRideShareDriver) {
+			sumScoringFunction.addScoringFunction(new SumScoringFunction.ActivityScoring() {
 				
 				private double score;
 				
 				@Override
 				public double getScore() {
-					return this.score;
+					return score;
 				}
 				
 				@Override
-				public void finish() {					
+				public void finish() {
 				}
 				
 				@Override
-				public void handleLeg(Leg leg) {
-					// TODO Auto-generated method stub
-					
+				public void handleLastActivity(Activity act) {
+					if(act.getType().equals("RideSharePickup") || act.getType().equals("RideShareDropoff")){
+						score =+ (-0.96 - 2) * ((act.getEndTime() - act.getStartTime()) / 3600);
+					}else if (act.getType().equals("RideShareStay")){
+						score =+ (-0.96 - 3) * ((act.getEndTime() - act.getStartTime()) / 3600);
+					}
+				}
+				
+				@Override
+				public void handleFirstActivity(Activity act) {
+					if(act.getType().equals("RideSharePickup") || act.getType().equals("RideShareDropoff")){
+						score =+ (-0.96 - 2) * ((act.getEndTime() - act.getStartTime()) / 3600);
+					}else if (act.getType().equals("RideShareStay")){
+						score =+ (-0.96 - 3) * ((act.getEndTime() - act.getStartTime()) / 3600);
+					}
+				}
+				
+				@Override
+				public void handleActivity(Activity act) {
+					if(act.getType().equals("RideSharePickup") || act.getType().equals("RideShareDropoff")){
+						score =+ (-0.96 - 2) * ((act.getEndTime() - act.getStartTime()) / 3600);
+					}else if (act.getType().equals("RideShareStay")){
+						score =+ (-0.96 - 3) * ((act.getEndTime() - act.getStartTime()) / 3600);
+					}
 				}
 			});
-		}
+		//}
 		
 		
-		return null;
+		return sumScoringFunction;
 	}
 
 }
