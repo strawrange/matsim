@@ -96,7 +96,7 @@ public class CalcLegTimes implements PersonDepartureEventHandler, PersonArrivalE
 	public void handleEvent(ActivityStartEvent event) {
 		Double depTime = this.agentDepartures.remove(event.getPersonId());
 		Double arrTime = this.agentArrivals.remove(event.getPersonId());
-		if (depTime != null) {
+		if (depTime != null && arrTime != null) {
 			double travTime = arrTime - depTime;
 			String fromActType = previousActivityTypes.remove(event.getPersonId());
 			String toActType = event.getActType();
