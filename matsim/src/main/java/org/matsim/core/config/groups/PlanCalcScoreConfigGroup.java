@@ -817,7 +817,7 @@ public final class PlanCalcScoreConfigGroup extends ConfigGroup {
 		private static final String CONSTANT = "constant";
 
 		private String mode = null;
-		private double traveling = -6.0;
+		private double traveling =-9.92;
 		private double distance = 0.0;
 		private double monetaryDistanceRate = 0.0;
 		private double constant = 0.0;
