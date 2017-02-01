@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
+import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.events.LinkEnterEvent;
 import org.matsim.api.core.v01.events.LinkLeaveEvent;
 import org.matsim.api.core.v01.events.PersonArrivalEvent;
@@ -174,7 +175,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 
 	@Override
-	public void handleEvent(PersonDepartureEvent event) {
+	public void handleEvent(PersonDepartureEvent event) {	
 		Leg leg = PopulationUtils.createLeg(event.getLegMode());
 		leg.setDepartureTime(event.getTime());
 		legs.put(event.getPersonId(), leg);
@@ -221,6 +222,11 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 	@Override
 	public void handleEvent(PersonArrivalEvent event) {
 		Leg leg = legs.get(event.getPersonId());
+		
+		if(!leg.getMode().equals(event.getLegMode())){
+			leg.setMode(event.getLegMode());
+		}
+		
 		leg.setTravelTime( event.getTime() - leg.getDepartureTime() );
 		double travelTime = leg.getDepartureTime() + leg.getTravelTime() - leg.getDepartureTime();
 		leg.setTravelTime(travelTime);

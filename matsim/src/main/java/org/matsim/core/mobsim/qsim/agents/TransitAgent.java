@@ -199,4 +199,10 @@ public final class TransitAgent implements MobsimDriverPassengerAgent, PlanAgent
 		
 	}
 
+	@Override
+	public void endLegAndComputeNextStateWithoutEvent(double now) {
+		// TODO Auto-generated method stub
+		basicAgentDelegate.endLegAndComputeNextStateWithoutEvent(now);
+	}
+
 }

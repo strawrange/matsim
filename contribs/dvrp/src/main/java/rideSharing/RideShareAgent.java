@@ -192,7 +192,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 		if(legDyn){
 			VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
 			pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());			
-			dAgent.endLegAndComputeNextStateWithoutEvent(now);
+			dAgent.endLegAndComputeNextState(now);
 			//dAgent.endActivityAndComputeNextState(now);
 			setIsDyn(false);
 			legDyn = false;
@@ -217,7 +217,8 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 				logic.getOptimizer().updateSchedule(veh,s);        
 			//dAgent.endLegAndComputeNextState(now);
 		//}else{
-		//pAgent.endLegAndComputeNextState(now);
+		pAgent.endLegAndComputeNextStateWithoutEvent(now);
+		return;
 		//}
 		//VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
 		//double DynEndTime = logic.getVehicle().getT1();
@@ -375,6 +376,12 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 
 	@Override
 	public void setCurrentLinkId(Id<Link> currentLinkId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void endLegAndComputeNextStateWithoutEvent(double now) {
 		// TODO Auto-generated method stub
 		
 	}
