@@ -18,7 +18,7 @@
 		<param name="writeEventsInterval" value="5" />
 		<param name="writePlansInterval" value="5" />
 		<param name="eventsFileFormat" value="xml" ></param>
-		<param name="outputDirectory" value="output"/>
+		<param name="outputDirectory" value="output_0perhr_new"/>
 		<param name="firstIteration" value="0" />
 		<param name="lastIteration" value="100" />
 		<param name="mobsim" value="qsim" />
@@ -51,16 +51,16 @@
 		<param name="BrainExpBeta" value="1.0" />
 
 		<!-- [utils] alternative-specific constant for pt.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
-		<param name="constantPt" value="-0.124" />
+		<param name="constantPt" value="-1.24" />
 
 		<!-- [utils] alternative-specific constant for car.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
-		<param name="constantCar" value="-0.562" />
+		<param name="constantCar" value="-5.62" />
 
 		<!-- [utils] alternative-specific constant for walk.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
 		<param name="constantWalk" value="0.0" />
 		
 		<!-- [utils] alternative-specific constant for ride share driver.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
-		<param name="constantRideShareDriver" value="-0.562" />
+		<param name="constantRideShareDriver" value="-5.62" />
 		
 		<!-- [utils] alternative-specific constant for ride share passenger.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
 		<param name="constantRideSharePassenger" value="0.0" />
@@ -96,28 +96,28 @@
 		<param name="performing" value="0.96" />
 
 		<!-- [utils/hr] additional marginal utility of traveling by car.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="traveling" value="-0.992" />
+		<param name="traveling" value="-9.92" />
 
 		<!-- [utils/hr] additional marginal utility offset of traveling by pt.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="travelingPt" value="-0.18" />
+		<param name="travelingPt" value="-1.8" />
 
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share passenger.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="travelingRideSharePassenger" value="-0.5"></param>
+		<param name="travelingRideSharePassenger" value="-29.8"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share driver.  due to extra income normally positive -->
-		<param name="travelingRideShareDriver" value="-0.992"></param>
+		<param name="travelingRideShareDriver" value="-0.5"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by foot.  normally negative.  this comes on top of the opportunity cost of time.  also see marginalUtlOfDistanceWalk -->
-		<param name="travelingWalk" value="-1.14"/>
+		<param name="travelingWalk" value="-9.92"/>
 
 		<!-- [utils] utility of switching a line (= transfer penalty).  Normally negative -->
 		<param name="utilityOfLineSwitch" value="0.0"/>
 
 		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
-		<param name="waitingPt" value="-0.18" ></param>
+		<param name="waitingPt" value="-1.8" ></param>
 		
 		<!-- [utils/hr] utility offset for waiting.  this comes on top of the opportunity cost of time.  Probably implemented correctly, but not tested. -->
-		<param name="waiting" value="-0.3" />
+		<param name="waiting" value="-3" />
 
 		<param name="activityType_0"            value="home" /> <!-- home -->
 		<param name="activityPriority_0"        value="1" />

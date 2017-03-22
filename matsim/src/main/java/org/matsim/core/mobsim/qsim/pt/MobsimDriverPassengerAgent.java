@@ -37,6 +37,8 @@ public interface MobsimDriverPassengerAgent extends PTPassengerAgent, MobsimDriv
 	// because of "instanceof" conditions.  kai, nov'10
 
 	PlanElement getCurrentPlanElement();
+
+	void endLegAndComputeNextStateWithoutEvent(double now);
 	
 	// yy One should consider renaming this into MobsimPTPassengerAgent and make it extend PTPassengerAgent, MobsimAgent only
 	// (modular interface for PT Passengers).  kai, nov'14

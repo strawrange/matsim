@@ -388,4 +388,15 @@ public class DynAgent
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	public void endActivityAndComputeNextStateWithoutStayEvent(double now) {
+		// TODO Auto-generated method stub
+        computeNextAction(dynActivity, now);
+	}
+
+	public void endLegAndComputeNextStateWithoutEvent(double now) {
+		//events.processEvent(new PersonArrivalEvent(now, id, currentLinkId, dynLeg.getMode()));
+		computeNextAction(dynLeg, now);
+	}
 }

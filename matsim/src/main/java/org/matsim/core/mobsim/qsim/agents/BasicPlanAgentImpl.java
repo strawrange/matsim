@@ -439,5 +439,20 @@ public class BasicPlanAgentImpl implements MobsimAgent, PlanAgent, Identifiable<
 		}
 		throw new RuntimeException("unexpected type of PlanElement") ;
 	}
+
+	public void endLegAndComputeNextStateWithoutEvent(double now) {
+		// TODO Auto-generated method stub
+		if( (!(this.getCurrentLinkId() == null && this.getDestinationLinkId() == null)) 
+				&& !this.getCurrentLinkId().equals(this.getDestinationLinkId())) {
+			log.error("The agent " + this.getPerson().getId() + " has destination link " + this.getDestinationLinkId()
+					+ ", but arrived on link " + this.getCurrentLinkId() + ". Setting agent state to ABORT.");
+			this.setState(MobsimAgent.State.ABORT) ;
+		} else {
+			// note that when we are here we don't know if next is another leg, or an activity  Therefore, we go to a general method:
+			advancePlan(now) ;
+		}
+		
+		this.currentLinkIndex = 0 ;
+	}
 	
 }

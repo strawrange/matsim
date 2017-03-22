@@ -250,6 +250,12 @@ public class PersonDriverAgentImpl implements MobsimDriverAgent, MobsimPassenger
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public void endLegAndComputeNextStateWithoutEvent(double now) {
+		// TODO Auto-generated method stub
+		basicAgentDelegate.endLegAndComputeNextStateWithoutEvent(now);
+	}
 	
 
 }
