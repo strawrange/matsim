@@ -193,7 +193,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 			VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());
 			pAgent.setCurrentLinkId(dAgent.getCurrentLinkId());			
 			dAgent.endLegAndComputeNextState(now);
-			//dAgent.endActivityAndComputeNextState(now);
+			dAgent.endActivityAndComputeNextState(now);
 			setIsDyn(false);
 			legDyn = false;
 			@SuppressWarnings("unchecked")
