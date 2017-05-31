@@ -177,6 +177,8 @@
 		<param name="ModuleProbability_4" value="0.05" />
 		<param name="Module_4" value="TimeAllocationMutator" />
 		<param name="ModuleDisableAfterIteration_4" value="420" />
+		
+		<param name="fractionOfIterationsToDisableInnovation" value="90"/>
 	</module>
 
 <!-- ====================================================================== -->
