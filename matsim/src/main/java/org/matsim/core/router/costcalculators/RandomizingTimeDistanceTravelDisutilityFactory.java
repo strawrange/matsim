@@ -21,6 +21,7 @@
 package org.matsim.core.router.costcalculators;
 
 import org.apache.log4j.Logger;
+import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup;
 import org.matsim.core.router.util.TravelDisutility;
 import org.matsim.core.router.util.TravelTime;
@@ -58,6 +59,9 @@ public class RandomizingTimeDistanceTravelDisutilityFactory implements TravelDis
 		final double marginalCostOfDistance_m = - params.getMonetaryDistanceRate() * cnScoringGroup.getMarginalUtilityOfMoney() 
 				- params.getMarginalUtilityOfDistance() ;
 
+		//params.getMode().equals(TransportMode.ride_share_passenger);
+		
+		
 		double normalization = 1;
 		if ( sigma != 0. ) {
 			normalization = 1. / Math.exp(this.sigma * this.sigma / 2);

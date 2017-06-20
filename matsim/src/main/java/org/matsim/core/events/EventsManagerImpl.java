@@ -217,6 +217,7 @@ public class EventsManagerImpl implements EventsManager {
 	}
 
 	private void computeEvent(final Event event) {
+		
 		for (HandlerInfo info : getHandlersForClass(event.getClass())) {
 			synchronized(info.eventHandler) {
 				if (callHandlerFast(info.eventClass, event, info.eventHandler)) {
