@@ -139,7 +139,7 @@ public class CharyparNagelLegScoring implements org.matsim.core.scoring.SumScori
 				this.nextStartPtLegIsFirstOfTrip = false ;
 			}
 		}
-	}
+			}
 
 	@Override
 	public void handleLeg(Leg leg) {

@@ -176,12 +176,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(PersonDepartureEvent event) {
-		Id<Person> id_temp = Id.createPersonId("10016_3");
-		Id<Person> id_temp_2 = event.getPersonId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(event.getPersonId());
-		}
-		
+
 		Leg leg = PopulationUtils.createLeg(event.getLegMode());
 		leg.setDepartureTime(event.getTime());
 		legs.put(event.getPersonId(), leg);
@@ -193,9 +188,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(PersonEntersVehicleEvent event) {
-		if(event.getPersonId().equals(Id.createPersonId("10016_3"))){
-			System.out.println(event.getPersonId());
-		}
+
 		LineAndRoute lineAndRoute = transitVehicle2currentRoute.get(event.getVehicleId());
 		if (lineAndRoute != null
 				&& !event.getPersonId().equals(lineAndRoute.driverId)) { // transit drivers are not considered to travel by transit
@@ -210,11 +203,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(LinkEnterEvent event) {
-		Id<Vehicle> id_temp = Id.createVehicleId("10016_3");
-		Id<Vehicle> id_temp_2 = event.getVehicleId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(id_temp_2);
-		}
+
 		Id<Person> driverOfVehicle = delegate.getDriverOfVehicle(event.getVehicleId());
 		List<Id<Link>> route = experiencedRoutes.get(driverOfVehicle);
 		route.add(event.getLinkId());
@@ -222,21 +211,13 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(TeleportationArrivalEvent travelEvent) {
-		Id<Person> id_temp = Id.createPersonId("10016_3");
-		Id<Person> id_temp_2 = travelEvent.getPersonId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(travelEvent.getPersonId());
-		}
+
 		routelessTravels.put(travelEvent.getPersonId(), travelEvent);
 	}
 
 	@Override
 	public void handleEvent(VehicleArrivesAtFacilityEvent event) {
-		Id<Vehicle> id_temp = Id.createVehicleId("10016_3");
-		Id<Vehicle> id_temp_2 = event.getVehicleId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(event.getVehicleId());
-		}
+
 		LineAndRoute lineAndRoute = transitVehicle2currentRoute.get(event.getVehicleId());
 		if (lineAndRoute != null) {
 			lineAndRoute.lastFacilityId = event.getFacilityId();
@@ -245,11 +226,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(PersonArrivalEvent event) {
-		Id<Person> id_temp = Id.createPersonId("10016_3");
-		Id<Person> id_temp_2 = event.getPersonId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(event.getPersonId());
-		}
+
 		Leg leg = legs.get(event.getPersonId());
 		
 		if(!leg.getMode().equals(event.getLegMode())){
@@ -329,11 +306,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(TransitDriverStartsEvent event) {
-		Id<Vehicle> id_temp = Id.createVehicleId("10016_3");
-		Id<Vehicle> id_temp_2 = event.getVehicleId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(event.getVehicleId());
-		}
+
 		LineAndRoute lineAndRoute = new LineAndRoute(event.getTransitLineId(), event.getTransitRouteId(), event.getDriverId());
 		transitVehicle2currentRoute.put(event.getVehicleId(), lineAndRoute);
 	}
@@ -344,11 +317,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(VehicleEntersTrafficEvent event) {
-		Id<Person> id_temp = Id.createPersonId("10016_3");
-		Id<Person> id_temp_2 = event.getPersonId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(event.getPersonId());
-		}
+
 		delegate.handleEvent(event);
 		// remember the relative position on the link
 		relPosOnDepartureLinkPerPerson.put(event.getPersonId(), event.getRelativePositionOnLink());
@@ -356,11 +325,7 @@ TeleportationArrivalEventHandler, TransitDriverStartsEventHandler, PersonEntersV
 
 	@Override
 	public void handleEvent(VehicleLeavesTrafficEvent event) {
-		Id<Person> id_temp = Id.createPersonId("10016_3");
-		Id<Person> id_temp_2 = event.getPersonId();
-		if(id_temp_2.equals(id_temp)){
-			System.out.println(event.getPersonId());
-		}
+
 		delegate.handleEvent(event);
 
 		// remember the relative position on the link
