@@ -143,9 +143,6 @@ class ScoringFunctionsForPopulation implements BasicEventHandler, EventsToLegs.L
 	@Override
 	synchronized public void handleActivity(PersonExperiencedActivity o) {
 		Id<Person> agentId = o.getAgentId();
-		if(agentId.equals(Id.createPersonId("10016_3"))){
-			System.out.println(agentId);
-		}
 		Activity activity = o.getActivity();
 		ScoringFunction scoringFunction = ScoringFunctionsForPopulation.this.getScoringFunctionForAgent(agentId);
 		if (scoringFunction != null) {

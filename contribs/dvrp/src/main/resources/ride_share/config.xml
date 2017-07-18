@@ -18,7 +18,7 @@
 		<param name="writeEventsInterval" value="5" />
 		<param name="writePlansInterval" value="5" />
 		<param name="eventsFileFormat" value="xml" ></param>
-		<param name="outputDirectory" value="output_0perhr_new"/>
+		<param name="outputDirectory" value="output_60perhr_new0.8"/>
 		<param name="firstIteration" value="0" />
 		<param name="lastIteration" value="100" />
 		<param name="mobsim" value="qsim" />
@@ -102,10 +102,10 @@
 		<param name="travelingPt" value="-0.18" />
 
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share passenger.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="travelingRideSharePassenger" value="-0.1"></param>
+		<param name="travelingRideSharePassenger" value="-3.87"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share driver.  due to extra income normally positive -->
-		<param name="travelingRideShareDriver" value="-0.992"></param>
+		<param name="travelingRideShareDriver" value="2.728"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by foot.  normally negative.  this comes on top of the opportunity cost of time.  also see marginalUtlOfDistanceWalk -->
 		<param name="travelingWalk" value="-1.14"/>
@@ -178,7 +178,7 @@
 		<param name="Module_4" value="TimeAllocationMutator" />
 		<param name="ModuleDisableAfterIteration_4" value="420" />
 		
-		<param name="fractionOfIterationsToDisableInnovation" value="0.9"/>
+		<param name="fractionOfIterationsToDisableInnovation" value="0.8"/>
 	</module>
 
 <!-- ====================================================================== -->

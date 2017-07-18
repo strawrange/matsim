@@ -81,7 +81,6 @@ public final class CharyparNagelActivityScoring implements org.matsim.core.scori
 	}
 
 	protected double calcActScore(final double arrivalTime, final double departureTime, final Activity act) {
-
 		ActivityUtilityParameters actParams = this.params.utilParams.get(act.getType());
 		if (actParams == null) {
 			throw new IllegalArgumentException("acttype \"" + act.getType() + "\" is not known in utility parameters " +
@@ -215,6 +214,9 @@ public final class CharyparNagelActivityScoring implements org.matsim.core.scori
 			if ((minimalDuration >= 0) && (duration < minimalDuration)) {
 				tmpScore += this.params.marginalUtilityOfEarlyDeparture_s * (minimalDuration - duration);
 			}
+		}
+		if(Double.isInfinite(tmpScore)){
+			System.out.println("xxx");
 		}
 		return tmpScore;
 	}
