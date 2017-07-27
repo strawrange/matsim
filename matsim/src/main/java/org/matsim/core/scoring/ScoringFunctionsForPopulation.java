@@ -128,10 +128,10 @@ class ScoringFunctionsForPopulation implements BasicEventHandler, EventsToLegs.L
 	@Override
 	synchronized public void handleLeg(PersonExperiencedLeg o) {
 		Id<Person> agentId = o.getAgentId();
-		if(agentId.equals(Id.createPersonId("10016_3"))){
-			System.out.println(agentId);
-		}
 		Leg leg = o.getLeg();
+		if (leg.getMode().equals("ride_share_driver")){
+			leg = o.getLeg();
+		}
 		ScoringFunction scoringFunction = ScoringFunctionsForPopulation.this.getScoringFunctionForAgent(agentId);
 		if (scoringFunction != null) {
 			scoringFunction.handleLeg(leg);
