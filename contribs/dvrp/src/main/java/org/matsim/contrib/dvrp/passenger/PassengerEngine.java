@@ -19,6 +19,7 @@
 
 package org.matsim.contrib.dvrp.passenger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,8 @@ import org.matsim.core.mobsim.framework.MobsimAgent.State;
 import org.matsim.core.mobsim.qsim.InternalInterface;
 import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.mobsim.qsim.interfaces.*;
+
+import rideSharing.RideShareRequest;
 
 
 public class PassengerEngine
@@ -53,16 +56,16 @@ public class PassengerEngine
     private final AwaitingPickupStorage awaitingPickupStorage;
     
     private final QSim qsim;
-    private List<Request> waitingRequest;
+    private List<RideShareRequest> waitingRequest = new ArrayList<>();
 
 
 
-	public List<Request> getWaitingRequest() {
+	public List<RideShareRequest> getWaitingRequest() {
 		return waitingRequest;
 	}
 
 
-	public void setWaitingRequest(Request r) {
+	public void setWaitingRequest(RideShareRequest r) {
 		this.waitingRequest.add(r);
 	}
 
@@ -161,13 +164,14 @@ public class PassengerEngine
     @Override
     public boolean handleDeparture(double now, MobsimAgent agent, Id<Link> fromLinkId)
     {
-    	/*if (!waitingRequest.isEmpty()){
-    		for(Request r : waitingRequest){
-    			//createRequest(r.get,Id<Link> toLinkId, double departureTime, double now);
-    			optimizer.requestSubmitted(r);
+    	if (!waitingRequest.isEmpty()){
+    		for(RideShareRequest r : waitingRequest){
+    	        PassengerRequest remainRequest = requestCreator.createRequest(r.getId(),r.getPassenger() , r.getFromLink(), r.getToLink(),
+    	                now, now, now);   			
+    			optimizer.requestSubmitted(remainRequest);
     		}
     		waitingRequest.clear();
-        }*/
+        }
     	if (!agent.getMode().equals(mode)) {
             return false;
         }
