@@ -60,7 +60,7 @@
 		<param name="constantWalk" value="0.0" />
 		
 		<!-- [utils] alternative-specific constant for ride share driver.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
-		<param name="constantRideShareDriver" value="-0.562" />
+		<param name="constantRideShareDriver" value="0.562" />
 		
 		<!-- [utils] alternative-specific constant for ride share passenger.  no guarantee that this is used anywhere. default=0 to be backwards compatible for the time being -->
 		<param name="constantRideSharePassenger" value="0.0" />
@@ -102,7 +102,7 @@
 		<param name="travelingPt" value="-0.18" />
 
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share passenger.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="travelingRideSharePassenger" value="-1.39"></param>
+		<param name="travelingRideSharePassenger" value="-3.87"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share driver.  due to extra income normally positive -->
 		<param name="travelingRideShareDriver" value="6.448"></param>
@@ -153,10 +153,6 @@
 			name="activityType_6" value="RideShareStay" ></param>
 		<param name="activityTypicalDuration_6" value="00:02:00" /><param name="activityType_7" value="AfterVrpSchedule"></param>
 		<param name="activityTypicalDuration_7" value="00:01:00"></param>
-		<parameterset
-			type="modeParams">
-	<param name="constant" value="-0.5" ></param>
-	<param name="mode" value="ride_share_driver" /></parameterset>
 
 	</module>
 
