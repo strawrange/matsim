@@ -119,7 +119,59 @@ public class RideShareOptimizer  implements VrpOptimizer{
 		requestSubmitted(request,vehicle);
     }
 
+    public void requestSubmittedNoCurrentVeh(Request request, Vehicle CurrentVeh){
+    	Vehicle vehicle = null;   	
+    	for(Vehicle veh: vehicles.values()){
+    		if(veh.getId().equals(CurrentVeh.getId())){
+    			continue;
+    		}
+			if(veh.getT1() == 0){
+				continue;
+			}
+    		if(vehicle == null){
+    			vehicle = veh;
+    		}else{
+    			if(vehicle.getT0() > veh.getT0()){
+    				Vehicle v = vehicle;
+    				vehicle = veh;
+    				veh = v;
+    			}
+				if(vehicle.getSchedule().getLastTask() == null){
+					continue;
+				}
+				if(veh.getSchedule().getLastTask() == null){
+					vehicle = veh;
+					continue;
+				}
+				if(veh.getSchedule().getLastTask() == null
+						&& veh.getT0() < vehicle.getSchedule().getLastTask().getEndTime()){
+					vehicle = veh;
+					continue;
+				}
+				if(veh.getSchedule().getLastTask().getEndTime() < 
+						vehicle.getSchedule().getLastTask().getEndTime()){
 
+					vehicle = veh;
+					continue;
+				}
+    			/*if(veh.getT0() < vehicle.getT0()){
+    				if(vehicle.getSchedule().getDropoffTask() == null &&
+    						veh.getSchedule().getDropoffTask() != null){
+    					vehicle = veh;
+    				}else if()
+    			}else{
+    			if(veh.getSchedule().getDropoffTask() == null){
+    				vehicle = veh;
+    			}else if(vehicle.getSchedule().getDropoffTask().getEndTime() > veh.getSchedule().getDropoffTask().getEndTime()){
+    				vehicle = veh;
+    			}*/
+    		}
+    	}
+    	if(vehicle == null){
+    		return;
+    	}
+		requestSubmitted(request,vehicle);
+    }
 
     public void requestSubmitted(Request request, Vehicle veh)
     {

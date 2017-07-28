@@ -42,6 +42,10 @@ public class VrpAgentLogic
     public void driveRequestSubmitted(Request request, double now){
     	this.optimizer.driveRequestSubmitted(request, now, vehicle.getId());  	
     }
+    
+    public void requestSubmitted(Request request){
+    	this.optimizer.requestSubmittedNoCurrentVeh(request, vehicle);  	
+    }
 
 
     private final VrpOptimizer optimizer;

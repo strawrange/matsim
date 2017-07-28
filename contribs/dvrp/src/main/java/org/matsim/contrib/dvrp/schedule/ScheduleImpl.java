@@ -60,14 +60,15 @@ public class ScheduleImpl<T extends AbstractTask>
         this.vehicle = vehicle;
     }
     
-    public void clearTasks(){
+    public List<T> clearTasks(){
     	int size = tasks.size();
+    	List<T> taskList = new ArrayList<>();
     	if(currentTask == null){
     		tasks.removeAll(tasks.subList(0, tasks.size()));
     		this.reduceStayTaskNumber();
-    		return;
     	}
     	else {
+    		taskList = new ArrayList<>(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
     		tasks.removeAll(tasks.subList(getCurrentTask().taskIdx +1, tasks.size()));
     		if(currentTask instanceof StayTask ){
         		StayTaskImpl currentStayTask = (StayTaskImpl)currentTask;
@@ -79,6 +80,7 @@ public class ScheduleImpl<T extends AbstractTask>
         	}else
         		throw new IllegalStateException(); //current task need to be drop off
     	}
+    	return taskList;
     	
     	
     	

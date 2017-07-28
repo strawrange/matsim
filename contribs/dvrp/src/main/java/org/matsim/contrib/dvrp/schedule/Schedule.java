@@ -19,6 +19,7 @@
 
 package org.matsim.contrib.dvrp.schedule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.matsim.api.core.v01.population.Activity;
@@ -71,7 +72,7 @@ public interface Schedule<T extends Task>
 
     void removeTask(T task);
     
-    void clearTasks();
+    List<T>  clearTasks();
     
     void reroute(int cycleIdx);
     

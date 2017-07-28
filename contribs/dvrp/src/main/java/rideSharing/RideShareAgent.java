@@ -1,5 +1,6 @@
 package rideSharing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.matsim.api.core.v01.Id;
@@ -51,6 +52,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 	Boolean legDyn = false;
 	VrpData vrpData;
 	PassengerEngine passengerEngine;
+	List<? extends Task> taskList = new ArrayList<>();
 	
 	public Boolean getIsDyn() {
 		return isDyn;
@@ -161,9 +163,20 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 				Task task = schedule.getCurrentTask();
 				if(!(task instanceof RideShareServeTask) || !((RideShareServeTask)task).isPickup()){
 					if(schedule.getNextTask() == null||schedule.getDropoffTask() == null||schedule.getDropoffTask().getEndTime() >= DynEndTime || now >= DynEndTime){
-						schedule.clearTasks();
+						if(!taskList.isEmpty()){
+							while(taskList.size() >= 4){
+								RideShareServeTask origin = (RideShareServeTask)taskList.get(1);
+								RideShareServeTask destination = (RideShareServeTask)taskList.get(3);
+								Request taskRequest = passengerEngine.createRequest(origin.getLink().getId(), destination.getLink().getId(), now, now);
+								//passengerEngine.setWaitingRequest(taskRequest);
+								taskList.removeAll(taskList.subList(0, 4));
+							}
+						taskList.clear();
+						}
+						
 						Request request = passengerEngine.createRequest(dAgent.getCurrentLinkId(), pAgent.getDestinationLinkId(), now, now);
 						logic.driveRequestSubmitted(request, now);
+
 						dAgent.endActivityAndComputeNextState(now);
 						schedule.getVehicle().removeT();
 						legDyn = true;
@@ -218,6 +231,7 @@ public final class RideShareAgent implements MobsimDriverPassengerAgent{
 			//dAgent.endLegAndComputeNextState(now);
 		//}else{
 		pAgent.endLegAndComputeNextStateWithoutEvent(now);
+
 		return;
 		//}
 		//VrpAgentLogic logic = (VrpAgentLogic)(dAgent.getAgentLogic());

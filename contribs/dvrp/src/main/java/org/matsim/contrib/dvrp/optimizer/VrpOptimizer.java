@@ -49,4 +49,6 @@ public interface VrpOptimizer
     public void updateSchedule(Vehicle veh, Schedule<AbstractTask> s);
 
 	double getQsimEndTime();
+
+	public void requestSubmittedNoCurrentVeh(Request request, Vehicle vehicle);
 }

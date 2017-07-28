@@ -19,6 +19,7 @@
 
 package org.matsim.contrib.dvrp.passenger;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.jmx.Agent;
@@ -27,6 +28,7 @@ import org.matsim.api.core.v01.events.*;
 import org.matsim.api.core.v01.network.*;
 import org.matsim.contrib.dvrp.data.*;
 import org.matsim.contrib.dvrp.optimizer.VrpOptimizer;
+import org.matsim.contrib.dvrp.schedule.Task;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.mobsim.framework.*;
 import org.matsim.core.mobsim.framework.MobsimAgent.State;
@@ -51,9 +53,21 @@ public class PassengerEngine
     private final AwaitingPickupStorage awaitingPickupStorage;
     
     private final QSim qsim;
+    private List<Request> waitingRequest;
 
 
-    public PassengerEngine(String mode, EventsManager eventsManager,
+
+	public List<Request> getWaitingRequest() {
+		return waitingRequest;
+	}
+
+
+	public void setWaitingRequest(Request r) {
+		this.waitingRequest.add(r);
+	}
+
+
+	public PassengerEngine(String mode, EventsManager eventsManager,
             PassengerRequestCreator requestCreator, VrpOptimizer optimizer, VrpData vrpData,
             Network network, QSim qsim)
     {
@@ -127,7 +141,8 @@ public class PassengerEngine
     public boolean prebookTrip(double now, MobsimPassengerAgent passenger, Id<Link> fromLinkId,
             Id<Link> toLinkId, double departureTime)
     {
-        if (departureTime <= now) {
+
+    	if (departureTime <= now) {
             throw new IllegalStateException("This is not a call ahead");
         }
 
@@ -146,7 +161,14 @@ public class PassengerEngine
     @Override
     public boolean handleDeparture(double now, MobsimAgent agent, Id<Link> fromLinkId)
     {
-        if (!agent.getMode().equals(mode)) {
+    	/*if (!waitingRequest.isEmpty()){
+    		for(Request r : waitingRequest){
+    			//createRequest(r.get,Id<Link> toLinkId, double departureTime, double now);
+    			optimizer.requestSubmitted(r);
+    		}
+    		waitingRequest.clear();
+        }*/
+    	if (!agent.getMode().equals(mode)) {
             return false;
         }
         /*boolean isDyn = false;
