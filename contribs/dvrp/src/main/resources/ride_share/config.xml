@@ -18,7 +18,7 @@
 		<param name="writeEventsInterval" value="5" />
 		<param name="writePlansInterval" value="5" />
 		<param name="eventsFileFormat" value="xml" ></param>
-		<param name="outputDirectory" value="output_60perhr_new0.8"/>
+		<param name="outputDirectory" value="#0"/>
 		<param name="firstIteration" value="0" />
 		<param name="lastIteration" value="200" />
 		<param name="mobsim" value="qsim" />
@@ -27,9 +27,9 @@
 
  	<module name="qsim" >
 		<param name="startTime" value="00:00:00" />
-		<param name="endTime" value="30:00:00" />
-		<param name="flowCapacityFactor" value="0.7" />
-		<param name="storageCapacityFactor" value="1.00" />
+		<param name="endTime" value="24:00:00" />
+		<param name="flowCapacityFactor" value="0.1" />
+		<param name="storageCapacityFactor" value="0.3" />
 		<param name="numberOfThreads" value="4" />
 		<param name = "snapshotperiod"	value = "00:00:10"/>
 
@@ -102,10 +102,10 @@
 		<param name="travelingPt" value="-0.18" />
 
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share passenger.  normally negative.  this comes on top of the opportunity cost of time -->
-		<param name="travelingRideSharePassenger" value="-3.87"></param>
+		<param name="travelingRideSharePassenger" value="-0.992"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by ride share driver.  due to extra income normally positive -->
-		<param name="travelingRideShareDriver" value="6.448"></param>
+		<param name="travelingRideShareDriver" value="-0.992"></param>
 		
 		<!-- [utils/hr] additional marginal utility offset of traveling by foot.  normally negative.  this comes on top of the opportunity cost of time.  also see marginalUtlOfDistanceWalk -->
 		<param name="travelingWalk" value="-1.14"/>
@@ -159,22 +159,16 @@
 	<module name="strategy">
         <param name="maxAgentPlanMemorySize" value="5" /> <!-- 0 means unlimited -->
 
-		<param name="ModuleProbability_1" value="0.05" />
+		<param name="ModuleProbability_1" value="0.4" />
 		<param name="Module_1" value="ChangeExpBeta" />
 		
-		<param name="ModuleProbability_2" value="0.05" />
-		<param name="Module_2" value="ReRoute" />
-		<param name="ModuleDisableAfterIteration_2" value="420" />
+		<param name="ModuleProbability_2" value="0.3" />
+		<param name="Module_2" value="changeTripMode" />		
 
-		<param name="ModuleProbability_3" value="0.1" />
- 		<param name="Module_3" value="SubtourModeChoice"/>
-		<param name="ModuleDisableAfterIteration_3" value="420" />
-
-		<param name="ModuleProbability_4" value="0.05" />
-		<param name="Module_4" value="TimeAllocationMutator" />
-		<param name="ModuleDisableAfterIteration_4" value="420" />
+		<param name="ModuleProbability_4" value="0.3" />
+		<param name="Module_4" value="TimeAllocationMutator" />		
 		
-		<param name="fractionOfIterationsToDisableInnovation" value="0.6"/>
+		<param name="fractionOfIterationsToDisableInnovation" value="0.8"/>
 	</module>
 
 <!-- ====================================================================== -->
@@ -201,18 +195,6 @@
 	</module>
 
 
-	<module name="subtourModeChoice" >
-
-		<!-- Defines the chain-based modes, seperated by commas -->
-		<param name="chainBasedModes" value="car, ride_share_driver" />
-
-		<!-- Defines whether car availability must be considered or not. A agent has no car only if it has no license, or never access to a car -->
-		<param name="considerCarAvailability" value="true" />
-
-		<!-- Defines all the modes available, including chain-based modes, seperated by commas -->
-		<param name="modes" value="car,pt,walk,ride_share_driver,ride_share_passenger" />
-	</module>
-
   	<module name="transit">
   	  	<param name="useTransit" value="true" />
   	  		<param name="transitScheduleFile" value="schedule.xml" />
@@ -220,8 +202,8 @@
   	 	<param name="transitModes" value="pt,bus" />
   	</module>
   	
-  		<module name="changeMode">
-		<param name="modes" value="ride_share_passenger,ride_share_driver,car" /><param
+  		<module name="changeTripMode">
+		<param name="modes" value="ride_share_passenger,ride_share_driver,car,pt,walk" /><param
 			name="ignoreCarAvailability" value="false" /></module>
 
 	<module name="travelTimeCalculator">
